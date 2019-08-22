@@ -1,0 +1,47 @@
+-------------------------------------------------------------
+Layout :
+
+Application level:       
+
+   Approach.lua
+      Bot = require(“BuilderBotLibrary”)
+      BT= require(“BehaviourTree”)
+
+      Approach = BT:create{
+         A behaviour tree consists of
+            Bot.getBlocks()
+            Bot.moveForward()...
+            Bot.putDownManipulator()
+            ...
+      }
+
+Intermediate level:   
+
+   BuilderBotLibrary.lua
+      builderBot.moveForward = function(xxx)
+         robot.differential_drive_system.setSpeed(xxx)
+      end
+
+      bb.getBlocks = function(xxx)
+         for each tag in robot.camera_system.getTags() do
+            Do something
+         end
+      end
+
+-------------------------------------------------------------
+ARGoS provides vector3 and quaternion
+
+-------------------------------------------------------------
+Format : 
+   Although I don't like it, and it's weird, let's keep
+   using 3 spaces as indent.
+
+      1 print(a)
+      2 if a = 4 then
+      3 ___print(a)
+      4 end
+
+   For a function name, The first letter should be Uppercase
+   
+      funtion KillMe()
+      end
