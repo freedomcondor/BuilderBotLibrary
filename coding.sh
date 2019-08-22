@@ -10,5 +10,7 @@ vim coding.sh -c "
 
    tabnew BuilderBotLibrary.lua
 
+   tabnew Tools/BlockTracking.lua
+
    tabnew Tools/ShowTable.lua
 "
