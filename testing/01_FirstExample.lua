@@ -41,7 +41,7 @@ function step()
    ---[[
    print("tags")
    ShowTable(Bot.GetTags(), 1)
-   print("blocks")
+   print("blocks -- note that the orientation is wrong currently")
    ShowTable(Bot.GetBlocks(), 1, "tags")
    --]]
 
