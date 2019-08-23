@@ -14,14 +14,16 @@ function init()
    print("quaternion:")
    ShowTable(getmetatable(quaternion()), 1, "__index")
 
+   print("-- rotation test --")
    local a = vector3(1,0,0)
    local b = quaternion(math.pi/2, vector3(0,0,1))
    a:rotate(b)
    print(a)
 
+   print("-- cross test --")
    a = vector3(1,0,0)
    b = vector3(0,1,0)
-   local c = vector3(a):cross(b)
+   local c = vector3(a):cross(b) -- stupid argos way of saying Y = Z * X
    print("a = ", a)
    print("b = ", b)
    print("c = ", c)
