@@ -61,7 +61,16 @@ BuilderBot.GetBlocks = function()
       -- blocks = an array of blocks
       -- a block has
       --    position    = a vector3
-      --    orientation = a quternion
+      --    X, Y, Z:  three vector3 (in camera's eye) 
+      --       showing the axis of a block :    
+      --
+      --           |Z           Z| /Y       the one pointing up is Z
+      --           |__ Y         |/         the nearest one pointing towards the camera is X
+      --           /              \         and then Y follows right hand coordinate system
+      --         X/                \X
+      --
+      --    orientation = a quternion 
+      --       - note that currently the orientation quaternion is not corrlated with XYZ
       --    tags = an array of tags pointers, each pointing to the tags array
 end
 
