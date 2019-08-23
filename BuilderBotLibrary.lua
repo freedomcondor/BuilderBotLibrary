@@ -7,6 +7,7 @@
 -- 
 ----------------------------------------------------
 require("BlockTracking")
+local CoorTrans = require("CoordinateTransfer") -- this is usefull
 
 local BuilderBot = {}
 
@@ -70,7 +71,7 @@ BuilderBot.GetBlocks = function()
       --         X/                \X
       --
       --    orientation = a quternion 
-      --       - note that currently the orientation quaternion is not corrlated with XYZ
+      --       - this orientation quaternion is matches XYZ
       --    tags = an array of tags pointers, each pointing to the tags array
 end
 

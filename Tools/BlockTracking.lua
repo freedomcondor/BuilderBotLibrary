@@ -1,3 +1,12 @@
+----------------------------------------------------
+-- Block tracking of BuilderBot
+--
+-- Author
+--    Weixu Zhu,  Tutti mi chiamano Harry
+--       zhuweixu_harry@126.com
+-- 
+----------------------------------------------------
+
 local BLOCKLENGTH = 0.055
 local CoorTrans = require("CoordinateTransfer")
 
@@ -54,7 +63,78 @@ local function FindBlockXYZ(orientation)
 
    Y = vector3(Z):cross(X) -- stupid argos way of saying Y = Z * X
 
-   return X, Y, Z
+   return X, Y, Z  -- unit vectors
+end
+
+local function XYtoQuaternion(_orientation, _X, _Y)
+   -- assume Z match
+   -- from the XY to calculate the right quaternion
+   local orientation = _orientation
+   local x = vector3(1,0,0)
+   x:rotate(orientation)
+   if (x - _X):length() < 0.2 then    
+                                          -- x match 
+      return orientation
+   elseif (x - _Y):length() < 0.2 then 
+                                          -- x matches Y, rotate 90 clockwise
+      return CoorTrans.OrientationTransferQ(
+                quaternion(-math.pi/2, vector3(0,0,1)), 
+                orientation)
+   elseif (x + _X):length() < 0.2 then 
+                                          -- x matches -X, rotate 180 clockwise
+      return CoorTrans.OrientationTransferQ(
+                quaternion(math.pi, vector3(0,0,1)), 
+                orientation)
+   elseif (x + _Y):length() < 0.2 then 
+                                          -- x matches -Y, rotate 90 anti-clockwise
+      return CoorTrans.OrientationTransferQ(
+                quaternion(math.pi/2, vector3(0,0,1)), 
+                orientation)
+   end
+end
+
+local function XYZtoQuaternion(_orientation, _X, _Y, _Z)
+   -- from the XYZ to calculate the right quaternion
+   local orientation = _orientation
+   local x = vector3(1,0,0)
+   local y = vector3(0,1,0)
+   local z = vector3(0,0,1)
+   x:rotate(orientation)
+   y:rotate(orientation)
+   z:rotate(orientation)
+   if (z - _Z):length() < 0.2 then     -- z is up
+      return XYtoQuaternion(orientation, _X, _Y)
+   elseif (-z - _Z):length() < 0.2 then     -- -z is up, rotate 180 along x
+      orientation = CoorTrans.OrientationTransferQ(
+                       quaternion(math.pi, vector3(1,0,0)),
+                       orientation
+                    )
+      return XYtoQuaternion(orientation, _X, _Y)
+   elseif (x - _Z):length() < 0.2 then     -- x is up, rotate a-clock 90 along y
+      orientation = CoorTrans.OrientationTransferQ(
+                       quaternion(math.pi/2, vector3(0,1,0)),
+                       orientation
+                    )
+      return XYtoQuaternion(orientation, _X, _Y)
+   elseif (-x - _Z):length() < 0.2 then     -- -x is up, rotate clock 90 along y
+      orientation = CoorTrans.OrientationTransferQ(
+                       quaternion(-math.pi/2, vector3(0,1,0)),
+                       orientation
+                    )
+      return XYtoQuaternion(orientation, _X, _Y)
+   elseif (y - _Z):length() < 0.2 then     -- y is up, rotate clock 90 along x
+      orientation = CoorTrans.OrientationTransferQ(
+                       quaternion(-math.pi/2, vector3(1,0,0)),
+                       orientation
+                    )
+      return XYtoQuaternion(orientation, _X, _Y)
+   elseif (-y - _Z):length() < 0.2 then     -- y is up, rotate a-clock 90 along x
+      orientation = CoorTrans.OrientationTransferQ(
+                       quaternion(math.pi/2, vector3(1,0,0)),
+                       orientation
+                    )
+      return XYtoQuaternion(orientation, _X, _Y)
+   end
 end
 
 function BlockTracking(_blocks, _tags)
@@ -89,10 +169,12 @@ function BlockTracking(_blocks, _tags)
       block.position = block.positionSum * (1/#block.tags)
       block.positionSum = nil
    end
-
    -- adjust block orientation
    for i, block in ipairs(blocks) do
       block.X, block.Y, block.Z = FindBlockXYZ(block.orientation)
+         -- X,Y,Z are unit vectors
+      block.orientation = XYZtoQuaternion(block.orientation, block.X, block.Y, block.Z)
+         -- to make orientation matches X,Y,Z
    end
 end
 
