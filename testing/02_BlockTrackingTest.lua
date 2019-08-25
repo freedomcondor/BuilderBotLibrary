@@ -61,8 +61,8 @@ function step()
    print("-- camera test --")
    Bot.ProcessBlocks()
    ---[[
-   print("tags")
-   ShowTable(Bot.GetTags(), 1)
+   --print("tags")
+   --ShowTable(Bot.GetTags(), 1)
    print("blocks")
    ShowTable(Bot.GetBlocks(), 1, "tags")
    --]]

@@ -16,7 +16,7 @@ function ShowTable(table, number, skipindex)
       else
          if type(v) == "table" then
             print(str)
-            ShowTable(v, number + 1, without)
+            ShowTable(v, number + 1, skipindex)
          else
             str = str .. tostring(v)
             print(str)

@@ -9,6 +9,7 @@
 
 local BLOCKLENGTH = 0.055
 local CoorTrans = require("CoordinateTransfer")
+local Hungarian = require("Hungarian")
 
 local function FindBlockXYZ(orientation)
    --    this function finds axis of a block :    
@@ -137,9 +138,71 @@ local function XYZtoQuaternion(_orientation, _X, _Y, _Z)
    end
 end
 
+local function HungarianMatch(_oldBlocks, _newBlocks)
+   -- the index of _oldBlocks maybe not consistent, like 1, 2, 4, 6
+   -- put it into oldBlockArray with 1,2,3,4
+   local oldBlocksArray = {}
+   local count = 0
+   for i, block in pairs(_oldBlocks) do
+      count = count + 1
+      oldBlocksArray[count] = block
+      oldBlocksArray[count].index = i
+   end
+
+   -- max size
+   local n = #oldBlocksArray
+   if #_newBlocks > n then n = #_newBlocks end
+
+   -- set penalty matrix
+      -- fill n * n with 0
+   local penaltyMatrix = {}
+   for i = 1, n do 
+      penaltyMatrix[i] = {}
+      for j = 1,n do 
+         penaltyMatrix[i][j] = 0
+      end
+   end
+
+   --                new blocks
+   --             * * * * * * * *
+   -- old blocks  *             *
+   --             * * * * * * * *
+
+   for i, oldB in ipairs(oldBlocksArray) do
+      for j, newB in ipairs(_newBlocks) do
+         local dis = (oldB.position - newB.position):length()
+         penaltyMatrix[i][j] = dis + 0.1   -- 0.1 to make it not 0
+      end
+   end
+
+   local hun = Hungarian:create{costMat = penaltyMatrix, MAXorMIN = "MIN"}
+   hun:aug()
+   -- hun.match_of_X[i] is the index of match for oldBlocksArray[i]
+
+   for i, oldB in ipairs(oldBlocksArray) do
+      if penaltyMatrix[i][hun.match_of_X[i]] == 0 then
+         -- lost
+         local index = oldB.index
+         _oldBlocks[index] = nil
+      else
+         -- tracking
+         local index = oldB.index
+         _oldBlocks[index] = _newBlocks[hun.match_of_X[i]]
+      end
+   end
+
+   local index = 1
+   for j, newB in ipairs(_newBlocks) do
+      if penaltyMatrix[hun.match_of_Y[j]][j] == 0 then
+         -- new blocks
+         while _oldBlocks[index] ~= nil do index = index + 1 end
+         _oldBlocks[index] = newB
+      end
+   end
+end
+
 function BlockTracking(_blocks, _tags)
-   local blocks = _blocks
-   for i, v in ipairs(blocks) do blocks[i] = nil end
+   local blocks = {}
 
    -- cluster tags into blocks
    local p = vector3(0, 0, -BLOCKLENGTH/2)
@@ -176,5 +239,7 @@ function BlockTracking(_blocks, _tags)
       block.orientation = XYZtoQuaternion(block.orientation, block.X, block.Y, block.Z)
          -- to make orientation matches X,Y,Z
    end
+
+   HungarianMatch(_blocks, blocks)
 end
 
