@@ -1,4 +1,4 @@
-function ShowTable(table, number, without)
+function ShowTable(table, number, skipindex)
    -- number means how many indents when printing
    if number == nil then number = 0 end
    if type(table) ~= "table" then return nil end
@@ -11,12 +11,12 @@ function ShowTable(table, number, without)
 
       str = str .. tostring(i) .. "\t"
 
-      if i == without then
+      if i == skipindex then
          print(str .. "SKIPPED")
       else
          if type(v) == "table" then
             print(str)
-            ShowTable(v, number + 1, without)
+            ShowTable(v, number + 1, skipindex)
          else
             str = str .. tostring(v)
             print(str)

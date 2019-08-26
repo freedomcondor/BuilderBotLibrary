@@ -1,5 +1,15 @@
+----------------------------------------------------
+-- Block tracking of BuilderBot
+--
+-- Author
+--    Weixu Zhu,  Tutti mi chiamano Harry
+--       zhuweixu_harry@126.com
+-- 
+----------------------------------------------------
+
 local BLOCKLENGTH = 0.055
 local CoorTrans = require("CoordinateTransfer")
+local Hungarian = require("Hungarian")
 
 local function FindBlockXYZ(orientation)
    --    this function finds axis of a block :    
@@ -54,12 +64,145 @@ local function FindBlockXYZ(orientation)
 
    Y = vector3(Z):cross(X) -- stupid argos way of saying Y = Z * X
 
-   return X, Y, Z
+   return X, Y, Z  -- unit vectors
+end
+
+local function XYtoQuaternion(_orientation, _X, _Y)
+   -- assume Z match
+   -- from the XY to calculate the right quaternion
+   local orientation = _orientation
+   local x = vector3(1,0,0)
+   x:rotate(orientation)
+   if (x - _X):length() < 0.2 then    
+                                          -- x match 
+      return orientation
+   elseif (x - _Y):length() < 0.2 then 
+                                          -- x matches Y, rotate 90 clockwise
+      return CoorTrans.OrientationTransferQ(
+                quaternion(-math.pi/2, vector3(0,0,1)), 
+                orientation)
+   elseif (x + _X):length() < 0.2 then 
+                                          -- x matches -X, rotate 180 clockwise
+      return CoorTrans.OrientationTransferQ(
+                quaternion(math.pi, vector3(0,0,1)), 
+                orientation)
+   elseif (x + _Y):length() < 0.2 then 
+                                          -- x matches -Y, rotate 90 anti-clockwise
+      return CoorTrans.OrientationTransferQ(
+                quaternion(math.pi/2, vector3(0,0,1)), 
+                orientation)
+   end
+end
+
+local function XYZtoQuaternion(_orientation, _X, _Y, _Z)
+   -- from the XYZ to calculate the right quaternion
+   local orientation = _orientation
+   local x = vector3(1,0,0)
+   local y = vector3(0,1,0)
+   local z = vector3(0,0,1)
+   x:rotate(orientation)
+   y:rotate(orientation)
+   z:rotate(orientation)
+   if (z - _Z):length() < 0.2 then     -- z is up
+      return XYtoQuaternion(orientation, _X, _Y)
+   elseif (-z - _Z):length() < 0.2 then     -- -z is up, rotate 180 along x
+      orientation = CoorTrans.OrientationTransferQ(
+                       quaternion(math.pi, vector3(1,0,0)),
+                       orientation
+                    )
+      return XYtoQuaternion(orientation, _X, _Y)
+   elseif (x - _Z):length() < 0.2 then     -- x is up, rotate a-clock 90 along y
+      orientation = CoorTrans.OrientationTransferQ(
+                       quaternion(math.pi/2, vector3(0,1,0)),
+                       orientation
+                    )
+      return XYtoQuaternion(orientation, _X, _Y)
+   elseif (-x - _Z):length() < 0.2 then     -- -x is up, rotate clock 90 along y
+      orientation = CoorTrans.OrientationTransferQ(
+                       quaternion(-math.pi/2, vector3(0,1,0)),
+                       orientation
+                    )
+      return XYtoQuaternion(orientation, _X, _Y)
+   elseif (y - _Z):length() < 0.2 then     -- y is up, rotate clock 90 along x
+      orientation = CoorTrans.OrientationTransferQ(
+                       quaternion(-math.pi/2, vector3(1,0,0)),
+                       orientation
+                    )
+      return XYtoQuaternion(orientation, _X, _Y)
+   elseif (-y - _Z):length() < 0.2 then     -- y is up, rotate a-clock 90 along x
+      orientation = CoorTrans.OrientationTransferQ(
+                       quaternion(math.pi/2, vector3(1,0,0)),
+                       orientation
+                    )
+      return XYtoQuaternion(orientation, _X, _Y)
+   end
+end
+
+local function HungarianMatch(_oldBlocks, _newBlocks)
+   -- the index of _oldBlocks maybe not consistent, like 1, 2, 4, 6
+   -- put it into oldBlockArray with 1,2,3,4
+   local oldBlocksArray = {}
+   local count = 0
+   for i, block in pairs(_oldBlocks) do
+      count = count + 1
+      oldBlocksArray[count] = block
+      oldBlocksArray[count].index = i
+   end
+
+   -- max size
+   local n = #oldBlocksArray
+   if #_newBlocks > n then n = #_newBlocks end
+
+   -- set penalty matrix
+      -- fill n * n with 0
+   local penaltyMatrix = {}
+   for i = 1, n do 
+      penaltyMatrix[i] = {}
+      for j = 1,n do 
+         penaltyMatrix[i][j] = 0
+      end
+   end
+
+   --                new blocks
+   --             * * * * * * * *
+   -- old blocks  *             *
+   --             * * * * * * * *
+
+   for i, oldB in ipairs(oldBlocksArray) do
+      for j, newB in ipairs(_newBlocks) do
+         local dis = (oldB.position - newB.position):length()
+         penaltyMatrix[i][j] = dis + 0.1   -- 0.1 to make it not 0
+      end
+   end
+
+   local hun = Hungarian:create{costMat = penaltyMatrix, MAXorMIN = "MIN"}
+   hun:aug()
+   -- hun.match_of_X[i] is the index of match for oldBlocksArray[i]
+
+   for i, oldB in ipairs(oldBlocksArray) do
+      if penaltyMatrix[i][hun.match_of_X[i]] == 0 then
+         -- lost
+         local index = oldB.index
+         _oldBlocks[index] = nil
+      else
+         -- tracking
+         local index = oldB.index
+         _oldBlocks[index] = _newBlocks[hun.match_of_X[i]]
+      end
+   end
+
+   local index = 1
+   for j, newB in ipairs(_newBlocks) do
+      if penaltyMatrix[hun.match_of_Y[j]][j] == 0 then
+         -- new blocks
+         while _oldBlocks[index] ~= nil do index = index + 1 end
+         _oldBlocks[index] = newB
+      end
+   end
 end
 
 function BlockTracking(_blocks, _tags)
-   local blocks = _blocks
-   for i, v in ipairs(blocks) do blocks[i] = nil end
+   local blocks = {}
 
    -- cluster tags into blocks
    local p = vector3(0, 0, -BLOCKLENGTH/2)
@@ -89,10 +232,14 @@ function BlockTracking(_blocks, _tags)
       block.position = block.positionSum * (1/#block.tags)
       block.positionSum = nil
    end
-
    -- adjust block orientation
    for i, block in ipairs(blocks) do
       block.X, block.Y, block.Z = FindBlockXYZ(block.orientation)
+         -- X,Y,Z are unit vectors
+      block.orientation = XYZtoQuaternion(block.orientation, block.X, block.Y, block.Z)
+         -- to make orientation matches X,Y,Z
    end
+
+   HungarianMatch(_blocks, blocks)
 end
 

@@ -13,6 +13,8 @@ vim coding.sh -c "
 
    tabnew Tools/BlockTracking.lua
 
+   tabnew Tools/Hungarian.lua
+
    tabnew Tools/ShowTable.lua
 "
 
