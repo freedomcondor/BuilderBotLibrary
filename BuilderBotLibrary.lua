@@ -36,6 +36,24 @@ BuilderBot.SetVelocity = function(x, y)
 end
 
 -- camera --------------------------------------------
+BuilderBot.GetCameraOrientation = function()
+   if BuilderBot.cameraOrientation == nil then
+      BuilderBot.cameraOrientation = 
+         CoorTrans.OrientationFromEulerAngles(
+            -0.50 * math.pi,
+             0.75 * math.pi,
+             0.00 * math.pi
+         )
+   end
+   return BuilderBot.cameraOrientation
+end
+
+--BuilderBot.cameraPosition = vector3(0.05, 0, 0.05)   -- bug report, lua don't get vector3 at this time
+
+BuilderBot.GetCameraPosition = function()
+   return vector3(0.15, 0, 0.05)
+end
+
 BuilderBot.EnableCamera= function()
    robot.camera_system.enable()
 end
@@ -75,7 +93,30 @@ BuilderBot.GetBlocks = function()
       --    tags = an array of tags pointers, each pointing to the tags array
 end
 
+BuilderBot.ProcessLeds = function()
+   local ledDis = 0.02 -- distance between leds to the center
+   local ledLocForTag = {             
+      vector3( ledDis,  0, 0),
+      vector3( 0,  ledDis, 0),
+      vector3(-ledDis,  0, 0),
+      vector3( 0, -ledDis, 0),
+   }     -- from x, counter-closewise
+   local ledLocForCamera = {}
+   local ledLocForRobot = {}
+
+   for i, tag in ipairs(BuilderBot.GetTags()) do
+      for j, ledLoc in ipairs(ledLocForTag) do
+         ledLocForCamera[j] = CoorTrans.LocationTransferV3(ledLoc, tag.position, tag.orientation)
+         ledLocForRobot[j] = CoorTrans.LocationTransferV3(ledLocForCamera[j], BuilderBot.GetCameraPosition(), BuilderBot.GetCameraOrientation())
+         print("led:", j, robot.camera_system.detect_led(ledLocForCamera[j]))
+         print(ledLocForCamera[j])
+         robot.debug.draw("arrow(" .. "blue" .. ")(" .. BuilderBot.GetCameraPosition():__tostring() .. ")(" .. ledLocForRobot[j]:__tostring() ..")")
+      end
+   end
+end
+
 BuilderBot.ProcessBlocks = function()
+   BuilderBot.ProcessLeds()
    if BuilderBot.blocks == nil then BuilderBot.blocks = {} end
    BlockTracking(BuilderBot.blocks, BuilderBot.GetTags())
 end

@@ -13,4 +13,13 @@ function CoordinateTransfer.OrientationTransferQ(theOriInYourEyeQ, yourOrieInMyE
    return yourOrieInMyEyeQ * theOriInYourEyeQ 
 end
 
+function CoordinateTransfer.OrientationFromEulerAngles(zRadian, yRadian, xRadian)
+   print(zRadian, yRadian, xRadian)
+   local a = vector3(0,0,0)
+   local X = quaternion(xRadian, vector3(1,0,0))
+   local Y = quaternion(yRadian, vector3(0,1,0))
+   local Z = quaternion(zRadian, vector3(0,0,1))
+   return X * Y * Z
+end
+
 return CoordinateTransfer
