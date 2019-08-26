@@ -104,15 +104,17 @@ BuilderBot.ProcessLeds = function()
    local ledLocForCamera = {}
    local ledLocForRobot = {}
 
+   --[[
    for i, tag in ipairs(BuilderBot.GetTags()) do
       for j, ledLoc in ipairs(ledLocForTag) do
          ledLocForCamera[j] = CoorTrans.LocationTransferV3(ledLoc, tag.position, tag.orientation)
          ledLocForRobot[j] = CoorTrans.LocationTransferV3(ledLocForCamera[j], BuilderBot.GetCameraPosition(), BuilderBot.GetCameraOrientation())
          print("led:", j, robot.camera_system.detect_led(ledLocForCamera[j]))
          print(ledLocForCamera[j])
-         robot.debug.draw("arrow(" .. "blue" .. ")(" .. BuilderBot.GetCameraPosition():__tostring() .. ")(" .. ledLocForRobot[j]:__tostring() ..")")
       end
    end
+   --]]
+   
 end
 
 BuilderBot.ProcessBlocks = function()
