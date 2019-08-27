@@ -49,9 +49,8 @@ BuilderBot.GetCameraOrientation = function()
 end
 
 --BuilderBot.cameraPosition = vector3(0.05, 0, 0.05)   -- bug report, lua don't get vector3 at this time
-
 BuilderBot.GetCameraPosition = function()
-   return vector3(0.15, 0, 0.05)
+   return vector3(0.07, 0, 0.10)    -- TODO: calculate it based on effector positions
 end
 
 BuilderBot.EnableCamera= function()
@@ -95,26 +94,21 @@ end
 
 BuilderBot.ProcessLeds = function()
    local ledDis = 0.02 -- distance between leds to the center
-   local ledLocForTag = {             
+   local ledLocForTag = {
       vector3( ledDis,  0, 0),
       vector3( 0,  ledDis, 0),
       vector3(-ledDis,  0, 0),
       vector3( 0, -ledDis, 0),
    }     -- from x, counter-closewise
-   local ledLocForCamera = {}
-   local ledLocForRobot = {}
 
-   --[[
    for i, tag in ipairs(BuilderBot.GetTags()) do
+      tag.led = 0
       for j, ledLoc in ipairs(ledLocForTag) do
-         ledLocForCamera[j] = CoorTrans.LocationTransferV3(ledLoc, tag.position, tag.orientation)
-         ledLocForRobot[j] = CoorTrans.LocationTransferV3(ledLocForCamera[j], BuilderBot.GetCameraPosition(), BuilderBot.GetCameraOrientation())
-         print("led:", j, robot.camera_system.detect_led(ledLocForCamera[j]))
-         print(ledLocForCamera[j])
+         local ledLocForCamera = CoorTrans.LocationTransferV3(ledLoc, tag.position, tag.orientation)
+         local color = robot.camera_system.detect_led(ledLocForCamera)
+         if color ~= tag.led then tag.led = color end
       end
    end
-   --]]
-   
 end
 
 BuilderBot.ProcessBlocks = function()

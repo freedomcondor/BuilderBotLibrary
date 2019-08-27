@@ -52,21 +52,21 @@ end
 function step()
    print("-------- step begins ---------")
 
+      --[[
    robot.debug.draw("arrow(" .. "blue" .. ")(" .. 
       --Bot.GetCameraPosition():__tostring() 
       vector3(0,0,0):__tostring()
                                                       .. ")(" .. 
-      ---[[
       CoorTrans.LocationTransferV3(
          vector3(0,0,0.1),
          --Bot.GetCameraPosition(),
          vector3(0,0,0),
          Bot.GetCameraOrientation()
       ):__tostring() 
-      --]]
       --vector3(0.1,0,0):__tostring()
                                                       ..")"
    )
+      --]]
 
    --- get time test ----
    print("-- get time test --")
@@ -81,7 +81,8 @@ function step()
    --print("tags")
    --ShowTable(Bot.GetTags(), 1)
    print("blocks")
-   ShowTable(Bot.GetBlocks(), 1, "tags")
+   --ShowTable(Bot.GetBlocks(), 1, "tags")
+   ShowTable(Bot.GetBlocks(), 1)
    --]]
 
 end
