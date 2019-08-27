@@ -84,7 +84,6 @@ function step()
    --ShowTable(Bot.GetBlocks(), 1, "tags")
    ShowTable(Bot.GetBlocks(), 1)
    --]]
-
 end
 
 function reset()

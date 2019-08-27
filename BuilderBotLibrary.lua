@@ -36,22 +36,23 @@ BuilderBot.SetVelocity = function(x, y)
 end
 
 -- camera --------------------------------------------
-BuilderBot.GetCameraOrientation = function()
-   if BuilderBot.cameraOrientation == nil then
-      BuilderBot.cameraOrientation = 
-         CoorTrans.OrientationFromEulerAngles(
-            -0.50 * math.pi,
-             0.75 * math.pi,
-             0.00 * math.pi
-         )
-   end
-   return BuilderBot.cameraOrientation
-end
 
---BuilderBot.cameraPosition = vector3(0.05, 0, 0.05)   -- bug report, lua don't get vector3 at this time
+---------------------------------------------------------------------------------- think again this part
+BuilderBot.cameraOrientation = 
+   CoorTrans.OrientationFromEulerAngles(
+      -0.50 * math.pi,
+       0.75 * math.pi,
+       0.00 * math.pi
+   )
+
+BuilderBot.cameraPosition = vector3(0.05, 0, 0.05)
+----------------------------------------------------------------------------------
+
+--[[
 BuilderBot.GetCameraPosition = function()
    return vector3(0.07, 0, 0.10)    -- TODO: calculate it based on effector positions
 end
+--]]
 
 BuilderBot.EnableCamera= function()
    robot.camera_system.enable()
