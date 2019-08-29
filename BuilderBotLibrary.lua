@@ -107,7 +107,7 @@ BuilderBot.ProcessLeds = function()
       for j, ledLoc in ipairs(ledLocForTag) do
          local ledLocForCamera = CoorTrans.LocationTransferV3(ledLoc, tag.position, tag.orientation)
          local color = robot.camera_system.detect_led(ledLocForCamera)
-         if color ~= tag.led then tag.led = color end
+         if color ~= tag.led and color ~= 0 then tag.led = color end
       end
    end
 end
