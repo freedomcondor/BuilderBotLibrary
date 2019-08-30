@@ -34,7 +34,7 @@
         <builderbot_lift_system implementation="default" />
         <builderbot_nfc implementation="default" show_rays="true" />
       </sensors>
-      <params script="approach_cube.lua" />
+      <params script="testing/03_MajdTesting.lua" />
     </lua_controller>
 
     <lua_controller id="block">

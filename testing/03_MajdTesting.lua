@@ -1,13 +1,24 @@
-
+package.path = package.path .. ";Tools/?.lua"
 DEBUG = true
 
-robotIF = require("RobotInterface")
-Vec3 = require("Vector3")
-Matrix = require("Matrix")
-Vector = require("Vector")
-pprint = require('pprint')
+-- robotIF = require("RobotInterface")
+-- Vec3 = require("Vector3")
+-- Matrix = require("Matrix")
+-- Vector = require("Vector")
+-- pprint = require('pprint')
 luabt = require("luabt.luabt")
+local Bot = require("BuilderBotLibrary")
 
+
+---------------------------------------------------------------------------------------
+-- Stuff to move to BuilderBotLibrary.lua later
+---------------------------------------------------------------------------------------
+Bot.SetLiftPosition = function(height)
+	return robot.lift_system.set_position(height)
+end
+Bot.ChargeMagnet = function()
+	return robot.electromagnet_system.set_discharge_mode("disabled")
+end
 ---------------------------------------------------------------------------------------
 -- Defining range finders positions and orientations
 ---------------------------------------------------------------------------------------
@@ -404,30 +415,30 @@ function init()
 	-- obstacle_avoidance_fsm = luafsm.create(obstacle_avoidance_states)
 
 	-- instantiate a behavior tree
-	main_bt = luabt.create(main_node)
+	-- main_bt = luabt.create(main_node)
 	
 
 end
 
 function step()
 	stepCount = stepCount + 1
-	local timeNow = robotIF.getTime()
+	local timeNow = Bot.GetTime()
 	local timePeriod = timeNow - timeHolding	-- unit s
 	timeHolding = timeNow
-	ProcessBlocks()
-	ProcessObstacles()
-	main_bt()
+	-- ProcessBlocks()
+	-- ProcessObstacles()
+	-- main_bt()
 end
 
 function reset()
-	timeHolding = robotIF.getTime()	-- in s
+	timeHolding = Bot.GetTime()	-- in s
 	stepCount = 0
-	robotIF.enableCamera()
-	robotIF.setLiftPosition(0.2)
-	robotIF.chargeMagnet()
+	Bot.EnableCamera()
+	Bot.SetLiftPosition(0.2)
+	Bot.ChargeMagnet()
 
 end
 
 function destroy()
-	robotIF.setVelocity(0,0)
+	Bot.SetVelocity(0,0)
 end
