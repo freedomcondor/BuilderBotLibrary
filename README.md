@@ -39,11 +39,11 @@ approach_root_node = bt.create(...)
 ```
 The intermediate layer is composed of functions designed to be used in the application layer.
 ```lua
-builderbot.move = function(xxx)
+api.move = function(xxx)
    robot.differential_drive_system.set_speed(xxx)
 end
 
-builderbot.get_blocks = function(xxx)
+api.get_blocks = function(xxx)
    for tag in robot.camera_system.get_tags() do
       process_tag(tag)
    end
