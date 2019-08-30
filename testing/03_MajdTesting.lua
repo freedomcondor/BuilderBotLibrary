@@ -1,81 +1,84 @@
-package.path = package.path .. ";Tools/?.lua"
+package.path = package.path .. ';Tools/?.lua'
 DEBUG = true
 
 -- robotIF = require("RobotInterface")
 -- Vec3 = require("Vector3")
 -- Matrix = require("Matrix")
 -- Vector = require("Vector")
--- pprint = require('pprint')
-luabt = require("luabt.luabt")
-local Bot = require("BuilderBotLibrary")
-
+pprint = require('pprint')
+luabt = require('luabt.luabt')
+require('ShowTable')
+local Bot = require('BuilderBotLibrary')
 
 ---------------------------------------------------------------------------------------
 -- Stuff to move to BuilderBotLibrary.lua later
 ---------------------------------------------------------------------------------------
 Bot.SetLiftPosition = function(height)
-	return robot.lift_system.set_position(height)
+   return robot.lift_system.set_position(height)
 end
 Bot.ChargeMagnet = function()
-	return robot.electromagnet_system.set_discharge_mode("disabled")
+   return robot.electromagnet_system.set_discharge_mode('disabled')
 end
 ---------------------------------------------------------------------------------------
 -- Defining range finders positions and orientations
 ---------------------------------------------------------------------------------------
 RangeFinders = {}
-RangeFinders[1]={position = {x = 0.0640,y = -0.0175,z = 0.0495},angle = 90}
-RangeFinders[2]={position = {x = 0.0523,y = -0.0522,z = 0.0495},angle = 135}
-RangeFinders[3]={position = {x = 0.0175,y = -0.0640,z = 0.0495},angle = 180}
-RangeFinders[4]={position = {x = -0.0175,y = -0.0640,z = 0.0495},angle = 180}
-RangeFinders[5]={position = {x = -0.0522,y = -0.0523,z = 0.0495},angle = -135}
-RangeFinders[6]={position = {x = -0.0640,y = -0.0175,z = 0.0495},angle = -90}
-RangeFinders[7]={position = {x = -0.0640,y = 0.0175,z = 0.0495},angle = -90}
-RangeFinders[8]={position = {x = -0.0522,y = 0.0523,z = 0.0495},angle = -45}
-RangeFinders[9]={position = {x = -0.0175,y = 0.0640,z = 0.0495},angle = 0}
-RangeFinders[10]={position = {x = 0.0175,y = 0.0640,z = 0.0495},angle = 0}
-RangeFinders[11]={position = {x = 0.0523,y = 0.0522,z = 0.0495},angle = 45}
-RangeFinders[12]={position = {x = 0.0640,y = 0.0175,z = 0.0495},angle = 90}
+RangeFinders[1] = {position = {x = 0.0640, y = -0.0175, z = 0.0495}, angle = 90}
+RangeFinders[2] = {position = {x = 0.0523, y = -0.0522, z = 0.0495}, angle = 135}
+RangeFinders[3] = {position = {x = 0.0175, y = -0.0640, z = 0.0495}, angle = 180}
+RangeFinders[4] = {position = {x = -0.0175, y = -0.0640, z = 0.0495}, angle = 180}
+RangeFinders[5] = {position = {x = -0.0522, y = -0.0523, z = 0.0495}, angle = -135}
+RangeFinders[6] = {position = {x = -0.0640, y = -0.0175, z = 0.0495}, angle = -90}
+RangeFinders[7] = {position = {x = -0.0640, y = 0.0175, z = 0.0495}, angle = -90}
+RangeFinders[8] = {position = {x = -0.0522, y = 0.0523, z = 0.0495}, angle = -45}
+RangeFinders[9] = {position = {x = -0.0175, y = 0.0640, z = 0.0495}, angle = 0}
+RangeFinders[10] = {position = {x = 0.0175, y = 0.0640, z = 0.0495}, angle = 0}
+RangeFinders[11] = {position = {x = 0.0523, y = 0.0522, z = 0.0495}, angle = 45}
+RangeFinders[12] = {position = {x = 0.0640, y = 0.0175, z = 0.0495}, angle = 90}
 
-
-function RangeFinderToRobotConversion(distance,range_finder_id)
-	y =  RangeFinders[range_finder_id]["position"]["y"] + math.cos(math.rad(RangeFinders[range_finder_id]["angle"])) * distance
-	x =  RangeFinders[range_finder_id]["position"]["x"] + math.sin(math.rad(RangeFinders[range_finder_id]["angle"])) * distance
-	z =  RangeFinders[range_finder_id]["position"]["z"]
-	return x,y,z
+function RangeFinderToRobotConversion(distance, range_finder_id)
+   y =
+      RangeFinders[range_finder_id]['position']['y'] +
+      math.cos(math.rad(RangeFinders[range_finder_id]['angle'])) * distance
+   x =
+      RangeFinders[range_finder_id]['position']['x'] +
+      math.sin(math.rad(RangeFinders[range_finder_id]['angle'])) * distance
+   z = RangeFinders[range_finder_id]['position']['z']
+   return x, y, z
 end
 
+function Camera2RobotConversion(loc)
+   -- compute the location of Box in Robot's coordinate system
+   -- robot Axis : x front y left z up
+   -- camera Axis : x right y down z far
 
-function Camera2RobotConversion(loc)	
-	-- compute the location of Box in Robot's coordinate system
-	-- robot Axis : x front y left z up
-	-- camera Axis : x right y down z far
-	
+   CamTranslation = Vec3:create(0.1, 0, robotIF.getLiftPosition() + 0.1495)
+   alpha = math.rad(135)
+   lambda = math.rad(90)
 
-	CamTranslation = Vec3:create( 0.1, 0, robotIF.getLiftPosition() + 0.1495)		
-	alpha = math.rad(135)
-	lambda = math.rad(90)
+   local RotMatX =
+      Matrix:create {
+      {1, 0, 0},
+      {0, math.cos(alpha), math.sin(alpha)},
+      {0, -1 * math.sin(alpha), math.cos(alpha)}
+   }
 
-	local RotMatX = Matrix:create{
-		{1, 0              , 0                 },
-		{0, math.cos(alpha), math.sin(alpha)},
-		{0, -1*math.sin(alpha), math.cos(alpha)},
-	}
+   local RotMatZ =
+      Matrix:create {
+      {math.cos(lambda), math.sin(lambda), 0},
+      {-1 * math.sin(lambda), math.cos(lambda), 0},
+      {0, 0, 1}
+   }
 
-	local RotMatZ = Matrix:create{
-		{math.cos(lambda), math.sin(lambda), 0},
-		{-1*math.sin(lambda), math.cos(lambda)   , 0},
-		{0               , 0                  , 1},
-	}
-	
-	local v_loc = Vector:create({loc.x, loc.y, loc.z})	
-	local R = RotMatZ * RotMatX 
-	-- pprint(R)
-	local locVec = R * v_loc
+   local v_loc = Vector:create({loc.x, loc.y, loc.z})
+   local R = RotMatZ * RotMatX
+   -- pprint(R)
+   local locVec = R * v_loc
 
-	local locVec3 = Vec3:create(locVec[1],locVec[2],locVec[3])
-	locVec3 = locVec3 + CamTranslation
-	
-	return locVec3
+   local locVec3 = Vec3:create(locVec[1], locVec[2], locVec[3])
+   locVec3 = locVec3 + CamTranslation
+
+   return locVec3
 end
 
 ---------------------------------------------------------------------------------------
@@ -84,15 +87,21 @@ end
 --	We are asinging type = "target" to all of the blocks, I did not know how to read the LEDs
 Blocks = {}
 function ProcessBlocks()
-	Blocks = {}
-	local Tags,Boxes = robotIF.getBoxes()
-	for i = 1,Boxes.n do 
-		block_position_vector_camera = Vec3:create( Boxes[i].translation.x, Boxes[i].translation.y, Boxes[i].translation.z)
-		block_position_vector_robot =  Camera2RobotConversion(block_position_vector_camera)
-		block_type = "target"
-		block_id = Boxes[i].label
-		table.insert(Blocks,{position = block_position_vector_robot,id = block_id,type = block_type})
-	end
+   if Blocks == nil then
+      Blocks = {}
+   end
+   BlockTracking(Blocks, Bot.GetTags())
+   pprint(Blocks)
+   -- ShowTable(Bot.GetBlocks(), 1, 'tags')
+   -- (Bot.GetBlocks())
+
+   -- for i = 1, Boxes.n do
+   --    block_position_vector_camera = Vector3(Boxes[i].translation.x, Boxes[i].translation.y, Boxes[i].translation.z)
+   --    block_position_vector_robot = Camera2RobotConversion(block_position_vector_camera)
+   --    block_type = 'target'
+   --    block_id = Boxes[i].label
+   --    table.insert(Blocks, {position = block_position_vector_robot, id = block_id, type = block_type})
+   -- end
 end
 ---------------------------------------------------------------------------------------
 -- Process Obstacles
@@ -100,45 +109,43 @@ end
 Obstacles = {}
 
 function ProcessObstacles()
-		
-	if robotIF.getLiftPosition() > 0.05 then --	checks if the gripper is up
-		-- Loop over range finders and register obstacles and there positions relative to the robot. 
-		-- The position is in x,y,z. x is pointing to the front of the robot, y to the left and z up.
-		Obstacles = {}
-		for i = 1,12 do
-			distance = robotIF.getRFReading(i)
-			-- print(distance)
-			if distance > 0 then 
-				obstacle_x,obstacle_y,obstacle_z = RangeFinderToRobotConversion(distance,i)
-				table.insert(Obstacles,{position = {x = obstacle_x,y = obstacle_y,z = obstacle_z},id = nil})
-			end	
-		end
-	else
-		return false
-	end
-	--	Consider non-target blocks as obstacles
-	for key,block in pairs(Blocks) do 
-		if block["type"] ~= "target" then
-			table.insert(Obstacles,{position = block["position"],id = block["id"]})
-		end
-	end
+   if robotIF.getLiftPosition() > 0.05 then --	checks if the gripper is up
+      -- Loop over range finders and register obstacles and there positions relative to the robot.
+      -- The position is in x,y,z. x is pointing to the front of the robot, y to the left and z up.
+      Obstacles = {}
+      for i = 1, 12 do
+         distance = robotIF.getRFReading(i)
+         -- print(distance)
+         if distance > 0 then
+            obstacle_x, obstacle_y, obstacle_z = RangeFinderToRobotConversion(distance, i)
+            table.insert(Obstacles, {position = {x = obstacle_x, y = obstacle_y, z = obstacle_z}, id = nil})
+         end
+      end
+   else
+      return false
+   end
+   --	Consider non-target blocks as obstacles
+   for key, block in pairs(Blocks) do
+      if block['type'] ~= 'target' then
+         table.insert(Obstacles, {position = block['position'], id = block['id']})
+      end
+   end
 
-	-- if #Obstacles == 0 then print("No obstacles detected") else pprint("Obstacles list",Obstacles) end
+   -- if #Obstacles == 0 then print("No obstacles detected") else pprint("Obstacles list",Obstacles) end
 
-	return true
-	
+   return true
 end
 ---------------------------------------------------------------------------------------
 -- Move
 ---------------------------------------------------------------------------------------
-function move(velocity ,bearing)	-- still have not defined the bearing well
-	if bearing == 0 then 
-		robotIF.setVelocity(velocity,-velocity)
-	elseif bearing > 0 then
-		robotIF.setVelocity(velocity,velocity)
-	elseif bearing < 0 then 
-		robotIF.setVelocity(-velocity,-velocity)
-	end
+function move(velocity, bearing) -- still have not defined the bearing well
+   if bearing == 0 then
+      robotIF.setVelocity(velocity, -velocity)
+   elseif bearing > 0 then
+      robotIF.setVelocity(velocity, velocity)
+   elseif bearing < 0 then
+      robotIF.setVelocity(-velocity, -velocity)
+   end
 end
 ---------------------------------------------------------------------------------------
 -- Obstacle avoidance
@@ -169,240 +176,245 @@ end
 -- 	}
 --   }
 
-
-
 move_forward = function()
-	-- Move forward function
-	move(0.02,0)
-	return true
+   -- Move forward function
+   move(0.02, 0)
+   return true
 end
 turn_left = function()
-	-- Turn left function
-	move(0.01,1)
-	return true
+   -- Turn left function
+   move(0.01, 1)
+   return true
 end
 turn_right = function()
-	-- Turn right function
-	move(0.01,-1)
-	return true
+   -- Turn right function
+   move(0.01, -1)
+   return true
 end
 stop = function()
-	move(0,1)
-	return false,true
+   move(0, 1)
+   return false, true
 end
-
 
 -- Define obstacle avoidance behaviour tree
 obstacle_avoidance = {
-	type = "selector",
-	children = {
-		{	-- This is the obstacle avoidance sequence
-			type = "sequence",
-			children = {
-				-- condition leaf, is there an obstacle?
-				function()
-					if Obstacles ~= nil then
-						for key,obstacle in pairs(Obstacles) do
-							if obstacle["position"]["x"] > 0.04 then
-								print("avoiding obstacles")
-								return false, true
-							end
-						end
-						return false, false
-					else 
-						return false, false
-					end
-				end,
-				-- action leaf, turn away
-				turn_left,
-			}
-	   },
-	   	-- action leaf, move forward
-		-- move_forward
-
-	}
- }
+   type = 'selector',
+   children = {
+      {
+         -- This is the obstacle avoidance sequence
+         type = 'sequence',
+         children = {
+            -- condition leaf, is there an obstacle?
+            function()
+               if Obstacles ~= nil then
+                  for key, obstacle in pairs(Obstacles) do
+                     if obstacle['position']['x'] > 0.04 then
+                        print('avoiding obstacles')
+                        return false, true
+                     end
+                  end
+                  return false, false
+               else
+                  return false, false
+               end
+            end,
+            -- action leaf, turn away
+            turn_left
+         }
+      }
+      -- action leaf, move forward
+      -- move_forward
+   }
+}
 
 ---------------------------------------------------------------------------------------
--- Approach Cube 
+-- Approach Cube
 ---------------------------------------------------------------------------------------
 -- In this tree we are supposed to use blocks rather than obstacles list (I will change it later)
 target_cube_detected = function()
-	if Blocks ~= nil then
-		for key,block in pairs(Blocks) do 
-			if block["type"] == "target" then
-				print("detected target")
-				return false, true
-			end
-		end
-		return false, false
-	else
-		return false, false
-	end
+   if Blocks ~= nil then
+      for key, block in pairs(Blocks) do
+         if block['type'] == 'target' then
+            print('detected target')
+            return false, true
+         end
+      end
+      return false, false
+   else
+      return false, false
+   end
 end
-check_approached_cube = function(target_distance,error_tolerance)
-	--	This only checks if the robot has approached the cube but still seeing the cube (yet not ready for picking)
-	-- print("checking reached")
-	for key,block in pairs(Blocks) do 
-		actual_distance = block["position"]["x"]
-		if block["type"] == "target" then
-			if actual_distance < target_distance + error_tolerance then
-				print("reached target")
-				return false, true
-			else return false, false
-			end
-		else print("lost target")
-		end
-	end
+check_approached_cube = function(target_distance, error_tolerance)
+   --	This only checks if the robot has approached the cube but still seeing the cube (yet not ready for picking)
+   -- print("checking reached")
+   for key, block in pairs(Blocks) do
+      actual_distance = block['position']['x']
+      if block['type'] == 'target' then
+         if actual_distance < target_distance + error_tolerance then
+            print('reached target')
+            return false, true
+         else
+            return false, false
+         end
+      else
+         print('lost target')
+      end
+   end
 end
 
 check_current_approach_angle_bigger = function()
-	-- Checks if the current angle is bigger than the required calculated approach angle
-	-- For now the approach angle is set to zero at all times since we do not have a correct cube orientation
-	-- print("check bigger")
-	target_angle = 0
-	error_tolerance = 0.03
-	for key,block in pairs(Blocks) do 
-		actual_angle = math.atan(block["position"]["y"]/block["position"]["x"]) 
-		-- print(actual_angle)
-		if block["type"] == "target" then
-			error = target_angle - actual_angle
-			if (error < 0) and (math.abs(error) >  error_tolerance)  then
-				return false, true
-			else return false, false
-			end
-		else print("lost target")
-		end
-	end
+   -- Checks if the current angle is bigger than the required calculated approach angle
+   -- For now the approach angle is set to zero at all times since we do not have a correct cube orientation
+   -- print("check bigger")
+   target_angle = 0
+   error_tolerance = 0.03
+   for key, block in pairs(Blocks) do
+      actual_angle = math.atan(block['position']['y'] / block['position']['x'])
+      -- print(actual_angle)
+      if block['type'] == 'target' then
+         error = target_angle - actual_angle
+         if (error < 0) and (math.abs(error) > error_tolerance) then
+            return false, true
+         else
+            return false, false
+         end
+      else
+         print('lost target')
+      end
+   end
 end
 check_current_approach_angle_smaller = function()
-	-- Checks if the current angle is smaller than the required calculated approach angle
-	-- For now the approach angle is set to zero at all times since we do not have a correct cube orientation
-	-- print("check smaller")
-	target_angle = 0
-	error_tolerance = 0.01
-	for key,block in pairs(Blocks) do 
-		actual_angle = math.atan(block["position"]["y"]/block["position"]["x"]) 
-		-- print(actual_angle)
-		if block["type"] == "target" then
-			error = target_angle - actual_angle
-			if (error > 0) and (math.abs(error) >  error_tolerance)  then
-				return false, true
-			else return false, false
-			end
-		else print("lost target")
-		end
-	end
+   -- Checks if the current angle is smaller than the required calculated approach angle
+   -- For now the approach angle is set to zero at all times since we do not have a correct cube orientation
+   -- print("check smaller")
+   target_angle = 0
+   error_tolerance = 0.01
+   for key, block in pairs(Blocks) do
+      actual_angle = math.atan(block['position']['y'] / block['position']['x'])
+      -- print(actual_angle)
+      if block['type'] == 'target' then
+         error = target_angle - actual_angle
+         if (error > 0) and (math.abs(error) > error_tolerance) then
+            return false, true
+         else
+            return false, false
+         end
+      else
+         print('lost target')
+      end
+   end
 end
 lower_camera = function()
-	-- This function lowers the camera to get a better view of the cube, so that we do not lose the cube while approching
-	lower_position = 0.002
-	robotIF.setLiftPosition(lower_position)
-	if robotIF.getLiftPosition() < lower_position + 0.001  then 
-		return false, true
-	else return true
-	end
+   -- This function lowers the camera to get a better view of the cube, so that we do not lose the cube while approching
+   lower_position = 0.002
+   robotIF.setLiftPosition(lower_position)
+   if robotIF.getLiftPosition() < lower_position + 0.001 then
+      return false, true
+   else
+      return true
+   end
 end
 approach = {
-	type = "selector",
-	children = {
-		{
-			type = "selector",
-			children = {
-				{
-					type = "sequence",
-					children = {
-						check_current_approach_angle_bigger,
-						turn_right
-					}
-				},
-				{
-					type = "sequence",
-					children = {
-						check_current_approach_angle_smaller,
-						turn_left
-					}
-				}
-			}
-		},
-		move_forward
-	}
+   type = 'selector',
+   children = {
+      {
+         type = 'selector',
+         children = {
+            {
+               type = 'sequence',
+               children = {
+                  check_current_approach_angle_bigger,
+                  turn_right
+               }
+            },
+            {
+               type = 'sequence',
+               children = {
+                  check_current_approach_angle_smaller,
+                  turn_left
+               }
+            }
+         }
+      },
+      move_forward
+   }
 }
 check_far_approached_cube = function()
-	print("far approach")
-	return check_approached_cube(0.22, 0.01)
+   print('far approach')
+   return check_approached_cube(0.22, 0.01)
 end
 check_near_approached_cube = function()
-	print("near approach")
-	return check_approached_cube(0.14, 0.01)
+   print('near approach')
+   return check_approached_cube(0.14, 0.01)
 end
 check_touched = function()
-	left_sensor = robotIF.getRFReading("left")
-	right_sensor = robotIF.getRFReading("right")
-	if left_sensor < 0.005 and left_sensor > 0 and right_sensor < 0.005 and right_sensor > 0 then
-		return false, true
-	else return false, false
-	end
+   left_sensor = robotIF.getRFReading('left')
+   right_sensor = robotIF.getRFReading('right')
+   if left_sensor < 0.005 and left_sensor > 0 and right_sensor < 0.005 and right_sensor > 0 then
+      return false, true
+   else
+      return false, false
+   end
 end
 grip = function()
-	print("gripping")
-	robotIF.pullMagnet()
-	return false, true
+   print('gripping')
+   robotIF.pullMagnet()
+   return false, true
 end
 liftup = function()
-	higher_position = 0.22
-	robotIF.setLiftPosition(higher_position)
-	if robotIF.getLiftPosition() > higher_position - 0.001 then 
-		return false, true
-	else return true
-	end
+   higher_position = 0.22
+   robotIF.setLiftPosition(higher_position)
+   if robotIF.getLiftPosition() > higher_position - 0.001 then
+      return false, true
+   else
+      return true
+   end
 end
-far_approach = {	
-	type = "selector",
-	children = {
-		check_far_approached_cube,
-		approach
-	}
+far_approach = {
+   type = 'selector',
+   children = {
+      check_far_approached_cube,
+      approach
+   }
 }
 near_approach = {
-	type = "selector",
-	children = {
-		check_near_approached_cube,
-		approach
-	}
+   type = 'selector',
+   children = {
+      check_near_approached_cube,
+      approach
+   }
 }
 
 touch_and_lift = {
-	type = "sequence",
-	children = {
-		check_touched,
-		stop,
-		grip,
-		liftup
-	}
+   type = 'sequence',
+   children = {
+      check_touched,
+      stop,
+      grip,
+      liftup
+   }
 }
 
 detect_and_approach_target = {
-	type = "sequence",
-	children = {
-		target_cube_detected,
-		far_approach,
-		stop,
-		lower_camera,
-		near_approach
-	}
+   type = 'sequence',
+   children = {
+      target_cube_detected,
+      far_approach,
+      stop,
+      lower_camera,
+      near_approach
+   }
 }
 
-main_node = { 
-	type = "selector",
-	children = {
-		obstacle_avoidance,
-		detect_and_approach_target,
-		touch_and_lift,
-		move_forward,
-	}
+main_node = {
+   type = 'selector',
+   children = {
+      obstacle_avoidance,
+      detect_and_approach_target,
+      touch_and_lift,
+      move_forward
+   }
 }
-
 
 ---------------------------------------------------------------------------------------
 -- Control Loop
@@ -410,35 +422,32 @@ main_node = {
 local timeHolding
 local stepCount
 function init()
-	reset()	
-	-- initiate the state machine
-	-- obstacle_avoidance_fsm = luafsm.create(obstacle_avoidance_states)
+   reset()
+   -- initiate the state machine
+   -- obstacle_avoidance_fsm = luafsm.create(obstacle_avoidance_states)
 
-	-- instantiate a behavior tree
-	-- main_bt = luabt.create(main_node)
-	
-
+   -- instantiate a behavior tree
+   -- main_bt = luabt.create(main_node)
 end
 
 function step()
-	stepCount = stepCount + 1
-	local timeNow = Bot.GetTime()
-	local timePeriod = timeNow - timeHolding	-- unit s
-	timeHolding = timeNow
-	-- ProcessBlocks()
-	-- ProcessObstacles()
-	-- main_bt()
+   stepCount = stepCount + 1
+   local timeNow = Bot.GetTime()
+   local timePeriod = timeNow - timeHolding -- unit s
+   timeHolding = timeNow
+   ProcessBlocks()
+   -- ProcessObstacles()
+   -- main_bt()
 end
 
 function reset()
-	timeHolding = Bot.GetTime()	-- in s
-	stepCount = 0
-	Bot.EnableCamera()
-	Bot.SetLiftPosition(0.2)
-	Bot.ChargeMagnet()
-
+   timeHolding = Bot.GetTime() -- in s
+   stepCount = 0
+   Bot.EnableCamera()
+   Bot.SetLiftPosition(0.2)
+   Bot.ChargeMagnet()
 end
 
 function destroy()
-	Bot.SetVelocity(0,0)
+   Bot.SetVelocity(0, 0)
 end
