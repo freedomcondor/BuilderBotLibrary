@@ -14,11 +14,11 @@ pprint.defaults = {
     show_table = true,
     show_function = false,
     show_thread = false,
-    show_userdata = false,
+    show_userdata = true,
     -- additional display trigger
     show_metatable = false,     -- show metatable
     show_all = false,           -- override other show settings and show everything
-    use_tostring = false,       -- use __tostring to print table if available
+    use_tostring = true,       -- use __tostring to print table if available
     filter_function = nil,      -- called like callback(value[,key, parent]), return truty value to hide
     object_cache = 'local',     -- cache blob and table to give it a id, 'local' cache per print, 'global' cache
                                 -- per process, falsy value to disable (might cause infinite loop)
@@ -434,7 +434,9 @@ function pprint.pformat(obj, option, printer)
     formatter['number'] = option.show_number and number_formatter or nop_formatter -- need to handle math.huge
     formatter['function'] = option.show_function and make_fixed_formatter('function', option.object_cache) or nop_formatter
     formatter['thread'] = option.show_thread and make_fixed_formatter('thread', option.object_cache) or nop_formatter
-    formatter['userdata'] = option.show_userdata and make_fixed_formatter('userdata', option.object_cache) or nop_formatter
+    -- formatter['userdata'] = option.show_userdata and make_fixed_formatter('userdata', option.object_cache) or nop_formatter
+    formatter['userdata'] = option.show_userdata and tostring_formatter or nop_formatter
+
     formatter['string'] = option.show_string and string_formatter or nop_formatter
     formatter['table'] = option.show_table and table_formatter or nop_formatter
 
