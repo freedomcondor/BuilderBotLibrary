@@ -1,4 +1,4 @@
-# BuilderBot Library
+# The BuilderBot Library
 ## Prerequisites 
 1. Compile and install the [ARGoS simulator](https://github.com/ilpincy/argos3)
 2. Compile and install the [SRoCS plugin for the ARGoS simulator](https://github.com/allsey87/argos3-srocs)
@@ -30,7 +30,7 @@ end
 ```
 
 ### API Levels
-Applications are designed by using the functions provided by the intermediate API. These functions are supposed to encapsulated insides [FSM states](https://github.com/allsey87/luafsm) or [BT nodes](https://github.com/allsey87/luabt).
+Applications are designed by using the functions provided by the intermediate API. These functions are supposed to encapsulated inside [finite state machine states](https://github.com/allsey87/luafsm) or [behavior tree nodes](https://github.com/allsey87/luabt).
 ```lua
 api = require("builderbot.api")
 cv = require("builderbot.cv")
