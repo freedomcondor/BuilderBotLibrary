@@ -188,6 +188,7 @@ local function HungarianMatch(_oldBlocks, _newBlocks)
          -- tracking
          local index = oldB.index
          _oldBlocks[index] = _newBlocks[hun.match_of_X[i]]
+         _oldBlocks[index].id = index
       end
    end
 
@@ -197,6 +198,7 @@ local function HungarianMatch(_oldBlocks, _newBlocks)
          -- new blocks
          while _oldBlocks[index] ~= nil do index = index + 1 end
          _oldBlocks[index] = newB
+         _oldBlocks[index].id = index
       end
    end
 end

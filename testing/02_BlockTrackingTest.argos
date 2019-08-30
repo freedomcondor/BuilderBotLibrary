@@ -20,6 +20,14 @@
         <builderbot_lift_system implementation="default" />
         <builderbot_nfc implementation="default" />
         <builderbot_wifi implementation="default" />
+
+        <!-- for debug -->
+         <debug implementation="default">
+            <interface id="logerr" output="stderr" />
+            <interface id="log" output="stdout" />
+            <interface id="draw" />
+         </debug>
+
       </actuators>
       <sensors>
         <builderbot_camera_system implementation="default"

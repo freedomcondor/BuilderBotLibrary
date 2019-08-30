@@ -36,6 +36,24 @@ BuilderBot.SetVelocity = function(x, y)
 end
 
 -- camera --------------------------------------------
+
+---------------------------------------------------------------------------------- think again this part
+BuilderBot.cameraOrientation = 
+   CoorTrans.OrientationFromEulerAngles(
+      -0.50 * math.pi,
+       0.75 * math.pi,
+       0.00 * math.pi
+   )
+
+BuilderBot.cameraPosition = vector3(0.05, 0, 0.05)
+----------------------------------------------------------------------------------
+
+--[[
+BuilderBot.GetCameraPosition = function()
+   return vector3(0.07, 0, 0.10)    -- TODO: calculate it based on effector positions
+end
+--]]
+
 BuilderBot.EnableCamera= function()
    robot.camera_system.enable()
 end
@@ -75,7 +93,27 @@ BuilderBot.GetBlocks = function()
       --    tags = an array of tags pointers, each pointing to the tags array
 end
 
+BuilderBot.ProcessLeds = function()
+   local ledDis = 0.02 -- distance between leds to the center
+   local ledLocForTag = {
+      vector3( ledDis,  0, 0),
+      vector3( 0,  ledDis, 0),
+      vector3(-ledDis,  0, 0),
+      vector3( 0, -ledDis, 0),
+   }     -- from x, counter-closewise
+
+   for i, tag in ipairs(BuilderBot.GetTags()) do
+      tag.led = 0
+      for j, ledLoc in ipairs(ledLocForTag) do
+         local ledLocForCamera = CoorTrans.LocationTransferV3(ledLoc, tag.position, tag.orientation)
+         local color = robot.camera_system.detect_led(ledLocForCamera)
+         if color ~= tag.led then tag.led = color end
+      end
+   end
+end
+
 BuilderBot.ProcessBlocks = function()
+   BuilderBot.ProcessLeds()
    if BuilderBot.blocks == nil then BuilderBot.blocks = {} end
    BlockTracking(BuilderBot.blocks, BuilderBot.GetTags())
 end
