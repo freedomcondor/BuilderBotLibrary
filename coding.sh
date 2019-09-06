@@ -9,6 +9,7 @@ vim coding.sh -c "
    vsp testing/02_BlockTrackingTest.argos
 
    tabnew BuilderBotAPI.lua
+   tabnew ApplicationNode.lua
 "
 
 <<COMMENT
