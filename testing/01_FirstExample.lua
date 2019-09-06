@@ -2,7 +2,7 @@ package.path = package.path .. ";Tools/?.lua"
 require("ShowTable")
 --require("Debugger")
 
-local Bot = require("BuilderBotLibrary")
+local api = require("BuilderBotAPI")
 
 -- ARGoS Loop ------------------------
 function init()
@@ -27,33 +27,39 @@ function init()
    print("a = ", a)
    print("b = ", b)
    print("c = ", c)
+
+   print("-- quaternion multiply test --")
+   a = vector3(1,0,0)
+   local q1 = quaternion(math.pi/2, vector3(0,0,1))
+   local q2 = quaternion(math.pi/2, vector3(1,0,0))
+   print("rotate q1 = ", vector3(a):rotate(q1))
+   print("rotate q2 = ", vector3(a):rotate(q2))
+   local q3 = q2 * q1
+   print("after cross")
+   print("rotate q1 = ", vector3(a):rotate(q1))
+   print("rotate q2 = ", vector3(a):rotate(q2))
+   print("rotate q3 = ", vector3(a):rotate(q3))
+
    print("vector and quaternion test end")
    --]]
-
-   -- robot test ---
-   Bot.SetVelocity(0.01, 0.01)
-   Bot.EnableCamera()
 end
 
 function step()
-   print("-------- step begins ---------")
-
-   --- get time test ----
-   print("-- get time test --")
-   print(Bot.GetTime())
-   print(Bot.GetTimePeriod())
-
-
-   --- camera test ----
-   print("-- camera test --")
-   Bot.ProcessBlocks()
-   ---[[
-   print("tags")
-   ShowTable(Bot.GetTags(), 1)
-   print("blocks")
-   ShowTable(Bot.GetBlocks(), 1, "tags")
-   --]]
-
+      --[[
+   robot.debug.draw("arrow(" .. "blue" .. ")(" .. 
+      --Bot.GetCameraPosition():__tostring() 
+      vector3(0,0,0):__tostring()
+                                                      .. ")(" .. 
+      CoorTrans.LocationTransferV3(
+         vector3(0,0,0.1),
+         --Bot.GetCameraPosition(),
+         vector3(0,0,0),
+         Bot.GetCameraOrientation()
+      ):__tostring() 
+      --vector3(0.1,0,0):__tostring()
+                                                      ..")"
+   )
+      --]]
 end
 
 function reset()

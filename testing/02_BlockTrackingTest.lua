@@ -2,88 +2,39 @@ package.path = package.path .. ";Tools/?.lua"
 require("ShowTable")
 --require("Debugger")
 
-local CoorTrans = require("CoordinateTransfer") -- this is usefull
-local Bot = require("BuilderBotLibrary")
+local api = require("BuilderBotAPI")
 
 -- ARGoS Loop ------------------------
 function init()
-   -- vector and quaternion test ----
-   ---[[
-   print("-- vector test --")
-   print("vector:")
-   ShowTable(getmetatable(vector3()), 1, "__index")
-   print("quaternion:")
-   ShowTable(getmetatable(quaternion()), 1, "__index")
-
-   print("-- rotation test --")
-   local a = vector3(1,0,0)
-   local b = quaternion(math.pi/2, vector3(0,0,1))
-   a:rotate(b)
-   print(a)
-
-   print("-- cross test --")
-   a = vector3(1,0,0)
-   b = vector3(0,1,0)
-   local c = vector3(a):cross(b) -- stupid argos way of saying Y = Z * X
-   print("a = ", a)
-   print("b = ", b)
-   print("c = ", c)
-
-   print("-- quaternion multiply test --")
-   a = vector3(1,0,0)
-   local q1 = quaternion(math.pi/2, vector3(0,0,1))
-   local q2 = quaternion(math.pi/2, vector3(1,0,0))
-   print("rotate q1 = ", vector3(a):rotate(q1))
-   print("rotate q2 = ", vector3(a):rotate(q2))
-   local q3 = q2 * q1
-   print("after cross")
-   print("rotate q1 = ", vector3(a):rotate(q1))
-   print("rotate q2 = ", vector3(a):rotate(q2))
-   print("rotate q3 = ", vector3(a):rotate(q3))
-
-   print("vector and quaternion test end")
-   --]]
-
    -- robot test ---
-   Bot.SetVelocity(0.01, 0.01)
-   Bot.EnableCamera()
+   api.move(0.01, 0.01)
+   robot.camera_system.enable()
+   print("lift_position", robot.lift_system.position)
 end
 
 function step()
    print("-------- step begins ---------")
-
-      --[[
-   robot.debug.draw("arrow(" .. "blue" .. ")(" .. 
-      --Bot.GetCameraPosition():__tostring() 
-      vector3(0,0,0):__tostring()
-                                                      .. ")(" .. 
-      CoorTrans.LocationTransferV3(
-         vector3(0,0,0.1),
-         --Bot.GetCameraPosition(),
-         vector3(0,0,0),
-         Bot.GetCameraOrientation()
-      ):__tostring() 
-      --vector3(0.1,0,0):__tostring()
-                                                      ..")"
-   )
-      --]]
-
    --- get time test ----
    print("-- get time test --")
-   print(Bot.GetTime())
-   print(Bot.GetTimePeriod())
+   print(api.get_time_period())
 
 
    --- camera test ----
    print("-- camera test --")
-   Bot.ProcessBlocks()
-   ---[[
-   --print("tags")
-   --ShowTable(Bot.GetTags(), 1)
+   api.process_blocks()
+
    print("blocks")
-   --ShowTable(Bot.GetBlocks(), 1, "tags")
-   ShowTable(Bot.GetBlocks(), 1)
-   --]]
+   ShowTable(api.blocks, 1)
+
+   for i, tag in pairs(robot.camera_system.tags) do
+      local tag_to_robot = api.frame_transfer(
+         tag.position,
+         tag.orientation,
+         api.get_camera_position(),
+         api.camera_orientation
+      )
+      api.debug_arrow("blue", api.get_camera_position(), tag_to_robot) 
+   end
 end
 
 function reset()
