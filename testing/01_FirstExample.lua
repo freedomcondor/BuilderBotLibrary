@@ -45,21 +45,12 @@ function init()
 end
 
 function step()
-      --[[
    robot.debug.draw("arrow(" .. "blue" .. ")(" .. 
-      --Bot.GetCameraPosition():__tostring() 
       vector3(0,0,0):__tostring()
                                                       .. ")(" .. 
-      CoorTrans.LocationTransferV3(
-         vector3(0,0,0.1),
-         --Bot.GetCameraPosition(),
-         vector3(0,0,0),
-         Bot.GetCameraOrientation()
-      ):__tostring() 
-      --vector3(0.1,0,0):__tostring()
+      vector3(0.1,0,0):__tostring()
                                                       ..")"
    )
-      --]]
 end
 
 function reset()

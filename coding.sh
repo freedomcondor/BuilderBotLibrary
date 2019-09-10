@@ -3,8 +3,11 @@ vim coding.sh -c "
    set shiftwidth=3
    set expandtab
 
-   tabnew README
+   tabnew README.md
 
+   tabnew testing/01_FirstExample.lua
+   vsp testing/01_FirstExample.argos
+   
    tabnew testing/02_BlockTrackingTest.lua
    vsp testing/02_BlockTrackingTest.argos
 
@@ -13,9 +16,6 @@ vim coding.sh -c "
 "
 
 <<COMMENT
-   tabnew testing/01_FirstExample.lua
-   vsp testing/01_FirstExample.argos
-
    tabnew Tools/BlockTracking.lua
    tabnew Tools/Hungarian.lua
    tabnew Tools/ShowTable.lua
