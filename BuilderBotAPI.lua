@@ -22,12 +22,12 @@ builderbot_api.frame_transfer = function(loc_AinB, ori_AinB, loc_BinC, ori_BinC)
    local loc_AinC = nil
    local ori_AinC = nil
    if loc_AinB ~= nil and loc_BinC ~= nil and ori_BinC ~= nil then
-      loc = vector3(loc_AinB):rotate(ori_BinC) + loc_BinC
+      loc_AinC = vector3(loc_AinB):rotate(ori_BinC) + loc_BinC
    end
    if ori_AinB ~= nil and ori_BinC ~= nil then
-      ori = ori_BinC * ori_AinB
+      ori_AinC = ori_BinC * ori_AinB
    end
-   return loc, ori
+   return loc_AinC, ori_AinC
 end
 
 -- system --------------------------------------------
