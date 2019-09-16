@@ -1,45 +1,21 @@
---[[
-local grap_block = {
-   type = "sequence",
-   children = {
-      function()
-         print("I am sequence 1")
-         if #api.blocks == 2 then
-            return false, true -- not running, finish true
-         else
-            return true, false -- running, false
-         end
-      end,
-      function()
-         print("I am sequence 2")
-         robot.lift_system.set_position(0.07)
-         return true, true
-      end,
-      function()
-         print("I am sequence 3")
-         return true, true
-      end,
-   }
-}
---]]
-
-local grap_block = {
-   type = "selector",
+local pickup_block = {
+   type = "sequence*",
    children = {
       -- touch down
       {
-         type = "sequence",
+         type = "selector",
          children = {
-            -- hand empty ?
+            -- hand full ?
             function()
-               print("check empty")
-               if robot.rangefinders["underneath"].proximity == 0 or 
-                  robot.rangefinders["underneath"].proximity > 0.005 then
+               print("check full")
+               if robot.rangefinders["underneath"].proximity ~= 0 and
+                  robot.rangefinders["underneath"].proximity < 0.005 then
                   return false, true -- not running, true
                else
                   return false, false -- not running, false
                end
             end,
+            -- low lift
             function()
                print("set down")
                robot.lift_system.set_position(0)
@@ -53,8 +29,21 @@ local grap_block = {
          children = {
             -- wait
             function()
-               print("wait")
+               print("start waiting")
+               if BTDATA.pickup_block == nil then 
+                  BTDATA.pickup_block = {}
+               end
+               BTDATA.pickup_block.count = 0
                return false, true
+            end,
+            function()
+               print("add one")
+               BTDATA.pickup_block.count = BTDATA.pickup_block.count + 1
+               if BTDATA.pickup_block.count == 10 then
+                  return false, true
+               else
+                  return true
+               end
             end,
             -- raise 
             function()
@@ -67,4 +56,4 @@ local grap_block = {
    }
 }
 
-return grap_block
+return pickup_block

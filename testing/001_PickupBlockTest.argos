@@ -42,7 +42,7 @@
         <builderbot_lift_system implementation="default" />
         <builderbot_nfc implementation="default" show_rays="true" />
       </sensors>
-	  <params script="testing/001_GrabBlockTest.lua" />
+	  <params script="testing/001_PickupBlockTest.lua" />
     </lua_controller>
 
     <lua_controller id="block">

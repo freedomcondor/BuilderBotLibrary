@@ -133,7 +133,9 @@ builderbot_api.process_blocks = function()
    builderbot_api.process_leds()
    if builderbot_api.blocks_for_camera == nil then builderbot_api.blocks_for_camera = {} end
    BlockTracking(builderbot_api.blocks_for_camera, robot.camera_system.tags)
-   -- convert blocks to robot frame, copy useful things from blocks_for_camera into blocks with frame transfer
+   -- convert blocks to robot frame, copy useful things from blocks_for_camera into blocks with frame transfer 
+      -- TODO: make it more charming by doing the transfer for tags, and then blocktracking
+      --       this needs to change all the coordinate system in blocktracking
    builderbot_api.blocks = {}
    for i, block_for_camera in pairs(builderbot_api.blocks_for_camera) do
       builderbot_api.blocks[i] = {}

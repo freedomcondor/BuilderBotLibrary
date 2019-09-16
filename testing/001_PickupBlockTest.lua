@@ -4,30 +4,20 @@ package.path = package.path .. ";AppNode/?.lua"
 require("ShowTable")
 --require("Debugger")
 
-local api = require("BuilderBotAPI")
-local app = require("ApplicationNode")
-local bt = require("luabt_new")
+api = require("BuilderBotAPI")
+app = require("ApplicationNode")  -- these need to be global
+local bt = require("luabt")
 
 -- ARGoS Loop ------------------------
 function init()
-   -- robot test ---
-   api.move(0.01, 0.01)
-
-   robot.lift_system.set_position(0.07)
-
+   -- bt init ---
+   BTDATA = {}
    behaviour = bt.create{
       type = "sequence*",
       children = {
-         -- prepare
-         function()
-            if robot.lift_system.position < 0.06 then
-               robot.lift_system.set_position(0.07)
-               return true  -- running
-            else
-               return false, true -- true
-            end
-         end,
-         -- forward
+         -- search block
+         app.search_block,
+         -- forward TODO: make it approach_block
          function()
             if robot.rangefinders["1"].proximity < 0.025 and
                robot.rangefinders["1"].proximity ~= 0 then
@@ -38,19 +28,19 @@ function init()
                return true  -- running
             end
          end,
-         -- grab_block
-         app.grab_block
+         -- pickup block
+         app.pickup_block
       },
    }
+   -- robot init ---
+   robot.camera_system.enable()
 end
 
 local STATE = "prepare"
 
 function step()
    print("-------- step begins ---------")
-
-   --ShowTable(robot.rangefinders)
-
+   api.process_blocks()
    behaviour()
 end
 

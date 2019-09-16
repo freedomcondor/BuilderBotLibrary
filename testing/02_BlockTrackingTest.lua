@@ -1,11 +1,12 @@
 package.path = package.path .. ";Tools/?.lua"
---package.path = package.path .. ";luabt/?.lua"
+package.path = package.path .. ";luabt/?.lua"
 package.path = package.path .. ";AppNode/?.lua"
 require("ShowTable")
 --require("Debugger")
 
-local api = require("BuilderBotAPI")
-local app = require("ApplicationNode")
+--robot.xxx is provided by argos
+api = require("BuilderBotAPI")
+app = require("ApplicationNode")
 local bt = require("luabt")
 
 -- ARGoS Loop ------------------------
@@ -14,7 +15,7 @@ function init()
    api.move(0.01, 0.01)
    robot.camera_system.enable()
 
-   behaviour = bt.create(app.grap_block)
+   behaviour = bt.create(app.pickup_block)
 end
 
 function step()
