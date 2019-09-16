@@ -110,6 +110,7 @@ end
       --    tags = an array of tags pointers, each pointing to the tags array
 
 builderbot_api.process_leds = function()
+   -- takes tags in camera_frame_reference 
    local led_dis = 0.02 -- distance between leds to the center
    local led_loc_for_tag = {
       vector3( led_dis,  0, 0),
@@ -129,28 +130,22 @@ builderbot_api.process_leds = function()
    end
 end
 
-builderbot_api.process_blocks = function()
+builderbot_api.process_tags = function()
+   -- figure out led color
    builderbot_api.process_leds()
-   if builderbot_api.blocks_for_camera == nil then builderbot_api.blocks_for_camera = {} end
-   BlockTracking(builderbot_api.blocks_for_camera, robot.camera_system.tags)
-   -- convert blocks to robot frame, copy useful things from blocks_for_camera into blocks with frame transfer
-   builderbot_api.blocks = {}
-   for i, block_for_camera in pairs(builderbot_api.blocks_for_camera) do
-      builderbot_api.blocks[i] = {}
-      local block = builderbot_api.blocks[i]
-      block.position = vector3(block_for_camera.position):rotate(builderbot_api.camera_orientation) + builderbot_api.get_camera_position()
-      block.orientation = builderbot_api.camera_orientation * block_for_camera.orientation
-      block.X = vector3(block_for_camera.X):rotate(builderbot_api.camera_orientation)
-      block.Y = vector3(block_for_camera.Y):rotate(builderbot_api.camera_orientation)
-      block.Z = vector3(block_for_camera.Z):rotate(builderbot_api.camera_orientation)
-      block.id = block_for_camera.id
-      block.tags = {}
-      for i, tag_for_camera in ipairs(block_for_camera.tags) do
-         block.tags[i] = {}
-         block.tags[i].id = tag_for_camera.id
-         block.tags[i].led = tag_for_camera.led
-      end
+   -- convert tags to robot frame 
+   -- -- note that this changes robot.camera_system.tags, process_leds must happen before this
+   for i, tag in ipairs(robot.camera_system.tags) do
+      tag.position = tag.position:rotate(builderbot_api.camera_orientation) + builderbot_api.get_camera_position()
+      tag.orientation = builderbot_api.camera_orientation * tag.orientation
    end
+end
+
+builderbot_api.process_blocks = function()
+   builderbot_api.process_tags()
+   -- track block
+   if builderbot_api.blocks == nil then builderbot_api.blocks = {} end
+   BlockTracking(builderbot_api.blocks, robot.camera_system.tags)
 end
 
 -- debug arrow ---------------------------------------

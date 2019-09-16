@@ -11,8 +11,14 @@ vim coding.sh -c "
    tabnew testing/02_BlockTrackingTest.lua
    vsp testing/02_BlockTrackingTest.argos
 
+   tabnew testing/001_PickupBlockTest.lua
+   vsp testing/001_PickupBlockTest.argos
+
    tabnew BuilderBotAPI.lua
    tabnew ApplicationNode.lua
+
+   tabnew AppNode/search_block.lua
+   tabnew AppNode/pickup_block.lua
 "
 
 <<COMMENT
