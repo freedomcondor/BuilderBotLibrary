@@ -28,9 +28,11 @@ local search_block = {
             function()
                local flag = false
                for i, block in pairs(api.blocks) do
-                  flag = true
-                  block.type = "target"
-                  break
+                  if block.tags[1].led == 4 then -- pick up rule
+                     flag = true
+                     block.type = "target"
+                     break
+                  end
                end
                if flag == true then return false, true
                                else return false, false end
