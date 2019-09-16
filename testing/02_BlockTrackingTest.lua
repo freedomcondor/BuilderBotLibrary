@@ -31,14 +31,14 @@ function step()
    print("blocks")
    ShowTable(api.blocks, 1)
 
-   for i, tag in pairs(robot.camera_system.tags) do
-      local tag_to_robot = api.frame_transfer(
-         tag.position,
-         tag.orientation,
-         api.get_camera_position(),
-         api.camera_orientation
-      )
-      api.debug_arrow("blue", api.get_camera_position(), tag_to_robot) 
+   for i, tag_for_camera in pairs(robot.camera_system.tags) do
+      local tagpose = vector3(tag_for_camera.position):rotate(api.camera_orientation) + 
+                      api.get_camera_position()
+      api.debug_arrow("red", api.get_camera_position(), tagpose) 
+   end
+
+   for i, block in pairs(api.blocks) do
+      api.debug_arrow("blue", api.get_camera_position(), block.position) 
    end
 
    behaviour()

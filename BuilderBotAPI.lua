@@ -13,6 +13,7 @@ local builderbot_api = {}
 -- system --------------------------------------------
 ------------------------------------------------------
 
+--[[ --this function is abandoned
 builderbot_api.frame_transfer = function(loc_AinB, ori_AinB, loc_BinC, ori_BinC)
    -- A has location&orientation in B's eye
    -- B has location&orientation in C's eye
@@ -22,13 +23,14 @@ builderbot_api.frame_transfer = function(loc_AinB, ori_AinB, loc_BinC, ori_BinC)
    local loc_AinC = nil
    local ori_AinC = nil
    if loc_AinB ~= nil and loc_BinC ~= nil and ori_BinC ~= nil then
-      loc = vector3(loc_AinB):rotate(ori_BinC) + loc_BinC
+      loc_AinC = vector3(loc_AinB):rotate(ori_BinC) + loc_BinC
    end
    if ori_AinB ~= nil and ori_BinC ~= nil then
-      ori = ori_BinC * ori_AinB
+      ori_AinC = ori_BinC * ori_AinB
    end
-   return loc, ori
+   return loc_AinC, ori_AinC
 end
+--]]
 
 -- system --------------------------------------------
 ------------------------------------------------------
@@ -119,8 +121,8 @@ builderbot_api.process_leds = function()
    for i, tag in ipairs(robot.camera_system.tags) do
       tag.led = 0
       for j, led_loc in ipairs(led_loc_for_tag) do
-         --local led_loc_for_camera = vector3(led_loc):rotate(tag.orientation) + tag.position
-         local led_loc_for_camera, _ = builderbot_api.frame_transfer(led_loc, nil, tag.position, tag.orientation) 
+         local led_loc_for_camera = vector3(led_loc):rotate(tag.orientation) + tag.position
+         --local led_loc_for_camera, _ = builderbot_api.frame_transfer(led_loc, nil, tag.position, tag.orientation) 
          local color = robot.camera_system.detect_led(led_loc_for_camera)
          if color ~= tag.led and color ~= 0 then tag.led = color end
       end
@@ -129,8 +131,26 @@ end
 
 builderbot_api.process_blocks = function()
    builderbot_api.process_leds()
-   if builderbot_api.blocks == nil then builderbot_api.blocks = {} end
-   BlockTracking(builderbot_api.blocks, robot.camera_system.tags)
+   if builderbot_api.blocks_for_camera == nil then builderbot_api.blocks_for_camera = {} end
+   BlockTracking(builderbot_api.blocks_for_camera, robot.camera_system.tags)
+   -- convert blocks to robot frame, copy useful things from blocks_for_camera into blocks with frame transfer
+   builderbot_api.blocks = {}
+   for i, block_for_camera in pairs(builderbot_api.blocks_for_camera) do
+      builderbot_api.blocks[i] = {}
+      local block = builderbot_api.blocks[i]
+      block.position = vector3(block_for_camera.position):rotate(builderbot_api.camera_orientation) + builderbot_api.get_camera_position()
+      block.orientation = builderbot_api.camera_orientation * block_for_camera.orientation
+      block.X = vector3(block_for_camera.X):rotate(builderbot_api.camera_orientation)
+      block.Y = vector3(block_for_camera.Y):rotate(builderbot_api.camera_orientation)
+      block.Z = vector3(block_for_camera.Z):rotate(builderbot_api.camera_orientation)
+      block.id = block_for_camera.id
+      block.tags = {}
+      for i, tag_for_camera in ipairs(block_for_camera.tags) do
+         block.tags[i] = {}
+         block.tags[i].id = tag_for_camera.id
+         block.tags[i].led = tag_for_camera.led
+      end
+   end
 end
 
 -- debug arrow ---------------------------------------

@@ -8,7 +8,6 @@
 ----------------------------------------------------
 
 local BLOCKLENGTH = 0.055
-local CoorTrans = require("CoordinateTransfer")
 local Hungarian = require("Hungarian")
 
 local function FindBlockXYZ(orientation)
@@ -73,24 +72,18 @@ local function XYtoQuaternion(_orientation, _X, _Y)
    local orientation = _orientation
    local x = vector3(1,0,0)
    x:rotate(orientation)
-   if (x - _X):length() < 0.2 then    
-                                          -- x match 
+   if (x - _X):length() < 0.2 then     
+      -- x match 
       return orientation
    elseif (x - _Y):length() < 0.2 then 
-                                          -- x matches Y, rotate 90 clockwise
-      return CoorTrans.OrientationTransferQ(
-                quaternion(-math.pi/2, vector3(0,0,1)), 
-                orientation)
+      -- x matches Y, rotate 90 clockwise
+      return orientation * quaternion(-math.pi/2, vector3(0,0,1))
    elseif (x + _X):length() < 0.2 then 
-                                          -- x matches -X, rotate 180 clockwise
-      return CoorTrans.OrientationTransferQ(
-                quaternion(math.pi, vector3(0,0,1)), 
-                orientation)
+      -- x matches -X, rotate 180 clockwise
+      return orientation * quaternion(math.pi, vector3(0,0,1))
    elseif (x + _Y):length() < 0.2 then 
-                                          -- x matches -Y, rotate 90 anti-clockwise
-      return CoorTrans.OrientationTransferQ(
-                quaternion(math.pi/2, vector3(0,0,1)), 
-                orientation)
+      -- x matches -Y, rotate 90 anti-clockwise
+      return orientation * quaternion(math.pi/2, vector3(0,0,1))
    end
 end
 
@@ -103,37 +96,28 @@ local function XYZtoQuaternion(_orientation, _X, _Y, _Z)
    x:rotate(orientation)
    y:rotate(orientation)
    z:rotate(orientation)
-   if (z - _Z):length() < 0.2 then     -- z is up
+   if (z - _Z):length() < 0.2 then     
+      -- z is up
       return XYtoQuaternion(orientation, _X, _Y)
-   elseif (-z - _Z):length() < 0.2 then     -- -z is up, rotate 180 along x
-      orientation = CoorTrans.OrientationTransferQ(
-                       quaternion(math.pi, vector3(1,0,0)),
-                       orientation
-                    )
+   elseif (-z - _Z):length() < 0.2 then     
+      -- -z is up, rotate 180 along x
+      orientation = orientation * quaternion(math.pi, vector3(1,0,0))
       return XYtoQuaternion(orientation, _X, _Y)
-   elseif (x - _Z):length() < 0.2 then     -- x is up, rotate a-clock 90 along y
-      orientation = CoorTrans.OrientationTransferQ(
-                       quaternion(math.pi/2, vector3(0,1,0)),
-                       orientation
-                    )
+   elseif (x - _Z):length() < 0.2 then     
+      -- x is up, rotate a-clock 90 along y
+      orientation = orientation * quaternion(math.pi/2, vector3(0,1,0))
       return XYtoQuaternion(orientation, _X, _Y)
-   elseif (-x - _Z):length() < 0.2 then     -- -x is up, rotate clock 90 along y
-      orientation = CoorTrans.OrientationTransferQ(
-                       quaternion(-math.pi/2, vector3(0,1,0)),
-                       orientation
-                    )
+   elseif (-x - _Z):length() < 0.2 then     
+      -- -x is up, rotate clock 90 along y
+      orientation = orientation * quaternion(-math.pi/2, vector3(0,1,0))
       return XYtoQuaternion(orientation, _X, _Y)
-   elseif (y - _Z):length() < 0.2 then     -- y is up, rotate clock 90 along x
-      orientation = CoorTrans.OrientationTransferQ(
-                       quaternion(-math.pi/2, vector3(1,0,0)),
-                       orientation
-                    )
+   elseif (y - _Z):length() < 0.2 then     
+      -- y is up, rotate clock 90 along x
+      orientation = orientation * quaternion(-math.pi/2, vector3(1,0,0))
       return XYtoQuaternion(orientation, _X, _Y)
-   elseif (-y - _Z):length() < 0.2 then     -- y is up, rotate a-clock 90 along x
-      orientation = CoorTrans.OrientationTransferQ(
-                       quaternion(math.pi/2, vector3(1,0,0)),
-                       orientation
-                    )
+   elseif (-y - _Z):length() < 0.2 then     
+      -- y is up, rotate a-clock 90 along x
+      orientation = orientation * quaternion(math.pi/2, vector3(1,0,0))
       return XYtoQuaternion(orientation, _X, _Y)
    end
 end
@@ -209,7 +193,7 @@ function BlockTracking(_blocks, _tags)
    -- cluster tags into blocks
    local p = vector3(0, 0, -BLOCKLENGTH/2)
    for i, tag in ipairs(_tags) do
-      local middlePointV3 = CoorTrans.LocationTransferV3(p, tag.position, tag.orientation)
+      local middlePointV3 = vector3(p):rotate(tag.orientation) + tag.position
 
       -- find which block it belongs
       local flag = 0
