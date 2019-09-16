@@ -1,5 +1,5 @@
 package.path = package.path .. ";Tools/?.lua"
-package.path = package.path .. ";luabt/?.lua"
+--package.path = package.path .. ";luabt/?.lua"
 package.path = package.path .. ";AppNode/?.lua"
 require("ShowTable")
 --require("Debugger")
