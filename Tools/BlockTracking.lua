@@ -10,7 +10,64 @@
 local BLOCKLENGTH = 0.055
 local Hungarian = require("Hungarian")
 
-local function FindBlockXYZ(orientation)
+local function FindBlockXYZ(orientation) -- for robot frame reference
+   --    this function finds axis of a block :    
+   --         |Z           Z| /Y       the one pointing up is z
+   --         |__ Y         |/         the nearest one pointing towards the camera is x
+   --        /               \         and then y follows right hand coordinate system
+   --      X/                 \X
+
+   -- All vectors in the system of the robot
+   --           z up
+   --             | /x, front
+   --             |/
+   --  y left -----
+   --                   in the camera's eye
+
+   local X, Y, Z -- vectors of XYZ axis of a block (in camera's coor system) 
+
+   -- all the 6 dirs of a block
+   local dirs = {}
+   dirs[1] = vector3(1,0,0)
+   dirs[2] = vector3(0,1,0)
+   dirs[3] = vector3(0,0,1)
+   dirs[1]:rotate(orientation)
+   dirs[2]:rotate(orientation)
+   dirs[3]:rotate(orientation)
+   dirs[4] = -dirs[1]
+   dirs[5] = -dirs[2]
+   dirs[6] = -dirs[3]
+
+   -- clear out 3 pointing far away 
+   -- in the case of robot, this may clear out dirs very close to z
+   --for i, v in pairs(dirs) do
+   --   if v.x > 0 then dirs[i] = nil end
+   --end
+
+   -- choose the one pointing highest(max z) as Z 
+   local highestI 
+   local highestZ = 0
+   for i, v in pairs(dirs) do
+      if v.z > highestZ then highestZ = v.z highestI = i end
+   end
+   Z = dirs[highestI]
+   dirs[highestI] = nil
+
+   -- choose the one pointing nearest(min x) as X
+   local nearestI 
+   local nearestX = 0
+   for i, v in pairs(dirs) do
+      if v.x < nearestX then nearestX = v.x nearestI = i end
+   end
+   X = dirs[nearestI]
+   dirs[nearestI] = nil
+
+   Y = vector3(Z):cross(X) -- stupid argos way of saying Y = Z * X
+
+   return X, Y, Z  -- unit vectors
+end
+
+local function FindBlockXYZ_forCamera(orientation)
    --    this function finds axis of a block :    
    --         |Z           Z| /Y       the one pointing up is z
    --         |__ Y         |/         the nearest one pointing towards the camera is x
