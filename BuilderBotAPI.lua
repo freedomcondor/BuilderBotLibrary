@@ -12,28 +12,6 @@ local builderbot_api = {}
 
 -- system --------------------------------------------
 ------------------------------------------------------
-
---[[ --this function is abandoned
-builderbot_api.frame_transfer = function(loc_AinB, ori_AinB, loc_BinC, ori_BinC)
-   -- A has location&orientation in B's eye
-   -- B has location&orientation in C's eye
-   -- calculate A's location&orientation in C's eye
-   -- if we only want location or only orientation, leave the other nil
-   
-   local loc_AinC = nil
-   local ori_AinC = nil
-   if loc_AinB ~= nil and loc_BinC ~= nil and ori_BinC ~= nil then
-      loc_AinC = vector3(loc_AinB):rotate(ori_BinC) + loc_BinC
-   end
-   if ori_AinB ~= nil and ori_BinC ~= nil then
-      ori_AinC = ori_BinC * ori_AinB
-   end
-   return loc_AinC, ori_AinC
-end
---]]
-
--- system --------------------------------------------
-------------------------------------------------------
 builderbot_api.lastTime = nil
 builderbot_api.get_time_period = function()
    if builderbot_api.lastTime == nil then
@@ -123,29 +101,23 @@ builderbot_api.process_leds = function()
       tag.led = 0
       for j, led_loc in ipairs(led_loc_for_tag) do
          local led_loc_for_camera = vector3(led_loc):rotate(tag.orientation) + tag.position
-         --local led_loc_for_camera, _ = builderbot_api.frame_transfer(led_loc, nil, tag.position, tag.orientation) 
          local color = robot.camera_system.detect_led(led_loc_for_camera)
          if color ~= tag.led and color ~= 0 then tag.led = color end
       end
    end
 end
 
-builderbot_api.process_tags = function()
-   -- figure out led color
-   builderbot_api.process_leds()
-   -- convert tags to robot frame 
-   -- -- note that this changes robot.camera_system.tags, process_leds must happen before this
-   for i, tag in ipairs(robot.camera_system.tags) do
-      tag.position = tag.position:rotate(builderbot_api.camera_orientation) + builderbot_api.get_camera_position()
-      tag.orientation = builderbot_api.camera_orientation * tag.orientation
-   end
-end
-
 builderbot_api.process_blocks = function()
-   builderbot_api.process_tags()
+   -- figure out led color for tags
+   builderbot_api.process_leds() 
    -- track block
    if builderbot_api.blocks == nil then builderbot_api.blocks = {} end
    BlockTracking(builderbot_api.blocks, robot.camera_system.tags)
+   -- transfer block to robot frame
+   for i, block in pairs(builderbot_api.blocks) do
+      block.position_robot = vector3(block.position):rotate(builderbot_api.camera_orientation) + builderbot_api.get_camera_position()
+      block.orientation_robot = builderbot_api.camera_orientation * block.orientation
+   end
 end
 
 -- debug arrow ---------------------------------------

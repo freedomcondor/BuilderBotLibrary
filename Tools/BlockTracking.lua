@@ -10,7 +10,7 @@
 local BLOCKLENGTH = 0.055
 local Hungarian = require("Hungarian")
 
-local function FindBlockXYZ(orientation) -- for robot frame reference
+local function FindBlockXYZ_forRobot(orientation) -- for robot frame reference
    --    this function finds axis of a block :    
    --         |Z           Z| /Y       the one pointing up is z
    --         |__ Y         |/         the nearest one pointing towards the camera is x
@@ -67,7 +67,7 @@ local function FindBlockXYZ(orientation) -- for robot frame reference
    return X, Y, Z  -- unit vectors
 end
 
-local function FindBlockXYZ_forCamera(orientation)
+local function FindBlockXYZ(orientation) -- for camera
    --    this function finds axis of a block :    
    --         |Z           Z| /Y       the one pointing up is z
    --         |__ Y         |/         the nearest one pointing towards the camera is x
@@ -179,6 +179,15 @@ local function XYZtoQuaternion(_orientation, _X, _Y, _Z)
    end
 end
 
+local function UpdateBlock(oldBlock, newBlock)
+   oldBlock.position = newBlock.position
+   oldBlock.orientation = newBlock.orientation
+   oldBlock.X = newBlock.X
+   oldBlock.Y = newBlock.Y
+   oldBlock.Z = newBlock.Z
+   oldBlock.tags = newBlock.tags
+end
+
 local function HungarianMatch(_oldBlocks, _newBlocks)
    -- the index of _oldBlocks maybe not consistent, like 1, 2, 4, 6
    -- put it into oldBlockArray with 1,2,3,4
@@ -228,8 +237,8 @@ local function HungarianMatch(_oldBlocks, _newBlocks)
       else
          -- tracking
          local index = oldB.index
-         _oldBlocks[index] = _newBlocks[hun.match_of_X[i]]
-         _oldBlocks[index].id = index
+         --_oldBlocks[index] = _newBlocks[hun.match_of_X[i]]
+         UpdateBlock(_oldBlocks[index], _newBlocks[hun.match_of_X[i]])
       end
    end
 

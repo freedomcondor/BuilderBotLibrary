@@ -15,14 +15,16 @@ vim coding.sh -c "
    vsp testing/001_PickupBlockTest.argos
 
    tabnew BuilderBotAPI.lua
+   tabnew Tools/BlockTracking.lua
+
    tabnew ApplicationNode.lua
 
    tabnew AppNode/search_block.lua
+   tabnew AppNode/approach_block.lua
    tabnew AppNode/pickup_block.lua
 "
 
 <<COMMENT
-   tabnew Tools/BlockTracking.lua
    tabnew Tools/Hungarian.lua
    tabnew Tools/ShowTable.lua
 COMMENT
