@@ -20,9 +20,10 @@ function init()
       children = {
          -- search block
          app.search_block,
+         -- approach_block
          app.approach_block,
          -- pickup block
-         -- app.pickup_block
+         app.pickup_block
       }
    }
    -- robot init ---
