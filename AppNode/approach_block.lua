@@ -10,7 +10,6 @@ local approach = {
          children = {
             -- get_target_block()
             function()
-               pprint(api.blocks)
                if target_block_id == nil then
                   for i, block in pairs(api.blocks) do
                      if block.type == 'target' then
@@ -67,18 +66,18 @@ local approach = {
             end,
             -- correct orientation based on position only
             function()
-               target_y = 0
+               target_y = 0.0005
                tolerence = 0.01
                if
-                  ((target_block.position.y > target_y - tolerence) and (target_block.position.y < target_y + tolerence))
+                  ((target_block.position_robot.y > target_y - tolerence) and (target_block.position_robot.y < target_y + tolerence))
                 then
                   print('orientation corrected')
                   return false, true
-               elseif (target_block.position.y < target_y - tolerence) then
+               elseif (target_block.position_robot.y < target_y - tolerence) then
                   print('correcting orientation')
                   api.move(0.001, -0.001)
                   return true
-               elseif (target_block.position.y > target_y + tolerence) then
+               elseif (target_block.position_robot.y > target_y + tolerence) then
                   print('correcting orientation')
                   api.move(-0.001, 0.001)
                   return true
@@ -93,14 +92,14 @@ local approach = {
                target_x = 0.17
                tolerence = 0.001
                if
-                  ((target_block.position.x > target_x - tolerence) and (target_block.position.x < target_x + tolerence))
+                  ((target_block.position_robot.x > target_x - tolerence) and (target_block.position_robot.x < target_x + tolerence))
                 then
                   print('in final position before losing block')
                   return false, true
-               elseif (target_block.position.x < target_x - tolerence) then
+               elseif (target_block.position_robot.x < target_x - tolerence) then
                   api.move(-0.005, -0.005)
                   return true
-               elseif (target_block.position.x > target_x + tolerence) then
+               elseif (target_block.position_robot.x > target_x + tolerence) then
                   api.move(0.005, 0.005)
                   return true
                else
@@ -114,19 +113,21 @@ local approach = {
          children = {
             -- move forward until picking position
             function()
-               print(robot.rangefinders['left'].proximity)
                if
                   (robot.rangefinders['left'].proximity ~= 0 and robot.rangefinders['left'].proximity < 0.005) or
                      (robot.rangefinders['right'].proximity ~= 0 and robot.rangefinders['right'].proximity < 0.005)
                 then
+                  print("haaa, found the block")
                   return false, true
                else
+                  print("moving forward")
                   api.move(0.005, 0.005)
                   return true
                end
             end,
             -- stop
             function()
+               print("stop")
                api.move(0, 0)
                return false,true
             end
