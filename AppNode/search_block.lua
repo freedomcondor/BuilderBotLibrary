@@ -15,6 +15,7 @@ local search_block = {
             end,
             -- set position(0.07)
             function()
+               print("fuck")
                robot.lift_system.set_position(0.07)
                return true -- always running
             end,
