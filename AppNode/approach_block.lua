@@ -33,8 +33,8 @@ local approach = {
                target_camera_height = robot.lift_system.position - target_block.position.y
                tolerance = 0.001
                maximum_camera_height = 0.13
-               if target_camera_height < 0.005 then
-                  target_camera_height = 0.005
+               if target_camera_height < target_block.position_robot.z + 0.005 - 0.0275 then
+                  target_camera_height = target_block.position_robot.z + 0.005 - 0.0275
                elseif target_camera_height > maximum_camera_height then
                   target_camera_height = maximum_camera_height
                end
