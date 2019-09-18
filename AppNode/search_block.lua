@@ -24,19 +24,18 @@ local search_block = {
       {
          type = "selector",
          children = {
-            -- if I see a block
-            function()
-               local flag = false
-               for i, block in pairs(api.blocks) do
-                  if block.tags[1].led == 4 then -- pick up rule
-                     flag = true
-                     block.type = "target"
-                     break
-                  end
-               end
-               if flag == true then return false, true
-                               else return false, false end
-            end,
+            -- if I choose a block
+            {
+               type = "sequence",
+               children = {
+                  -- choose block
+                  function()
+                     return BTDATA.search_block.choose()
+                  end,
+                  -- if successfully choose, stop turning
+                  function() api.move(0,0) end,
+               },
+            },
             -- turn the robot
             function()
                api.move(0.01, -0.01)

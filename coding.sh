@@ -5,17 +5,16 @@ vim coding.sh -c "
 
    tabnew README.md
 
-   tabnew testing/01_FirstExample.lua
-   vsp testing/01_FirstExample.argos
-   
    tabnew testing/02_BlockTrackingTest.lua
    vsp testing/02_BlockTrackingTest.argos
+
+   tabnew testing/04_SearchApproachPick.lua
+   vsp testing/04_SearchApproachPick.argos
 
    tabnew testing/001_PickupBlockTest.lua
    vsp testing/001_PickupBlockTest.argos
 
    tabnew BuilderBotAPI.lua
-   tabnew Tools/BlockTracking.lua
 
    tabnew ApplicationNode.lua
 
@@ -25,6 +24,10 @@ vim coding.sh -c "
 "
 
 <<COMMENT
+   tabnew testing/01_FirstExample.lua
+   vsp testing/01_FirstExample.argos
+   
+   tabnew Tools/BlockTracking.lua
    tabnew Tools/Hungarian.lua
    tabnew Tools/ShowTable.lua
 COMMENT

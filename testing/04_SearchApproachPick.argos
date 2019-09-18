@@ -58,21 +58,19 @@
   <!-- *********************** -->
   <arena size="1, 1, 2" center="0, 0, 0.5">
     <builderbot id="builderbot1" debug="false">
-      <body position="-0.30,0,0" orientation="0,0,0"/>
+      <body position="0.0,0,0" orientation="90,0,0"/>
       <controller config="builderbot"/>
     </builderbot>
 
     <block id="block1" debug="false">
-      <body position="0,0,0" orientation="0,0,0"/>
+      <body position="0.20,0,0" orientation="0,0,0"/>
       <controller config="block"/>
     </block>
 
-    <!--
     <block id="block2" debug="false">
-      <body position="0.06,0,0" orientation="15,0,0"/>
+      <body position="-0.15,0,0" orientation="0,0,0"/>
       <controller config="block"/>
     </block>
-    -->
 
   </arena>
 
@@ -103,7 +101,7 @@
   <!-- ****************** -->
 
   <visualization>
-    <qt-opengl lua_editor="false">
+    <qt-opengl lua_editor="true">
       <user_functions label="srocs_qtopengl_user_functions" />
       <camera>
         <placement idx="0" position=" 0,  -2.5,1" look_at="0,0,0.05" lens_focal_length="78" />

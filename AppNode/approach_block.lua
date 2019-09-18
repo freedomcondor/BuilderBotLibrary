@@ -1,7 +1,8 @@
 package.path = package.path .. ';Tools/?.lua'
 local pprint = require('pprint')
-target_block = nil
-target_block_id = nil
+
+target_block = nil -- not sure a global variable here is good or not
+
 local approach = {
    type = 'sequence*',
    children = {
@@ -10,37 +11,30 @@ local approach = {
          children = {
             -- get_target_block()
             function()
-               if target_block_id == nil then
-                  for i, block in pairs(api.blocks) do
-                     if block.type == 'target' then
-                        target_block = block
-                        target_block_id = block.id
-                        print('we have target block first time')
-                        return false, true
-                     end
-                  end
-                  if target_block == nil then
-                     return false, false
-                  end
+               if BTDATA.target.reference_id ~= nil then
+                  -- get block
+                  target_block = {}
+                  local refer_block = api.blocks[BTDATA.target.reference_id]
+                  target_block.position = 
+                     vector3(refer_block.position)
+                  target_block.position_robot = 
+                     vector3(refer_block.position_robot)
+                  return false, true
                else
-                  for i, block in pairs(api.blocks) do
-                     if block.id == target_block_id then
-                        target_block = block
-                        print('we have target block from id')
-                        return false, true
-                     end
-                  end
+                  target_block = nil
+                  return false, false
                end
             end,
             -- correct camera height
             -- Here I would need to use the block in camera coordination system
             function()
                -- this equation should be replaced with something related to the camera frame
-               target_camera_height = 0
+               api.move(0.0, 0.0)
+               target_camera_height = robot.lift_system.position - target_block.position.y
                tolerance = 0.001
                maximum_camera_height = 0.13
-               if target_camera_height < 0 then
-                  target_camera_height = 0
+               if target_camera_height < 0.005 then
+                  target_camera_height = 0.005
                elseif target_camera_height > maximum_camera_height then
                   target_camera_height = maximum_camera_height
                end
@@ -53,11 +47,11 @@ local approach = {
                   print('camera in position')
                   return false, true
                elseif (robot.lift_system.position < target_camera_height) then
-                  robot.lift_system.set_position(robot.lift_system.position + 0.001)
+                  robot.lift_system.set_position(target_camera_height)
                   print('lifting camera height')
                   return true
                elseif (robot.lift_system.position > target_camera_height) then
-                  robot.lift_system.set_position(robot.lift_system.position - 0.001)
+                  robot.lift_system.set_position(target_camera_height)
                   print('lowering camera height')
                   return true
                else
@@ -74,12 +68,12 @@ local approach = {
                   print('orientation corrected')
                   return false, true
                elseif (target_block.position_robot.y < target_y - tolerence) then
-                  print('correcting orientation')
-                  api.move(0.001, -0.001)
+                  print('correcting orientation, right')
+                  api.move(0.01, -0.01)
                   return true
                elseif (target_block.position_robot.y > target_y + tolerence) then
-                  print('correcting orientation')
-                  api.move(-0.001, 0.001)
+                  print('correcting orientation, left')
+                  api.move(-0.01, 0.01)
                   return true
                else
                   print('wow this case should not exist, orientation correction says hi')
@@ -108,15 +102,63 @@ local approach = {
             end
          }
       },
+      -- raise manipulator or backup
+      function() 
+         if BTDATA.target.offset == vector3(0,0,0) or BTDATA.target.offset == vector3(1,0,0) then
+            robot.lift_system.set_position(robot.lift_system.position + 0.025) 
+         elseif BTDATA.target.offset == vector3(0,0,1) then
+            robot.lift_system.set_position(robot.lift_system.position + 0.08) 
+         end
+         --[[
+         if (robot.rangefinders['underneath'].proximity ~= 0 and robot.rangefinders['underneath'].proximity < 0.005) then
+            robot.lift_system.set_position(robot.lift_system.position + 0.06) 
+         else
+            robot.lift_system.set_position(robot.lift_system.position + 0.02) 
+         end
+         --]]
+         return false, true 
+      end,
       {
-         type = 'sequence',
+         type = 'sequence*',
          children = {
+            function()
+               if BTDATA.approach_block == nil then
+                  BTDATA.approach_block = {}
+               end
+               if BTDATA.target.offset == vector3(1,0,0) then
+                  BTDATA.approach_block.forward = 0.02
+                  print("set 0.02")
+               else
+                  BTDATA.approach_block.forward = 0.08
+                  print("set 0.08")
+               end
+               BTDATA.approach_block.current = 0
+               return false, true
+            end,
+            -- move forward for some distance
+            function()
+               print("running,current = ", BTDATA.approach_block.current)
+               print("forward = ", BTDATA.approach_block.forward)
+               if BTDATA.approach_block.current < BTDATA.approach_block.forward then
+                  api.move(0.005, 0.005)
+                  BTDATA.approach_block.current = 
+                     BTDATA.approach_block.current + 0.005 * api.time_period
+                  return true
+               else
+                  print("running stop")
+                  api.move(0.000, 0.000)
+                  return false, true
+               end
+            end,
             -- move forward until picking position
+            --[[
             function()
                if
-                  (robot.rangefinders['left'].proximity ~= 0 and robot.rangefinders['left'].proximity < 0.005) or
-                     (robot.rangefinders['right'].proximity ~= 0 and robot.rangefinders['right'].proximity < 0.005)
-                then
+                  --(robot.rangefinders['left'].proximity ~= 0 and robot.rangefinders['left'].proximity < 0.005) or
+                  --   (robot.rangefinders['right'].proximity ~= 0 and robot.rangefinders['right'].proximity < 0.005)
+                  (robot.rangefinders["1"].proximity ~= 0 and robot.rangefinders["1"].proximity < 0.020) or
+                     (robot.rangefinders["12"].proximity ~= 0 and robot.rangefinders["12"].proximity < 0.020)
+               then
                   print("haaa, found the block")
                   return false, true
                else
@@ -125,6 +167,7 @@ local approach = {
                   return true
                end
             end,
+            --]]
             -- stop
             function()
                print("stop")
