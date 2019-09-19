@@ -10,68 +10,85 @@ api = require('BuilderBotAPI')
 app = require('ApplicationNode') -- these need to be global
 local bt = require('luabt')
 
+-- rules
+local function create_pickup_rule_node(target)
+   -- returns a function/btnode that 
+   --    chooses a block to pick up
+   --    from api.blocks
+   -- stores in target, if didn't find one, target = nil
+   --    target = {
+   --       reference_id = index of a block in api.blocks
+   --       offset = vector3(0,0,0), not 0 for virtual block
+   --    }
+   return function()
+      print("I am here")
+      local flag = false
+      target.reference_id = nil
+      for i, block in pairs(api.blocks) do
+         if block.tags[1].led == 4 then -- 4 means blue
+            print("I am also here")
+            target.reference_id = i
+            target.offset = vector3(0,0,0)
+            flag = true
+            break
+         end
+      end
+      if flag == true then return false, true
+                      else return false, false end
+   end
+end
+
+local function create_place_rule_node(target)
+   -- returns a function/btnode choose a place virtual block
+   -- stores in target, if didn't find one, target = nil
+   return function()
+      local flag = false
+      target.reference_id = nil
+      for i, block in pairs(api.blocks) do
+         if block.tags[1].led ~= 4 then -- 4 means blue
+            target.reference_id = i
+            target.offset = vector3(0,0,1)
+            flag = true
+            break
+         end
+      end
+      if flag == true then return false, true
+                      else return false, false end
+   end
+end
+
 -- ARGoS Loop ------------------------
 function init()
+   local BTDATA = {target = {},}
    -- bt init ---
-   BTDATA = {}
-   BTDATA.search_block = {}
-   function1 = function()
-      local flag = false
-      for i, block in pairs(api.blocks) do
-         if block.tags[1].led == 4 then -- blue
-            BTDATA.target = {}
-            BTDATA.target.reference_id = i
-            BTDATA.target.offset = vector3(0,0,0)
-            flag = true
-            break
-         end
-      end
-      if flag == true then return false, true
-                      else return false, false end
-   end
-
-   function2 = function()
-      local flag = false
-      for i, block in pairs(api.blocks) do
-         if block.tags[1].led ~= 4 then -- not blue
-            BTDATA.target = {}
-            BTDATA.target.reference_id = i
-            BTDATA.target.offset = vector3(0,0,1)
-            flag = true
-            break
-         end
-      end
-      if flag == true then return false, true
-                      else return false, false end
-   end
- 
-   behaviour = bt.create {
+   local bt_node = {
       type = 'sequence*',
       children = {
        -- pickup
-         function() BTDATA.search_block.choose = function1 return false, true end,
          -- search block
-         app.search_block,
+         app.create_search_block(create_pickup_rule_node(BTDATA.target)),
          -- approach_block
-         app.approach_block,
+         app.create_approach_block(BTDATA.target),
          -- pickup block
          app.pickup_block,
        -- place
-         function() BTDATA.search_block.choose = function2 return false, true end,
          -- search block
-         app.search_block,
+         app.create_search_block(create_place_rule_node(BTDATA.target)),
          -- approach_block
-         app.approach_block,
+         app.create_approach_block(BTDATA.target),
          -- drop
          function()
             robot.electromagnet_system.set_discharge_mode("destructive")
          end,
-         -- stay forever
-         function()
-            api.move(0,0) return true
-         end,
+         -- backup 2 cm
+         app.create_count_node(0, 0.02, 0.005, function() api.move(-0.005, -0.005) end),
+         -- stop
+         function() api.move(0,0) return true end,
       },
    }
+
+   ShowTable(bt_node)
+   behaviour = bt.create(bt_node)
    -- robot init ---
    robot.camera_system.enable()
 end
@@ -80,7 +97,7 @@ local STATE = 'prepare'
 
 function step()
    print('-------- step begins ---------')
-   api.update_time()
+   api.process_time()
    api.process_blocks()
    behaviour()
 end

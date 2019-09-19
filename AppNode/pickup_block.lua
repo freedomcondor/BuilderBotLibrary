@@ -1,3 +1,4 @@
+local create_count_node = require("count_node")
 local pickup_block = {
    type = "sequence*",
    children = {
@@ -27,24 +28,8 @@ local pickup_block = {
       {
          type = "sequence*",
          children = {
-            -- wait
-            function()
-               print("start waiting")
-               if BTDATA.pickup_block == nil then 
-                  BTDATA.pickup_block = {}
-               end
-               BTDATA.pickup_block.count = 0
-               return false, true
-            end,
-            function()
-               print("add one")
-               BTDATA.pickup_block.count = BTDATA.pickup_block.count + 1
-               if BTDATA.pickup_block.count == 10 then
-                  return false, true
-               else
-                  return true
-               end
-            end,
+            -- wait for 2 sec
+            create_count_node(0, 2, 1),
             -- raise 
             function()
                print("raising")

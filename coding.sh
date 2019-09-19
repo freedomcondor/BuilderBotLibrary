@@ -11,9 +11,6 @@ vim coding.sh -c "
    tabnew testing/04_SearchApproachPick.lua
    vsp testing/04_SearchApproachPick.argos
 
-   tabnew testing/001_PickupBlockTest.lua
-   vsp testing/001_PickupBlockTest.argos
-
    tabnew BuilderBotAPI.lua
 
    tabnew ApplicationNode.lua

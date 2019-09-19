@@ -12,14 +12,9 @@ local builderbot_api = {}
 
 -- system --------------------------------------------
 ------------------------------------------------------
-builderbot_api.lastTime = nil
-builderbot_api.time_period = nil
-builderbot_api.update_time = function()
-   if builderbot_api.lastTime == nil then
-      builderbot_api.lastTime = robot.system.time
-      return 0
-   end
-
+builderbot_api.lastTime = 0
+builderbot_api.time_period = 0
+builderbot_api.process_time = function()
    builderbot_api.time_period = robot.system.time - builderbot_api.lastTime
    builderbot_api.lastTime = robot.system.time
 end
