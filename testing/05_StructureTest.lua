@@ -4,7 +4,7 @@ package.path = package.path .. ';AppNode/?.lua'
 require('ShowTable')
 --local pprint = require('pprint')
 
-require("Debugger")
+--require("Debugger")
 
 api = require('BuilderBotAPI')
 app = require('ApplicationNode') -- these need to be global
@@ -30,8 +30,8 @@ local function create_pickup_rule_node(target)
       for i, block in pairs(api.blocks) do
          if block.tags[1].led == 4 then -- 4 means blue
             print("found a blue block")
-            if block.position_robot.z < distance then
-               distance = block.position_robot.z
+            if block.position_robot.x < distance then
+               distance = block.position_robot.x
                target.reference_id = i
                flag = true
             end
@@ -190,11 +190,19 @@ function init()
        -- pickup
          -- search block
          app.create_search_block(create_pickup_rule_node(BTDATA.target)),
+         -- recharge
+         function()
+            robot.electromagnet_system.set_discharge_mode("disable")
+         end,
          -- approach_block
          app.create_reach_block(BTDATA.target),
          -- pickup block
          app.pickup_block,
        -- place
+         function() 
+            robot.nfc.write('3')
+            return false, true
+         end,
          -- search block
          app.create_search_block(create_place_rule_node(BTDATA.target)),
          -- approach_block
@@ -204,9 +212,10 @@ function init()
             robot.electromagnet_system.set_discharge_mode("destructive")
          end,
          -- backup 2 cm
-         app.create_count_node(0, 0.02, 0.005, function() api.move(-0.005, -0.005) end),
+         app.create_count_node({start = 0, finish = 0.08, speed = 0.005, 
+                                func = function() api.move(-0.005, -0.005) end,}),
          -- stop
-         function() api.move(0,0) return true end,
+         --function() api.move(0,0) return true end,
       },
    }
 

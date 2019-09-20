@@ -16,6 +16,7 @@ vim coding.sh -c "
    tabnew AppNode/search_block.lua
    tabnew AppNode/reach_block.lua
    tabnew AppNode/approach_block.lua
+   tabnew AppNode/aim_block.lua
    tabnew AppNode/pickup_block.lua
    tabnew AppNode/count_node.lua
 "

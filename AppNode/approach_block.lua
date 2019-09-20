@@ -37,10 +37,10 @@ local create_approach_block = function(target, _distance)
                   api.move(0, 0)
                   return false, true
                elseif target_block.position_robot.x < target_distance - tolerence then
-                  api.move(-0.010, -0.010)
+                  api.move(-0.005, -0.005)
                   return true
                elseif target_block.position_robot.x > target_distance + tolerence then
-                  api.move(0.010, 0.010)
+                  api.move(0.005, 0.005)
                   return true
                else
                   print('wow this case should not exist')

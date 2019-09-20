@@ -58,27 +58,34 @@
   <!-- *********************** -->
   <arena size="1, 1, 2" center="0, 0, 0.5">
     <builderbot id="builderbot1" debug="false">
-      <body position="0.0,0,0" orientation="-90,0,0"/>
+      <body position="0.0,0,0" orientation="0,0,0"/>
       <controller config="builderbot"/>
     </builderbot>
 
     <block id="block1" debug="false">
-      <body position="0.20,0,0" orientation="0,0,0"/>
+      <body position="-0.15,0,0" orientation="0,0,0"/>
       <controller config="block"/>
     </block>
 
     <block id="block2" debug="false">
-      <body position="-0.20,0,0" orientation="0,0,0"/>
+      <body position="-0.15,0,0.055" orientation="0,0,0"/>
       <controller config="block"/>
     </block>
 
+    <!--
     <block id="block3" debug="false">
-      <body position="-0.20,0,0.055" orientation="0,0,0"/>
+      <body position="-0.20,0,0.11" orientation="0,0,0"/>
       <controller config="block"/>
     </block>
+    -->
 
     <block id="block4" debug="false">
-      <body position="-0.20,0,0.11" orientation="0,0,0"/>
+      <body position="0.20,0,0" orientation="0,0,0"/>
+      <controller config="block"/>
+    </block>
+
+    <block id="block5" debug="false">
+      <body position="0.28,0,0" orientation="0,0,0"/>
       <controller config="block"/>
     </block>
 

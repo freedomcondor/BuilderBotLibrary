@@ -29,13 +29,13 @@ local create_aim_block = function(target)
       function()
          print("approach: correcting orientation")
          local target_block = api.blocks[target.reference_id]
-         local tolerence = math.tan(5 * math.pi/180)
+         local tolerence = math.tan(3 * math.pi/180) -- 1 degree
          local angle = target_block.position_robot.y / target_block.position_robot.z
          if angle < -tolerence then
-            api.move(0.005, -0.005)
+            api.move(0.004, -0.004)
             return true
          elseif angle > tolerence then
-            api.move(-0.005, 0.005)
+            api.move(-0.004, 0.004)
             return true
          else
             print("robot in right orientation")

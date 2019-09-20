@@ -29,13 +29,11 @@ local pickup_block = {
          type = "sequence*",
          children = {
             -- wait for 2 sec
-            create_count_node(0, 2, 1),
+            create_count_node({start = 0, finish = 2, speed = 1,}),
             -- raise 
             function()
                print("raising")
                robot.lift_system.set_position(robot.lift_system.position + 0.05)
-               print("write nfc")
-               robot.nfc.write('1')
                return false, true  -- not running, true
             end,
          },

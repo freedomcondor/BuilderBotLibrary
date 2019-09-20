@@ -30,9 +30,10 @@ local create_reach_block = function(target)
                         return false, true
                      end,
                      -- wait for 1s
-                     create_count_node(0,3,1),
+                     create_count_node({start = 0, finish = 3, speed = 1,}),
                      -- forward 8cm
-                     create_count_node(0, 0.08, 0.005, function() api.move(0.005, 0.005) end)
+                     create_count_node({start = 0, finish = 0.085, speed = 0.005, 
+                                        func = function() api.move(0.005, 0.005) end,})
                   },
                },
                -- reach the top of the reference block
@@ -53,9 +54,10 @@ local create_reach_block = function(target)
                         return false, true
                      end,
                      -- wait for 1s
-                     create_count_node(0,5,1),
+                     create_count_node({start = 0, finish = 5, speed = 1,}),
                      -- forward 8cm
-                     create_count_node(0, 0.08, 0.005, function() api.move(0.005, 0.005) end)
+                     create_count_node({start = 0, finish = 0.08, speed = 0.005, 
+                                        func = function() api.move(0.005, 0.005) end,})
                   },
                },
                -- reach the front of the reference block
@@ -76,9 +78,10 @@ local create_reach_block = function(target)
                         return false, true
                      end,
                      -- wait for 1s
-                     create_count_node(0,3,1),
+                     create_count_node({start = 0, finish = 3, speed = 1,}),
                      -- forward 8cm
-                     create_count_node(0, 0.02, 0.005, function() api.move(0.005, 0.005) end)
+                     create_count_node({start = 0, finish = 0.02, speed = 0.005, 
+                                        func = function() api.move(0.005, 0.005) end,})
                   },
                },
                -- reach the front down of the reference block
@@ -99,9 +102,10 @@ local create_reach_block = function(target)
                         return false, true
                      end,
                      -- wait for 1s
-                     create_count_node(0,3,1),
+                     create_count_node({start = 0, finish = 3, speed = 1,}),
                      -- forward 8cm
-                     create_count_node(0, 0.02, 0.005, function() api.move(0.005, 0.005) end)
+                     create_count_node({start = 0, finish = 0.02, speed = 0.005, 
+                                        func = function() api.move(0.005, 0.005) end,})
                   },
                },
                -- reach the front down down of the reference block
@@ -122,9 +126,10 @@ local create_reach_block = function(target)
                         return false, true
                      end,
                      -- wait for 1s
-                     create_count_node(0,5,1),
+                     create_count_node({start = 0, finish = 5, speed = 1,}),
                      -- forward 8cm
-                     create_count_node(0, 0.02, 0.005, function() api.move(0.005, 0.005) end)
+                     create_count_node({start = 0, finish = 0.02, speed = 0.005, 
+                                        func = function() api.move(0.005, 0.005) end,})
                   },
                },
             },
