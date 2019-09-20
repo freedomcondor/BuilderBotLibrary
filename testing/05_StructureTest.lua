@@ -12,15 +12,21 @@ local bt = require('luabt')
 
 -- pyramid rules ------------------------------------
 -----------------------------------------------------
+
+-- this is a dirty part, recommand to start reading from line 237
+
 local function create_pickup_rule_node(target)
    -- returns a function/btnode that 
-   --    chooses a block to pick up
-   --    from api.blocks
-   -- stores in target, if didn't find one, target = nil
+   --    chooses a block from api.blocks
+   -- stores in target, if didn't find one, target.reference_id = nil
    --    target = {
    --       reference_id = index of a block in api.blocks
-   --       offset = vector3(0,0,0), not 0 for virtual block
+   --       offset = vector3(0,0,0), for the block itself
+   --                vector3(1,0,0), for front of this block
    --    }
+   -- note that target already points to an existing table, 
+   --    never do target = {}, then you lost the existing table
+   
    return function()
       -- find nearest blue block
       print("ckecking pick up rule")
@@ -44,8 +50,11 @@ local function create_pickup_rule_node(target)
 end
 
 local function create_place_rule_node(target)
-   -- returns a function/btnode choose a place virtual block
-   -- stores in target, if didn't find one, target = nil
+   -- returns a function/btnode choose a virtual block (a location to place a block)
+   -- stores in target, if didn't find one, target.reference_id = nil
+   -- first search a non-blue block, go nearer(use approach_block),
+   -- move camera up and down to see what in that column, 
+   --    and set target reference and offset accordingly
    return {
       type = "sequence*",
       children = {
@@ -252,6 +261,7 @@ function init()
          -- drop
          app.create_place_block(BTDATA.target, 0.025),
 
+       -- backup
          -- backup 6 cm
          app.create_count_node({start = 0, finish = 0.06, speed = 0.005, 
                                 func = function() api.move(-0.005, -0.005) end,}),

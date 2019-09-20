@@ -32,7 +32,7 @@ local create_search_block = function(rule_node)
                -- choose a block,
                -- if got one, return true, stop selector
                rule_node,
-               -- turn the robot
+               -- otherwise turn the robot
                function()
                   --api.move(0.01, -0.01)
                   api.move(-0.01, 0.01)

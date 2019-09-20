@@ -1,6 +1,16 @@
 local create_count_node = require("count_node")
 
 local create_reach_block = function(target, _distance)
+   -- assuming I'm _distance away of the block, 
+   -- shamefully forward blindly for a certain _distance
+   -- based on target.offset, adjust the distance and 
+   --                         raise or lower the manipulator
+   --     offset could be vector3(0,0,0), means the reference block itself
+   --                     vector3(1,0,0), means just infront of the reference block
+   --                     vector3(0,0,1), top of the reference block
+   --                     vector3(1,0,-1)
+   --                     vector3(1,0,-2)
+
    return -- return the following table
 {
    type = "sequence*",
@@ -29,7 +39,7 @@ local create_reach_block = function(target, _distance)
                   -- wait for 1s
                   create_count_node({start = 0, finish = 3, speed = 1,}),
                   -- forward 8cm
-                  create_count_node({start = 0, finish = 0.085, speed = 0.005, 
+                  create_count_node({start = 0, finish = _distance + 0.055, speed = 0.005, 
                                      func = function() api.move(0.005, 0.005) end,})
                },
             },
@@ -53,7 +63,7 @@ local create_reach_block = function(target, _distance)
                   -- wait for 1s
                   create_count_node({start = 0, finish = 5, speed = 1,}),
                   -- forward 8cm
-                  create_count_node({start = 0, finish = 0.08, speed = 0.005, 
+                  create_count_node({start = 0, finish = _distance + 0.055, speed = 0.005, 
                                      func = function() api.move(0.005, 0.005) end,})
                },
             },
@@ -77,7 +87,7 @@ local create_reach_block = function(target, _distance)
                   -- wait for 1s
                   create_count_node({start = 0, finish = 3, speed = 1,}),
                   -- forward 8cm
-                  create_count_node({start = 0, finish = 0.02, speed = 0.005, 
+                  create_count_node({start = 0, finish = _distance, speed = 0.005, 
                                      func = function() api.move(0.005, 0.005) end,})
                },
             },
@@ -101,7 +111,7 @@ local create_reach_block = function(target, _distance)
                   -- wait for 1s
                   create_count_node({start = 0, finish = 3, speed = 1,}),
                   -- forward 8cm
-                  create_count_node({start = 0, finish = 0.02, speed = 0.005, 
+                  create_count_node({start = 0, finish = _distance, speed = 0.005, 
                                      func = function() api.move(0.005, 0.005) end,})
                },
             },
@@ -125,7 +135,7 @@ local create_reach_block = function(target, _distance)
                   -- wait for 1s
                   create_count_node({start = 0, finish = 5, speed = 1,}),
                   -- forward 8cm
-                  create_count_node({start = 0, finish = 0.02, speed = 0.005, 
+                  create_count_node({start = 0, finish = _distance, speed = 0.005, 
                                      func = function() api.move(0.005, 0.005) end,})
                },
             },

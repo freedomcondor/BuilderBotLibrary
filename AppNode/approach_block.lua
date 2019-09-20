@@ -1,6 +1,8 @@
 local create_aim_block = require("aim_block")
 
 local create_approach_block = function(target, _distance)
+   -- approach the target reference block until _distance away 
+
    return -- return this table
 -- go to the pre-position
 {

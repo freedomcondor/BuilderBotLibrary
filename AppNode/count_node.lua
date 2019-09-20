@@ -1,5 +1,8 @@
 local create_count_node = function(para)
    -- para = {start, finish, speed, func}
+   -- count from start to finish with increment of speed * api.time_period
+   -- each step do func()
+   -- need to do api.process_time everytime
    local current
    return {
       type = "sequence*",

@@ -14,10 +14,11 @@ vim coding.sh -c "
    vsp ApplicationNode.lua
 
    tabnew AppNode/search_block.lua
-   tabnew AppNode/reach_block.lua
    tabnew AppNode/approach_block.lua
+   tabnew AppNode/reach_block.lua
    tabnew AppNode/aim_block.lua
    tabnew AppNode/pickup_block.lua
+   tabnew AppNode/place_block.lua
    tabnew AppNode/count_node.lua
 "
 
