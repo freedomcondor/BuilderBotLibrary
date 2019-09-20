@@ -5,25 +5,31 @@ vim coding.sh -c "
 
    tabnew README.md
 
-   tabnew testing/02_BlockTrackingTest.lua
-   vsp testing/02_BlockTrackingTest.argos
+   tabnew block.lua
 
-   tabnew testing/04_SearchApproachPick.lua
-   vsp testing/04_SearchApproachPick.argos
+   tabnew testing/05_StructureTest.lua
+   vsp testing/05_StructureTest.argos
 
    tabnew BuilderBotAPI.lua
-
-   tabnew ApplicationNode.lua
+   vsp ApplicationNode.lua
 
    tabnew AppNode/search_block.lua
+   tabnew AppNode/reach_block.lua
    tabnew AppNode/approach_block.lua
    tabnew AppNode/pickup_block.lua
+   tabnew AppNode/count_node.lua
 "
 
 <<COMMENT
    tabnew testing/01_FirstExample.lua
    vsp testing/01_FirstExample.argos
+
+   tabnew testing/02_BlockTrackingTest.lua
+   vsp testing/02_BlockTrackingTest.argos
    
+   tabnew testing/04_SearchApproachPick.lua
+   vsp testing/04_SearchApproachPick.argos
+
    tabnew Tools/BlockTracking.lua
    tabnew Tools/Hungarian.lua
    tabnew Tools/ShowTable.lua

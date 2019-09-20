@@ -34,6 +34,8 @@ local pickup_block = {
             function()
                print("raising")
                robot.lift_system.set_position(robot.lift_system.position + 0.05)
+               print("write nfc")
+               robot.nfc.write('1')
                return false, true  -- not running, true
             end,
          },

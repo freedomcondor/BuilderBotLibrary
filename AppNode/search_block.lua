@@ -1,7 +1,7 @@
 local create_search_block = function(rule_node)
    -- create a search node based on rule_node
    return {
-      type = "sequence",
+      type = "sequence*",
       children = {
          -- prepare, lift to 0.07
          {
