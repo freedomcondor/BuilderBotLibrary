@@ -9,7 +9,8 @@ local create_search_block = function(rule_node)
             children = {
                -- if lift reach position(0.07), return true, stop selector
                function()
-                  if robot.lift_system.position > 0.065 then
+                  if robot.lift_system.position > 0.065 and
+                     robot.lift_system.position < 0.075 then
                      print("search_in position")
                      return false, true
                   else

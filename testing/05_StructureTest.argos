@@ -56,7 +56,7 @@
   <!-- *********************** -->
   <!-- * Arena configuration * -->
   <!-- *********************** -->
-  <arena size="1, 1, 2" center="0, 0, 0.5">
+  <arena size="4, 2, 2" center="0, 0, 0.5">
     <builderbot id="builderbot1" debug="false">
       <body position="0.0,0,0" orientation="0,0,0"/>
       <controller config="builderbot"/>
@@ -67,14 +67,14 @@
       <controller config="block"/>
     </block>
 
+    <!--
     <block id="block2" debug="false">
       <body position="-0.15,0,0.055" orientation="0,0,0"/>
       <controller config="block"/>
     </block>
 
-    <!--
     <block id="block3" debug="false">
-      <body position="-0.20,0,0.11" orientation="0,0,0"/>
+      <body position="-0.15,0,0.11" orientation="0,0,0"/>
       <controller config="block"/>
     </block>
     -->
@@ -85,7 +85,27 @@
     </block>
 
     <block id="block5" debug="false">
-      <body position="0.28,0,0" orientation="0,0,0"/>
+      <body position="0.58,-0.20,0" orientation="0,0,0"/>
+      <controller config="block"/>
+    </block>
+
+    <block id="block6" debug="false">
+      <body position="0.58,-0.10,0" orientation="0,0,0"/>
+      <controller config="block"/>
+    </block>
+
+    <block id="block7" debug="false">
+      <body position="0.58,0.0,0" orientation="0,0,0"/>
+      <controller config="block"/>
+    </block>
+
+    <block id="block8" debug="false">
+      <body position="0.58,0.10,0" orientation="0,0,0"/>
+      <controller config="block"/>
+    </block>
+
+    <block id="block9" debug="false">
+      <body position="0.58,0.20,0" orientation="0,0,0"/>
       <controller config="block"/>
     </block>
 
@@ -96,7 +116,7 @@
   <!-- ******************* -->
   <physics_engines>
     <pointmass3d id="pm3d" />
-    <dynamics3d id="dyn3d" iterations="25" default_friction="1">
+    <dynamics3d id="dyn3d" iterations="35" default_friction="1">
       <gravity g="9.8" />
       <floor height="0.01" friction="1"/>
       <virtual_magnetism />

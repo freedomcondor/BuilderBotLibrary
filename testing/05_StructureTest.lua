@@ -10,7 +10,8 @@ api = require('BuilderBotAPI')
 app = require('ApplicationNode') -- these need to be global
 local bt = require('luabt')
 
--- rules
+-- pyramid rules ------------------------------------
+-----------------------------------------------------
 local function create_pickup_rule_node(target)
    -- returns a function/btnode that 
    --    chooses a block to pick up
@@ -48,16 +49,25 @@ local function create_place_rule_node(target)
    return {
       type = "sequence*",
       children = {
-         -- find nearest and highest block not blue
+         -- find nearest and then highest block not blue
          function()
             local flag = false
-            local distance = 999999
+            local x_distance = 999999
+            local z_distance = -999999
+
             target.reference_id = nil
             target.offset = nil
             for i, block in pairs(api.blocks) do
                if block.tags[1].led ~= 4 then -- 4 means blue
                   print("found a non-blue block")
-                  if block.position.z < distance then
+                  if block.position_robot.x + 0.02 < x_distance then
+                     x_distance = block.position_robot.x
+                     z_distance = block.position_robot.z
+                     target.reference_id = i
+                     flag = true
+                  elseif block.position_robot.x < x_distance + 0.02 and
+                         block.position_robot.z > z_distance then
+                     z_distance = block.position_robot.z
                      target.reference_id = i
                      flag = true
                   end
@@ -66,12 +76,8 @@ local function create_place_rule_node(target)
             if flag == true then return false, true
                             else return false, false end
          end,
-         -- mark
-         function() print("before approach") return false, true end,
          -- approach it until 25cm
          app.create_approach_block(target, 0.25),
-         -- mark
-         function() print("after approach") return false, true end,
          -- check what's in that column there
          {
             type = "selector*",
@@ -82,29 +88,61 @@ local function create_place_rule_node(target)
                   children = {
                      -- find nearest highest not blue block
                      -- see if it is already level 3, return false
+                     -- see if column is full based on color, if full, return false
                      function()
                         -- nearest, highest, not blue
                         local flag = false
-                        local distance = 999999
+                        local x_distance = 999999
+                        local z_distance = -999999
                         target.reference_id = nil
                         target.offset = nil
                         for i, block in pairs(api.blocks) do
                            if block.tags[1].led ~= 4 then -- 4 means blue
-                              if block.position.z < distance then
-                                 distance = block.position.z
+                              if block.position_robot.x + 0.02 < x_distance then
+                                 x_distance = block.position_robot.x
+                                 z_distance = block.position_robot.z
+                                 target.reference_id = i
+                                 flag = true
+                              elseif block.position_robot.x < x_distance + 0.02 and
+                                 block.position_robot.z > z_distance then
+                                 z_distance = block.position_robot.z
                                  target.reference_id = i
                                  flag = true
                               end
                            end
                         end
                         local block = api.blocks[target.reference_id]
+
+
+                        if block.position_robot.z < 0.055 * (block.tags[1].led - 1) then
+
+                           print("test1")
+                           if block.tags[1].led == 1 then robot.nfc.write('1')
+                           elseif block.tags[1].led == 2 then robot.nfc.write('2')
+                           elseif block.tags[1].led == 3 then robot.nfc.write('3')
+                           end
+
+                           return false, true
+                        else
+
+                           print("test2")
+                           if block.tags[1].led == 1 then robot.nfc.write('1')
+                           elseif block.tags[1].led == 2 then robot.nfc.write('1')
+                           elseif block.tags[1].led == 3 then robot.nfc.write('2')
+                           end
+
+                           return false, false
+                        end
+
+                        --[[
                         if block.position_robot.z < 0.055 * 2 then
                            return false, true
                         else
                            return false, false
                         end
+                        --]]
                      end,
-                     -- check what on top of it
+                     -- check what's on top of it
                      {
                         type = "selector",
                         children = {
@@ -133,7 +171,16 @@ local function create_place_rule_node(target)
                }, -- end of move to top
                -- target is level 3, set offset (1, 0, -2)
                function()
-                  target.offset = vector3(1,0,-2)
+                  local block = api.blocks[target.reference_id]
+                  print("AAA")
+                  if block.tags[1].led == 3 then
+                     target.offset = vector3(1,0,-2)
+                  elseif block.tags[1].led == 2 then
+                     target.offset = vector3(1,0,-1)
+                  elseif block.tags[1].led == 1 then
+                     target.offset = vector3(1,0,0)
+                  end
+                  print("BBB")
                   return false ,true
                end,
                --[[
@@ -179,6 +226,8 @@ local function create_place_rule_node(target)
       },
    }
 end
+-- end of pyramid rules -----------------------------
+-----------------------------------------------------
 
 -- ARGoS Loop ------------------------
 function init()
@@ -190,36 +239,26 @@ function init()
        -- pickup
          -- search block
          app.create_search_block(create_pickup_rule_node(BTDATA.target)),
-         -- recharge
-         function()
-            robot.electromagnet_system.set_discharge_mode("disable")
-         end,
          -- approach_block
-         app.create_reach_block(BTDATA.target),
+         app.create_approach_block(BTDATA.target, 0.17),
          -- pickup block
-         app.pickup_block,
+         app.create_pickup_block(BTDATA.target, 0.025),
+
        -- place
-         function() 
-            robot.nfc.write('3')
-            return false, true
-         end,
          -- search block
          app.create_search_block(create_place_rule_node(BTDATA.target)),
          -- approach_block
-         app.create_reach_block(BTDATA.target),
+         app.create_approach_block(BTDATA.target, 0.17),
          -- drop
-         function()
-            robot.electromagnet_system.set_discharge_mode("destructive")
-         end,
-         -- backup 2 cm
-         app.create_count_node({start = 0, finish = 0.08, speed = 0.005, 
+         app.create_place_block(BTDATA.target, 0.025),
+
+         -- backup 6 cm
+         app.create_count_node({start = 0, finish = 0.06, speed = 0.005, 
                                 func = function() api.move(-0.005, -0.005) end,}),
          -- stop
          --function() api.move(0,0) return true end,
       },
    }
-
-   ShowTable(bt_node)
    behaviour = bt.create(bt_node)
    -- robot init ---
    robot.camera_system.enable()
