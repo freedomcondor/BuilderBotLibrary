@@ -1,4 +1,4 @@
-local create_aim_block = function(target)
+local create_aim_block_node = function(target)
    -- aim block, put the block into the center of the image
    return -- return the following table
 {
@@ -46,4 +46,4 @@ local create_aim_block = function(target)
 }
 
 end
-return create_aim_block
+return create_aim_block_node

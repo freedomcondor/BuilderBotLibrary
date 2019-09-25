@@ -1,4 +1,4 @@
-local create_search_block = function(rule_node)
+local create_search_block_node = function(rule_node)
    -- create a search node based on rule_node
    return {
       type = "sequence*",
@@ -44,4 +44,4 @@ local create_search_block = function(rule_node)
    }
 end
    
-return create_search_block
+return create_search_block_node

@@ -1,7 +1,7 @@
-local create_count_node = require("count_node")
-local create_reach_block = require("reach_block")
+local create_timer_node = require("timer")
+local create_reach_block_node = require("reach_block")
 
-local create_pickup_block = function(target, _forward_distance)
+local create_pickup_block_node = function(target, _forward_distance)
    -- assume I am _forward_distance away from the block
    -- shameful move blindly for that far (use reach_block node)
    -- move down manipulator to pickup
@@ -15,7 +15,7 @@ return -- return the following table
          robot.electromagnet_system.set_discharge_mode("disable")
       end,
       -- reach the block
-      create_reach_block(target, _forward_distance),
+      create_reach_block_node(target, _forward_distance),
       -- touch down
       {
          type = "selector",
@@ -47,7 +47,7 @@ return -- return the following table
                robot.electromagnet_system.set_discharge_mode("constructive")
             end,
             -- wait for 2 sec
-            create_count_node({start = 0, finish = 2, speed = 1,}),
+            create_timer_node({time = 2,}),
             -- raise 
             function()
                print("raising")
@@ -64,4 +64,4 @@ return -- return the following table
 }
 
 end
-return create_pickup_block
+return create_pickup_block_node

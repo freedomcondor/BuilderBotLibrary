@@ -1,6 +1,6 @@
-local create_count_node = require("count_node")
+local create_timer_node = require("timer")
 
-local create_reach_block = function(target, _distance)
+local create_reach_block_node = function(target, _distance)
    -- assuming I'm _distance away of the block, 
    -- shamefully forward blindly for a certain _distance
    -- based on target.offset, adjust the distance and 
@@ -37,9 +37,9 @@ local create_reach_block = function(target, _distance)
                      return false, true
                   end,
                   -- wait for 1s
-                  create_count_node({start = 0, finish = 3, speed = 1,}),
+                  create_timer_node({time = 3,}),
                   -- forward 8cm
-                  create_count_node({start = 0, finish = _distance + 0.055, speed = 0.005, 
+                  create_timer_node({time = (_distance + 0.055) / 0.005,
                                      func = function() api.move(0.005, 0.005) end,})
                },
             },
@@ -61,9 +61,9 @@ local create_reach_block = function(target, _distance)
                      return false, true
                   end,
                   -- wait for 1s
-                  create_count_node({start = 0, finish = 5, speed = 1,}),
+                  create_timer_node({time = 5,}),
                   -- forward 8cm
-                  create_count_node({start = 0, finish = _distance + 0.055, speed = 0.005, 
+                  create_timer_node({time = (_distance + 0.055) / 0.005,
                                      func = function() api.move(0.005, 0.005) end,})
                },
             },
@@ -85,9 +85,9 @@ local create_reach_block = function(target, _distance)
                      return false, true
                   end,
                   -- wait for 1s
-                  create_count_node({start = 0, finish = 3, speed = 1,}),
+                  create_timer_node({time = 3,}),
                   -- forward 8cm
-                  create_count_node({start = 0, finish = _distance, speed = 0.005, 
+                  create_timer_node({time = _distance / 0.005, 
                                      func = function() api.move(0.005, 0.005) end,})
                },
             },
@@ -109,9 +109,9 @@ local create_reach_block = function(target, _distance)
                      return false, true
                   end,
                   -- wait for 1s
-                  create_count_node({start = 0, finish = 3, speed = 1,}),
+                  create_timer_node({time = 3,}),
                   -- forward 8cm
-                  create_count_node({start = 0, finish = _distance, speed = 0.005, 
+                  create_timer_node({time = _distance / 0.005,
                                      func = function() api.move(0.005, 0.005) end,})
                },
             },
@@ -133,9 +133,9 @@ local create_reach_block = function(target, _distance)
                      return false, true
                   end,
                   -- wait for 1s
-                  create_count_node({start = 0, finish = 5, speed = 1,}),
-                  -- forward 8cm
-                  create_count_node({start = 0, finish = _distance, speed = 0.005, 
+                  create_timer_node({time = 5,}),
+                  -- forward _distance
+                  create_timer_node({time = _distance / 0.005, 
                                      func = function() api.move(0.005, 0.005) end,})
                },
             },
@@ -146,4 +146,4 @@ local create_reach_block = function(target, _distance)
    }, -- end of the children of the return table
 } -- end of the return table
 end
-return create_reach_block
+return create_reach_block_node

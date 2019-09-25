@@ -1,6 +1,6 @@
-local create_aim_block = require("aim_block")
+local create_aim_block_node = require("aim_block")
 
-local create_approach_block = function(target, _distance)
+local create_approach_block_node = function(target, _distance)
    -- approach the target reference block until _distance away 
 
    return -- return this table
@@ -26,7 +26,7 @@ local create_approach_block = function(target, _distance)
          type = "sequence",
          children = {
             -- aim block, put the block into the center of the image
-            create_aim_block(target),
+            create_aim_block_node(target),
             -- go to the pre-position
             function()
                print("approach: approaching pre-position")
@@ -54,4 +54,4 @@ local create_approach_block = function(target, _distance)
 } -- end of go to pre-position
 
 end
-return create_approach_block
+return create_approach_block_node

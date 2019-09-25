@@ -19,7 +19,7 @@ vim coding.sh -c "
    tabnew AppNode/aim_block.lua
    tabnew AppNode/pickup_block.lua
    tabnew AppNode/place_block.lua
-   tabnew AppNode/count_node.lua
+   tabnew AppNode/timer.lua
 "
 
 <<COMMENT

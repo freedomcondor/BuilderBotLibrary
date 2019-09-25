@@ -86,7 +86,7 @@ local function create_place_rule_node(target)
                             else return false, false end
          end,
          -- approach it until 25cm
-         app.create_approach_block(target, 0.25),
+         app.create_approach_block_node(target, 0.25),
          -- check what's in that column there
          {
             type = "selector*",
@@ -247,23 +247,23 @@ function init()
       children = {
        -- pickup
          -- search block
-         app.create_search_block(create_pickup_rule_node(BTDATA.target)),
+         app.create_search_block_node(create_pickup_rule_node(BTDATA.target)),
          -- approach_block
-         app.create_approach_block(BTDATA.target, 0.17),
+         app.create_approach_block_node(BTDATA.target, 0.17),
          -- pickup block
-         app.create_pickup_block(BTDATA.target, 0.025),
+         app.create_pickup_block_node(BTDATA.target, 0.025),
 
        -- place
          -- search block
-         app.create_search_block(create_place_rule_node(BTDATA.target)),
+         app.create_search_block_node(create_place_rule_node(BTDATA.target)),
          -- approach_block
-         app.create_approach_block(BTDATA.target, 0.17),
+         app.create_approach_block_node(BTDATA.target, 0.17),
          -- drop
-         app.create_place_block(BTDATA.target, 0.025),
+         app.create_place_block_node(BTDATA.target, 0.025),
 
        -- backup
          -- backup 6 cm
-         app.create_count_node({start = 0, finish = 0.06, speed = 0.005, 
+         app.create_timer_node({time = 0.06 / 0.005, 
                                 func = function() api.move(-0.005, -0.005) end,}),
          -- stop
          --function() api.move(0,0) return true end,

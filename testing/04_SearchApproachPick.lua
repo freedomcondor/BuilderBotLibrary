@@ -66,22 +66,22 @@ function init()
       children = {
        -- pickup
          -- search block
-         app.create_search_block(create_pickup_rule_node(BTDATA.target)),
+         app.create_search_block_node(create_pickup_rule_node(BTDATA.target)),
          -- approach_block
-         app.create_approach_block(BTDATA.target),
+         app.create_approach_block_node(BTDATA.target),
          -- pickup block
          app.pickup_block,
        -- place
          -- search block
-         app.create_search_block(create_place_rule_node(BTDATA.target)),
+         app.create_search_block_node(create_place_rule_node(BTDATA.target)),
          -- approach_block
-         app.create_approach_block(BTDATA.target),
+         app.create_approach_block_node(BTDATA.target),
          -- drop
          function()
             robot.electromagnet_system.set_discharge_mode("destructive")
          end,
          -- backup 2 cm
-         app.create_count_node(0, 0.02, 0.005, function() api.move(-0.005, -0.005) end),
+         app.create_timer_node({time = 0.02 / 0.005, func = function() api.move(-0.005, -0.005) end}),
          -- stop
          function() api.move(0,0) return true end,
       },
