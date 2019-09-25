@@ -38,7 +38,8 @@
         <builderbot_lift_system implementation="default" />
         <builderbot_nfc implementation="default" show_rays="true" />
       </sensors>
-      <params script="testing/05_StructureTest.lua" />
+      <params script="testing/05_StructureTest.lua"
+              lift_system_tolerance="0.001" />
     </lua_controller>
 
     <lua_controller id="block">
@@ -49,7 +50,9 @@
       <sensors>
         <radios implementation="default" show_rays="true"/>
       </sensors>
-      <params script="block.lua" />
+      <params script="block.lua" somekey="value.somevalue">
+        <test key2="value2"/>
+      </params>
     </lua_controller>
   </controllers>
 
