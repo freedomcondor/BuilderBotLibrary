@@ -1,3 +1,5 @@
+if api == nil then api = require('BuilderBotAPI') end
+
 local create_timer_node = require("timer")
 local create_reach_block_node = require("reach_block")
 
@@ -22,7 +24,7 @@ return -- return the following table
          children = {
             -- hand full ?
             function()
-               print("check full")
+               DebugMSG("check full")
                if robot.rangefinders["underneath"].proximity ~= 0 and
                   robot.rangefinders["underneath"].proximity < 0.005 then
                   return false, true -- not running, true
@@ -32,7 +34,7 @@ return -- return the following table
             end,
             -- low lift
             function()
-               print("set down")
+               DebugMSG("set down")
                robot.lift_system.set_position(0)
                return true
             end,
@@ -50,7 +52,7 @@ return -- return the following table
             create_timer_node({time = 2,}),
             -- raise 
             function()
-               print("raising")
+               DebugMSG("raising")
                robot.lift_system.set_position(robot.lift_system.position + 0.05)
                return false, true  -- not running, true
             end,

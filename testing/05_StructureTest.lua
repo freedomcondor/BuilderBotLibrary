@@ -2,13 +2,17 @@ package.path = package.path .. ';Tools/?.lua'
 package.path = package.path .. ';luabt/?.lua'
 package.path = package.path .. ';AppNode/?.lua'
 require('ShowTable')
+DebugMSG = require('DebugMessage')
 --local pprint = require('pprint')
 
 --require("Debugger")
 
-api = require('BuilderBotAPI')
-app = require('ApplicationNode') -- these need to be global
+if api == nil then api = require('BuilderBotAPI') end
+if app == nil then app = require('ApplicationNode') end
 local bt = require('luabt')
+
+DebugMSG.enable()
+DebugMSG.disable("search_block")
 
 -- pyramid rules ------------------------------------
 -----------------------------------------------------
@@ -29,14 +33,14 @@ local function create_pickup_rule_node(target)
    
    return function()
       -- find nearest blue block
-      print("ckecking pick up rule")
+      DebugMSG("ckecking pick up rule")
       local flag = false
       local distance = 999999
       target.reference_id = nil
       target.offset = vector3(0,0,0)
       for i, block in pairs(api.blocks) do
          if block.tags[1].led == 4 then -- 4 means blue
-            print("found a blue block")
+            DebugMSG("found a blue block")
             if block.position_robot.x < distance then
                distance = block.position_robot.x
                target.reference_id = i
@@ -68,7 +72,7 @@ local function create_place_rule_node(target)
             target.offset = nil
             for i, block in pairs(api.blocks) do
                if block.tags[1].led ~= 4 then -- 4 means blue
-                  print("found a non-blue block")
+                  DebugMSG("found a non-blue block")
                   if block.position_robot.x + 0.02 < x_distance then
                      x_distance = block.position_robot.x
                      z_distance = block.position_robot.z
@@ -125,7 +129,7 @@ local function create_place_rule_node(target)
 
                         if block.position_robot.z < 0.055 * (block.tags[1].led - 1) then
 
-                           print("test1")
+                           DebugMSG("test1")
                            if block.tags[1].led == 1 then robot.nfc.write('1')
                            elseif block.tags[1].led == 2 then robot.nfc.write('2')
                            elseif block.tags[1].led == 3 then robot.nfc.write('3')
@@ -134,7 +138,7 @@ local function create_place_rule_node(target)
                            return false, true
                         else
 
-                           print("test2")
+                           DebugMSG("test2")
                            if block.tags[1].led == 1 then robot.nfc.write('1')
                            elseif block.tags[1].led == 2 then robot.nfc.write('1')
                            elseif block.tags[1].led == 3 then robot.nfc.write('2')
@@ -181,7 +185,7 @@ local function create_place_rule_node(target)
                -- target is level 3, set offset (1, 0, -2)
                function()
                   local block = api.blocks[target.reference_id]
-                  print("AAA")
+                  DebugMSG("AAA")
                   if block.tags[1].led == 3 then
                      target.offset = vector3(1,0,-2)
                   elseif block.tags[1].led == 2 then
@@ -189,7 +193,7 @@ local function create_place_rule_node(target)
                   elseif block.tags[1].led == 1 then
                      target.offset = vector3(1,0,0)
                   end
-                  print("BBB")
+                  DebugMSG("BBB")
                   return false ,true
                end,
                --[[
@@ -277,7 +281,7 @@ end
 local STATE = 'prepare'
 
 function step()
-   print('-------- step begins ---------')
+   DebugMSG('-------- step begins ---------')
    api.process_time()
    api.process_blocks()
    behaviour()

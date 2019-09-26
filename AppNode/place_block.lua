@@ -1,3 +1,5 @@
+if api == nil then api = require('BuilderBotAPI') end
+
 local create_reach_block_node = require("reach_block")
 local create_timer_node = require("timer")
 

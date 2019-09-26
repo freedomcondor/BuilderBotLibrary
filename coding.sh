@@ -7,6 +7,8 @@ vim coding.sh -c "
 
    tabnew block.lua
 
+   tabnew Tools/DebugMessage.lua
+
    tabnew testing/05_StructureTest.lua
    vsp testing/05_StructureTest.argos
 
