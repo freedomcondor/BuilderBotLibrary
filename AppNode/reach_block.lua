@@ -2,9 +2,9 @@ if api == nil then api = require('BuilderBotAPI') end
 
 local create_timer_node = require("timer")
 
-local create_reach_block_node = function(target, _distance)
-   -- assuming I'm _distance away of the block, 
-   -- shamefully forward blindly for a certain _distance
+local create_reach_block_node = function(target, distance)
+   -- assuming I'm distance away of the block, 
+   -- shamefully forward blindly for a certain distance
    -- based on target.offset, adjust the distance and 
    --                         raise or lower the manipulator
    --     offset could be vector3(0,0,0), means the reference block itself
@@ -41,8 +41,9 @@ local create_reach_block_node = function(target, _distance)
                   -- wait for 1s
                   create_timer_node({time = 3,}),
                   -- forward 8cm
-                  create_timer_node({time = (_distance + 0.055) / 0.005,
-                                     func = function() api.move(0.005, 0.005) end,})
+                  create_timer_node({time = (distance + 0.055) / api.parameters.default_speed,
+                                     func = function() api.move(api.parameters.default_speed, 
+                                                                api.parameters.default_speed) end,})
                },
             },
             -- reach the top of the reference block
@@ -65,8 +66,9 @@ local create_reach_block_node = function(target, _distance)
                   -- wait for 1s
                   create_timer_node({time = 5,}),
                   -- forward 8cm
-                  create_timer_node({time = (_distance + 0.055) / 0.005,
-                                     func = function() api.move(0.005, 0.005) end,})
+                  create_timer_node({time = (distance + 0.055) / api.parameters.default_speed,
+                                     func = function() api.move(api.parameters.default_speed, 
+                                                                api.parameters.default_speed) end,})
                },
             },
             -- reach the front of the reference block
@@ -89,8 +91,9 @@ local create_reach_block_node = function(target, _distance)
                   -- wait for 1s
                   create_timer_node({time = 3,}),
                   -- forward 8cm
-                  create_timer_node({time = _distance / 0.005, 
-                                     func = function() api.move(0.005, 0.005) end,})
+                  create_timer_node({time = distance / api.parameters.default_speed, 
+                                     func = function() api.move(api.parameters.default_speed, 
+                                                                api.parameters.default_speed) end,})
                },
             },
             -- reach the front down of the reference block
@@ -113,8 +116,9 @@ local create_reach_block_node = function(target, _distance)
                   -- wait for 1s
                   create_timer_node({time = 3,}),
                   -- forward 8cm
-                  create_timer_node({time = _distance / 0.005,
-                                     func = function() api.move(0.005, 0.005) end,})
+                  create_timer_node({time = distance / api.parameters.default_speed, 
+                                     func = function() api.move(api.parameters.default_speed, 
+                                                                api.parameters.default_speed) end,})
                },
             },
             -- reach the front down down of the reference block
@@ -136,9 +140,10 @@ local create_reach_block_node = function(target, _distance)
                   end,
                   -- wait for 1s
                   create_timer_node({time = 5,}),
-                  -- forward _distance
-                  create_timer_node({time = _distance / 0.005, 
-                                     func = function() api.move(0.005, 0.005) end,})
+                  -- forward distance
+                  create_timer_node({time = distance / api.parameters.default_speed, 
+                                     func = function() api.move(api.parameters.default_speed, 
+                                                                api.parameters.default_speed) end,})
                },
             },
          }, -- end of children of step forward

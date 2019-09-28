@@ -34,17 +34,18 @@ local create_approach_block_node = function(target, _distance)
                DebugMSG("approach: approaching pre-position")
                local target_block = api.blocks[target.reference_id]
                local target_distance = _distance
-               local tolerence = 0.005
+               local tolerence = api.parameters.block_position_tolerance
+               local default_speed = api.parameters.default_speed
                if target_block.position_robot.x > target_distance - tolerence and 
                   target_block.position_robot.x < target_distance + tolerence then
                   DebugMSG('in final position before losing block')
                   api.move(0, 0)
                   return false, true
                elseif target_block.position_robot.x < target_distance - tolerence then
-                  api.move(-0.005, -0.005)
+                  api.move(-default_speed, -default_speed)
                   return true
                elseif target_block.position_robot.x > target_distance + tolerence then
-                  api.move(0.005, 0.005)
+                  api.move(default_speed, default_speed)
                   return true
                else
                   DebugMSG('wow this case should not exist')

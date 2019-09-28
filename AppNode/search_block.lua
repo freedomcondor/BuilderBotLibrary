@@ -12,10 +12,8 @@ local create_search_block_node = function(rule_node)
             children = {
                -- if lift reach position(0.07), return true, stop selector
                function()
-                  local a = 123
-                  DebugMSG("I am here", a)
-                  if robot.lift_system.position > 0.065 and
-                     robot.lift_system.position < 0.075 then
+                  if robot.lift_system.position > 0.07 - api.parameters.lift_system_position_tolerance and
+                     robot.lift_system.position < 0.07 + api.parameters.lift_system_position_tolerance then
                      DebugMSG("search_in position")
                      return false, true
                   else
@@ -40,7 +38,7 @@ local create_search_block_node = function(rule_node)
                -- otherwise turn the robot
                function()
                   --api.move(0.01, -0.01)
-                  api.move(-0.01, 0.01)
+                  api.move(-api.parameters.default_speed, api.parameters.default_speed)
                   return true
                end,
             },

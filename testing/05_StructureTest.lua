@@ -255,7 +255,7 @@ function init()
          -- approach_block
          app.create_approach_block_node(BTDATA.target, 0.17),
          -- pickup block
-         app.create_pickup_block_node(BTDATA.target, 0.025),
+         app.create_pickup_block_node(BTDATA.target, 0.028),
 
        -- place
          -- search block
@@ -263,7 +263,7 @@ function init()
          -- approach_block
          app.create_approach_block_node(BTDATA.target, 0.17),
          -- drop
-         app.create_place_block_node(BTDATA.target, 0.025),
+         app.create_place_block_node(BTDATA.target, 0.028),
 
        -- backup
          -- backup 6 cm

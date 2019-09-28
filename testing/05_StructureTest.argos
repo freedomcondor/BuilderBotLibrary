@@ -39,7 +39,10 @@
         <builderbot_nfc implementation="default" show_rays="true" />
       </sensors>
       <params script="testing/05_StructureTest.lua"
-              lift_system_tolerance="0.001" />
+              default_speed="0.01" 
+              block_position_tolerance="0.01"
+              aim_block_angle_tolerance="4"
+              />
     </lua_controller>
 
     <lua_controller id="block">

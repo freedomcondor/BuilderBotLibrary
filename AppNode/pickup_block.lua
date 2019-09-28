@@ -26,7 +26,7 @@ return -- return the following table
             function()
                DebugMSG("check full")
                if robot.rangefinders["underneath"].proximity ~= 0 and
-                  robot.rangefinders["underneath"].proximity < 0.005 then
+                  robot.rangefinders["underneath"].proximity < api.parameters.proximity_touch_tolerance then
                   return false, true -- not running, true
                else
                   return false, false -- not running, false

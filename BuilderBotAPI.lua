@@ -10,6 +10,28 @@ require("BlockTracking")
 
 local builderbot_api = {}
 
+-- parameters ----------------------------------------
+------------------------------------------------------
+builderbot_api.parameters = {}
+
+builderbot_api.parameters.lift_system_upper_limit = 0.135
+builderbot_api.parameters.lift_system_lower_limit = 0
+
+builderbot_api.parameters.lift_system_position_tolerance = 
+   tonumber(robot.params.lift_system_tolerance or 0.001)
+
+builderbot_api.parameters.default_speed = 
+   tonumber(robot.params.default_speed or 0.005)
+
+builderbot_api.parameters.aim_block_angle_tolerance = 
+   tonumber(robot.params.aim_block_angle_tolerance or 5)
+
+builderbot_api.parameters.block_position_tolerance = 
+   tonumber(robot.params.block_position_tolerance or 0.005)
+
+builderbot_api.parameters.proximity_touch_tolerance = 
+   tonumber(robot.params.proximity_touch_tolerance or 0.005)
+
 -- system --------------------------------------------
 ------------------------------------------------------
 builderbot_api.lastTime = 0
