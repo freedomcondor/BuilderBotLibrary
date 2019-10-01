@@ -13,7 +13,8 @@ local create_reach_block_node = function(target, distance)
    --                     vector3(1,0,-1)
    --                     vector3(1,0,-2)
 
-   return -- return the following table
+   return 
+-- return the following table
 {
    type = "sequence*",
    children = {

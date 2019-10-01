@@ -2,7 +2,8 @@ if api == nil then api = require('BuilderBotAPI') end
 
 local create_aim_block_node = function(target)
    -- aim block, put the block into the center of the image
-   return -- return the following table
+   return 
+-- return the following table
 {
    type = "sequence*",
    children = {

@@ -37,7 +37,6 @@ local create_search_block_node = function(rule_node)
                rule_node,
                -- otherwise turn the robot
                function()
-                  --api.move(0.01, -0.01)
                   api.move(-api.parameters.default_speed, api.parameters.default_speed)
                   return true
                end,

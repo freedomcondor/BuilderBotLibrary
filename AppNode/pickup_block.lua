@@ -8,7 +8,8 @@ local create_pickup_block_node = function(target, _forward_distance)
    -- shameful move blindly for that far (use reach_block node)
    -- move down manipulator to pickup
 
-return -- return the following table
+   return 
+-- return the following table
 {
    type = "sequence*",
    children = {

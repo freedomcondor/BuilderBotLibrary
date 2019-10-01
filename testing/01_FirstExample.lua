@@ -23,7 +23,8 @@ function init()
    print("-- cross test --")
    a = vector3(1,0,0)
    b = vector3(0,1,0)
-   local c = vector3(a):cross(b) -- stupid argos way of saying Y = Z * X
+   -- stupid argos way of saying c = a * b
+   local c = vector3(a):cross(b) 
    print("a = ", a)
    print("b = ", b)
    print("c = ", c)
@@ -47,9 +48,9 @@ end
 function step()
    robot.debug.draw("arrow(" .. "blue" .. ")(" .. 
       vector3(0,0,0):__tostring()
-                                                      .. ")(" .. 
+                                       .. ")(" .. 
       vector3(0.1,0,0):__tostring()
-                                                      ..")"
+                                       .. ")"
    )
 end
 

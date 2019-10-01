@@ -73,18 +73,29 @@ builderbot_api.get_camera_position = function()
    return vector3(0.095, 0, 0.125 + robot.lift_system.position) -- TODO: this number is not accurate
 end
 
---robot.camera_system.tags
-      -- tags = an array of tags
-      -- a tag has
-      --          
+-- camera's frame reference
+      --
       --             /z
       --            /
       --            ------- x
       --            |
       --            |y     in the camera's eye
       --
-      --    position    = a vector3
-      --    orientation = a quternion
+-- robot's frame reference
+      -- 
+      --            z up of the robot
+      --       |     |
+      --       |---  |  / y left of the robot
+      --     __|_    | /
+      --    |____|   |/
+      --     +  +    ------- x  in front of the robot
+
+
+--robot.camera_system.tags
+      -- tags = an array of tags
+      -- a tag has
+      --    position    = a vector3     -- in camera's frame reference
+      --    orientation = a quternion   -- in camera's frame reference
       --    center and corners  
       --       2D information, not important for now
 
@@ -92,6 +103,7 @@ end
       -- blocks = an array of blocks
       -- a block has
       --    position    = a vector3
+      --    orientation = a quternion   -- in camera's frame reference
       --    X, Y, Z:  three vector3 (in camera's eye) 
       --       showing the axis of a block :    
       --
@@ -100,8 +112,8 @@ end
       --           /              \         and then Y follows right hand coordinate system
       --         X/                \X
       --
-      --    orientation = a quternion 
-      --       - this orientation quaternion is matches XYZ
+      --    position_robot    = a vector3
+      --    orientation_robot = a quternion  in robot's frame reference
       --    tags = an array of tags pointers, each pointing to the tags array
 
 builderbot_api.process_leds = function()
@@ -112,7 +124,7 @@ builderbot_api.process_leds = function()
       vector3( 0,  led_dis, 0),
       vector3(-led_dis,  0, 0),
       vector3( 0, -led_dis, 0),
-   }     -- from x, counter-closewise
+   }     -- from x+, counter-closewise
 
    for i, tag in ipairs(robot.camera_system.tags) do
       tag.led = 0

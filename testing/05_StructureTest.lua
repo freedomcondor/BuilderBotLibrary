@@ -1,10 +1,7 @@
 package.path = package.path .. ';Tools/?.lua'
 package.path = package.path .. ';luabt/?.lua'
 package.path = package.path .. ';AppNode/?.lua'
-require('ShowTable')
 DebugMSG = require('DebugMessage')
---local pprint = require('pprint')
-
 --require("Debugger")
 
 if api == nil then api = require('BuilderBotAPI') end
