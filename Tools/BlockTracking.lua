@@ -253,6 +253,21 @@ local function HungarianMatch(_oldBlocks, _newBlocks)
    end
 end
 
+function CheckTagDirection(block)
+   for i, tag in ipairs(block.tags) do
+      local dif = (tag.position - block.position) * (1/BLOCKLENGTH) * 2
+      if (block.X - dif):length() < 0.5 then
+         block.tags.front = tag
+      elseif (block.Z - dif):length() < 0.5 then
+         block.tags.up = tag
+      elseif (block.Y - dif):length() < 0.5 then
+         block.tags.right = tag
+      elseif (-block.Y - dif):length() < 0.5 then
+         block.tags.left = tag
+      end
+   end
+end
+
 function BlockTracking(_blocks, _tags)
    local blocks = {}
 
@@ -290,6 +305,7 @@ function BlockTracking(_blocks, _tags)
          -- X,Y,Z are unit vectors
       block.orientation = XYZtoQuaternion(block.orientation, block.X, block.Y, block.Z)
          -- to make orientation matches X,Y,Z
+      CheckTagDirection(block)
    end
 
    HungarianMatch(_blocks, blocks)

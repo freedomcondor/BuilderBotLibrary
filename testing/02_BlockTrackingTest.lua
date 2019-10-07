@@ -1,12 +1,14 @@
 package.path = package.path .. ";Tools/?.lua"
 package.path = package.path .. ";luabt/?.lua"
 package.path = package.path .. ";AppNode/?.lua"
-require("ShowTable")
+DebugMSG = require('DebugMessage')
 --require("Debugger")
 
 --robot.xxx is provided by argos
 api = require("BuilderBotAPI")
 app = require("ApplicationNode")
+
+DebugMSG.enable()
 
 -- ARGoS Loop ------------------------
 function init()
@@ -16,18 +18,19 @@ function init()
 end
 
 function step()
-   print("-------- step begins ---------")
+   DebugMSG("-------- step begins ---------")
    --- get time test ----
-   print("-- get time test --")
-   print(api.get_time_period())
+   DebugMSG("-- get time test --")
+   api.process_time()
+   DebugMSG("time period = ", api.time_period)
 
 
    --- camera test ----
-   print("-- camera test --")
+   DebugMSG("-- camera test --")
    api.process_blocks()
 
-   print("blocks")
-   ShowTable(api.blocks, 1)
+   DebugMSG("blocks")
+   DebugMSG(api.blocks, 1)
 
 
    -- test tag location

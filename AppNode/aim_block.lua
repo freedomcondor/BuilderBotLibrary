@@ -1,10 +1,11 @@
 if api == nil then api = require('BuilderBotAPI') end
 
-local create_aim_block_node = function(target)
+local create_aim_block_node = function(target, aim_point)
    -- aim block, put the block into the center of the image
    return 
 -- return the following table
 {
+   --type = "sequence*",
    type = "sequence*",
    children = {
       -- correct camera height
@@ -32,12 +33,15 @@ local create_aim_block_node = function(target)
       function()
          DebugMSG("approach: correcting orientation")
          local target_block = api.blocks[target.reference_id]
-         local tolerence = math.tan(api.parameters.aim_block_angle_tolerance * math.pi/180)
-         local angle = target_block.position_robot.y / target_block.position_robot.z
-         if angle < -tolerence then
+         --local tolerence = math.tan(api.parameters.aim_block_angle_tolerance * math.pi/180)
+         local tolerence = api.parameters.aim_block_angle_tolerance 
+         local aim_angle = 0
+         if aim_point ~= nil then aim_angle = aim_point.angle end
+         local angle = math.atan(target_block.position_robot.y / target_block.position_robot.x) * 180 / math.pi  -- x should always be positive
+         if angle < aim_angle - tolerence then
             api.move(api.parameters.default_speed, -api.parameters.default_speed)
             return true
-         elseif angle > tolerence then
+         elseif angle > aim_angle + tolerence then
             api.move(-api.parameters.default_speed, api.parameters.default_speed)
             return true
          else

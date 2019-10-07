@@ -16,7 +16,9 @@ function init()
 
    print("-- rotation test --")
    local a = vector3(1,0,0)
-   local b = quaternion(math.pi/2, vector3(0,0,1))
+   local b = quaternion(-math.pi*3/4, vector3(0,0,1))
+   local r1,r2,r3,r4 = b:toangleaxis()
+   print("r1,r2,r3,r4 = ", r1,r2,r3,r4)
    a:rotate(b)
    print(a)
 

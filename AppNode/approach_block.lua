@@ -27,7 +27,7 @@ local create_approach_block_node = function(target, _distance)
          type = "sequence",
          children = {
             -- aim block, put the block into the center of the image
-            create_aim_block_node(target),
+            create_aim_block_node(target, {angle = 15}),
             -- go to the pre-position
             function()
                DebugMSG("approach: approaching pre-position")

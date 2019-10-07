@@ -11,7 +11,7 @@ function DebugMessage.mt:__call(a, ...)
    if DebugMessage.switches[moduleName] == true then
       --print("DebugMSG:\t" .. moduleName .. ":" .. info.currentline .. "\t", ...)
       if type(a) == "table" then
-         DebugMessage.ShowTable(a)
+         DebugMessage.ShowTable(a, ...)
       else
          print("DebugMSG:\t", a, ...)
       end
@@ -57,7 +57,7 @@ function DebugMessage.ShowTable(table, number, skipindex)
    if type(table) ~= "table" then return nil end
 
    for i, v in pairs(table) do
-      local str = "DebugMSG:\t"
+      local str = "DebugMSG:\t\t"
       for j = 1, number do
          str = str .. "\t"
       end

@@ -49,6 +49,17 @@ builderbot_api.move = function(x, y)
    robot.differential_drive.set_target_velocity(x, -y)
 end
 
+builderbot_api.move_with_bearing = function(v, th)
+   -- move v m/s forward, with th degree/s to the left
+   -- this is the distance of two wheelsA
+   -- TODO: needs to be tested on real robots
+   local d = 0.1225
+   local diff = math.pi * d * (th/360)
+   local x = v - diff
+   local y = v + diff
+   robot.differential_drive.set_target_velocity(x, -y)
+end
+
 -- camera --------------------------------------------
 ------------------------------------------------------
 
