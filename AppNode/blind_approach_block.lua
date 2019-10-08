@@ -1,3 +1,6 @@
+if DebugMSG == nil then DebugMSG = require('DebugMessage') end
+DebugMSG.register("blind_approach_block")
+
 if api == nil then api = require('BuilderBotAPI') end
 
 local create_move_to_location_node = require("move_to_location")
@@ -8,13 +11,17 @@ local create_blind_approach_block_node = function(target, _distance)
    return 
 -- return the following table
 {
-   type = "sequence",
+   type = "sequence*",
    children = {
       -- calc location
       function()
          local target_block = api.blocks[target.reference_id]
          location.position = target_block.position_robot + vector3(1,0,0):rotate(target_block.orientation_robot) * _distance
          location.orientation = target_block.orientation_robot * quaternion(math.pi, vector3(0,0,1))
+         DebugMSG("block position robot = ", target_block.position_robot)
+         DebugMSG("block x offset = ", vector3(1,0,0):rotate(target_block.orientation_robot) * _distance)
+         DebugMSG("position = ", location.position)
+         DebugMSG("orientation = ", location.orientation:toangleaxis())
          return false, true
       end,
       -- move to the location

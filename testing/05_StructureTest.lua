@@ -247,6 +247,8 @@ function init()
       type = 'sequence*',
       children = {
        -- pickup
+         app.create_search_block_node(create_pickup_rule_node(BTDATA.target)),
+         app.create_blind_approach_block_node(BTDATA.target, 0.22),
          -- search block
          app.create_search_block_node(create_pickup_rule_node(BTDATA.target)),
          -- approach_block
@@ -255,6 +257,8 @@ function init()
          app.create_pickup_block_node(BTDATA.target, 0.028),
 
        -- place
+         app.create_search_block_node(create_place_rule_node(BTDATA.target)),
+         app.create_blind_approach_block_node(BTDATA.target, 0.25),
          -- search block
          app.create_search_block_node(create_place_rule_node(BTDATA.target)),
          -- approach_block
@@ -263,8 +267,8 @@ function init()
          app.create_place_block_node(BTDATA.target, 0.028),
 
        -- backup
-         -- backup 6 cm
-         app.create_timer_node({time = 0.06 / 0.005, 
+         -- backup 8 cm
+         app.create_timer_node({time = 0.08 / 0.005, 
                                 func = function() api.move(-0.005, -0.005) end,}),
          -- stop
          --function() api.move(0,0) return true end,

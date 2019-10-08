@@ -10,6 +10,7 @@ local bt = require('luabt')
 
 DebugMSG.enable("nil")
 DebugMSG.enable("move_to_location")
+DebugMSG.enable("blind_approach_block")
 
 local function create_pickup_rule_node(target)
    -- returns a function/btnode that 
@@ -52,9 +53,14 @@ function init()
    local bt_node = {
       type = 'sequence*',
       children = {
-         -- search block
+         --[[
          app.create_search_block_node(create_pickup_rule_node(BTDATA.target)),
-         app.create_blind_approach_block_node(BTDATA.target, 0.17),
+         app.create_blind_approach_block_node(BTDATA.target, 0.22),
+         app.create_search_block_node(create_pickup_rule_node(BTDATA.target)),
+         app.create_approach_block_node(BTDATA.target, 0.17),
+         app.create_pickup_block_node(BTDATA.target, 0.028),
+         --]]
+         app.create_timer_node{time = 360 / 5, func = function() api.move_with_bearing(0, 5) end,},
 
          -- stop
          function() api.move(0,0) return true end,

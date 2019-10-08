@@ -9,6 +9,9 @@ vim coding.sh -c "
 
    tabnew Tools/DebugMessage.lua
 
+   tabnew testing/05_StructureTest.lua
+   vsp testing/05_StructureTest.argos
+
    tabnew testing/06_AdvanceMoveTest.lua
    vsp testing/06_AdvanceMoveTest.argos
 
@@ -18,7 +21,8 @@ vim coding.sh -c "
    tabnew Tools/BlockTracking.lua
 
    tabnew AppNode/approach_block.lua
-   tabnew AppNode/aim_block.lua
+   tabnew AppNode/blind_approach_block.lua
+   tabnew AppNode/move_to_location.lua
 "
 
 <<COMMENT
@@ -31,13 +35,11 @@ vim coding.sh -c "
    tabnew testing/04_SearchApproachPick.lua
    vsp testing/04_SearchApproachPick.argos
 
-   tabnew testing/05_StructureTest.lua
-   vsp testing/05_StructureTest.argos
-
    tabnew Tools/BlockTracking.lua
    tabnew Tools/Hungarian.lua
    tabnew Tools/ShowTable.lua
 
+   tabnew AppNode/aim_block.lua
    tabnew AppNode/search_block.lua
    tabnew AppNode/reach_block.lua
    tabnew AppNode/pickup_block.lua
