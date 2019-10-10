@@ -23,6 +23,7 @@ vim coding.sh -c "
    tabnew AppNode/approach_block.lua
    tabnew AppNode/blind_approach_block.lua
    tabnew AppNode/move_to_location.lua
+   tabnew AppNode/aim_block.lua
 "
 
 <<COMMENT
@@ -39,7 +40,6 @@ vim coding.sh -c "
    tabnew Tools/Hungarian.lua
    tabnew Tools/ShowTable.lua
 
-   tabnew AppNode/aim_block.lua
    tabnew AppNode/search_block.lua
    tabnew AppNode/reach_block.lua
    tabnew AppNode/pickup_block.lua

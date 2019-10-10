@@ -87,7 +87,13 @@ local function create_place_rule_node(target)
                             else return false, false end
          end,
          -- approach it until 25cm
-         app.create_approach_block_node(target, 0.25),
+         {
+            type = "selector",
+            children = {
+               app.create_approach_block_node(target, 0.25),
+               function() return false, true end,
+            },
+         },
          -- check what's in that column there
          {
             type = "selector*",
@@ -248,7 +254,7 @@ function init()
       children = {
        -- pickup
          app.create_search_block_node(create_pickup_rule_node(BTDATA.target)),
-         app.create_blind_approach_block_node(BTDATA.target, 0.22),
+         app.create_blind_approach_block_node(BTDATA.target, 0.25),
          -- search block
          app.create_search_block_node(create_pickup_rule_node(BTDATA.target)),
          -- approach_block

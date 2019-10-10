@@ -41,7 +41,7 @@
       <params script="testing/06_AdvanceMoveTest.lua"
               default_speed="0.005" 
               block_position_tolerance="0.005"
-              aim_block_angle_tolerance="3"
+              aim_block_angle_tolerance="5"
               />
     </lua_controller>
 

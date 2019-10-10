@@ -41,7 +41,7 @@
       <params script="testing/05_StructureTest.lua"
               default_speed="0.005" 
               block_position_tolerance="0.005"
-              aim_block_angle_tolerance="3"
+              aim_block_angle_tolerance="2"
               />
     </lua_controller>
 

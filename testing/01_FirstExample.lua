@@ -54,6 +54,10 @@ function init()
 
    print("vector and quaternion test end")
    --]]
+
+   print("-- robot api test --")
+   print("robot")
+   ShowTable(robot)
 end
 
 function step()
