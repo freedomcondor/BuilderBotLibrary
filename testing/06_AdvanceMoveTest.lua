@@ -53,9 +53,9 @@ function init()
    local bt_node = {
       type = 'sequence*',
       children = {
-         --[[
          app.create_search_block_node(create_pickup_rule_node(BTDATA.target)),
-         app.create_blind_approach_block_node(BTDATA.target, 0.22),
+         app.create_curved_approach_block_node(BTDATA.target, 0.22),
+         --[[
          app.create_search_block_node(create_pickup_rule_node(BTDATA.target)),
          app.create_approach_block_node(BTDATA.target, 0.17),
          app.create_pickup_block_node(BTDATA.target, 0.028),

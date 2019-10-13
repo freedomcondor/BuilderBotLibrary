@@ -14,7 +14,13 @@ local create_move_to_location_node = function(location)
    --       dis \th|
    --            \ |
    --             \|
-   --   y ---------- 
+   --   y ---------------------
+   --              |\
+   --              | \       backup
+   --              |  \   |
+   --              |   \th|
+   --              | th2\ |
+   --              | <---\
 
    local th, dis, th2
    local turn_th_timer_parameter = {}
@@ -29,15 +35,14 @@ local create_move_to_location_node = function(location)
       -- calculate th, dis, th2
       function()
          -- th
+         local backup_mode = false
          if location.position.x == 0 then
             if location.position.y < 0 then th = -90
             elseif location.position.y > 0 then th = 90 end
          else
             th = math.atan(location.position.y / location.position.x) * 180 / math.pi
-            if location.position.x < 0 and location.position.y < 0 then
-               th = th - 180
-            elseif location.position.x < 0 and location.position.y >= 0 then
-               th = th + 180
+            if location.position.x < 0 then
+               backup_mode = true
             end  
          end
          DebugMSG("th = ", th)
@@ -53,7 +58,11 @@ local create_move_to_location_node = function(location)
          -- dis
          dis = math.sqrt(location.position.x ^ 2 + location.position.y ^ 2)
          move_dis_timer_parameter.time = dis / api.parameters.default_speed
-         move_dis_timer_parameter.func = function() api.move_with_bearing(api.parameters.default_speed, 0) end
+         if backup_mode == false then
+            move_dis_timer_parameter.func = function() api.move_with_bearing(api.parameters.default_speed, 0) end
+         else
+            move_dis_timer_parameter.func = function() api.move_with_bearing(-api.parameters.default_speed, 0) end
+         end
          --move_dis_timer_parameter.func = function() api.move(api.parameters.default_speed, api.parameters.default_speed) end
          DebugMSG("dis = ", dis)
 
@@ -67,8 +76,8 @@ local create_move_to_location_node = function(location)
          DebugMSG("angle = ", angle)
          angle = angle * 180 / math.pi  -- angle from 0 to 360
          DebugMSG("angle = ", angle)
-         th2 = angle - th               -- th2 from -180 to 360 + 180
-         if th2 > 180 then th2 = th2 - 360 end
+         th2 = angle - th               -- th2 from -90 to 360 + 90
+         if th2 > 90 then th2 = th2 - 360 end
          local turnspeed = 3
          if th2 >= 0 then
             turn_th2_timer_parameter.time = th2 / turnspeed

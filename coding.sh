@@ -5,10 +5,6 @@ vim coding.sh -c "
 
    tabnew README.md
 
-   tabnew block.lua
-
-   tabnew Tools/DebugMessage.lua
-
    tabnew testing/05_StructureTest.lua
    vsp testing/05_StructureTest.argos
 
@@ -21,12 +17,15 @@ vim coding.sh -c "
    tabnew Tools/BlockTracking.lua
 
    tabnew AppNode/approach_block.lua
-   tabnew AppNode/blind_approach_block.lua
+   tabnew AppNode/Z_shape_approach_block.lua
    tabnew AppNode/move_to_location.lua
    tabnew AppNode/aim_block.lua
 "
 
 <<COMMENT
+   tabnew block.lua
+   tabnew Tools/DebugMessage.lua
+
    tabnew testing/01_FirstExample.lua
    vsp testing/01_FirstExample.argos
 

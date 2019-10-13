@@ -91,7 +91,7 @@ local function create_place_rule_node(target)
             type = "selector",
             children = {
                app.create_approach_block_node(target, 0.25),
-               function() return false, true end,
+               function() print("rule approach finidh") return false, true end,
             },
          },
          -- check what's in that column there
@@ -253,24 +253,20 @@ function init()
       type = 'sequence*',
       children = {
        -- pickup
-         app.create_search_block_node(create_pickup_rule_node(BTDATA.target)),
-         app.create_blind_approach_block_node(BTDATA.target, 0.25),
          -- search block
          app.create_search_block_node(create_pickup_rule_node(BTDATA.target)),
          -- approach_block
-         app.create_approach_block_node(BTDATA.target, 0.17),
+         app.create_curved_approach_block_node(BTDATA.target, 0.18),
          -- pickup block
-         app.create_pickup_block_node(BTDATA.target, 0.028),
+         app.create_pickup_block_node(BTDATA.target, 0.03),
 
        -- place
-         app.create_search_block_node(create_place_rule_node(BTDATA.target)),
-         app.create_blind_approach_block_node(BTDATA.target, 0.25),
          -- search block
          app.create_search_block_node(create_place_rule_node(BTDATA.target)),
          -- approach_block
-         app.create_approach_block_node(BTDATA.target, 0.17),
+         app.create_curved_approach_block_node(BTDATA.target, 0.18),
          -- drop
-         app.create_place_block_node(BTDATA.target, 0.028),
+         app.create_place_block_node(BTDATA.target, 0.03),
 
        -- backup
          -- backup 8 cm
