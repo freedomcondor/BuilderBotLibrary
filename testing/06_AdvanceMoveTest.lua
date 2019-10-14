@@ -54,12 +54,10 @@ function init()
       type = 'sequence*',
       children = {
          app.create_search_block_node(create_pickup_rule_node(BTDATA.target)),
-         app.create_curved_approach_block_node(BTDATA.target, 0.22),
-         --[[
-         app.create_search_block_node(create_pickup_rule_node(BTDATA.target)),
-         app.create_approach_block_node(BTDATA.target, 0.17),
-         app.create_pickup_block_node(BTDATA.target, 0.028),
-         --]]
+         -- the following approach both works
+         --app.create_curved_approach_block_node(BTDATA.target, 0.22),
+         app.create_Z_shape_approach_block_node(BTDATA.target, 0.22),
+
          app.create_timer_node{time = 360 / 5, func = function() api.move_with_bearing(0, 5) end,},
 
          -- stop

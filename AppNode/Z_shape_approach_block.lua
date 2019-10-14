@@ -5,7 +5,7 @@ if api == nil then api = require('BuilderBotAPI') end
 
 local create_move_to_location_node = require("move_to_location")
 
-local create_blind_approach_block_node = function(target, _distance)
+local create_Z_shape_approach_block_node = function(target, _distance)
    -- approach the target reference block until _distance away 
    local location = {}
    return 
@@ -30,4 +30,4 @@ local create_blind_approach_block_node = function(target, _distance)
 } -- end of go to pre-position
 
 end
-return create_blind_approach_block_node
+return create_Z_shape_approach_block_node
