@@ -5,6 +5,7 @@ app_nodes.create_search_block_node = require('search_block')
 -- abandoned
 --app_nodes.create_approach_block_node = require("approach_block")
 
+app_nodes.create_approach_block_node = require("approach_block")
 app_nodes.create_Z_shape_approach_block_node = require("Z_shape_approach_block")
 app_nodes.create_curved_approach_block_node = require("curved_approach_block")
 

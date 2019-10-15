@@ -32,7 +32,7 @@ local create_curved_approach_block_node = function(target, target_distance)
          if angle < blind_tolerance and angle > -blind_tolerance then 
             return false, true
          else
-            return false, true
+            return false, false
          end
       end,
       -- looply forward and backup to _distance

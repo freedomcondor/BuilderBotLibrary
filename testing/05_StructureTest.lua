@@ -9,7 +9,6 @@ if app == nil then app = require('ApplicationNode') end
 local bt = require('luabt')
 
 DebugMSG.enable()
-DebugMSG.disable("search_block")
 
 -- pyramid rules ------------------------------------
 -----------------------------------------------------
@@ -254,10 +253,20 @@ function init()
       children = {
        -- pickup
          -- search block
-         app.create_search_block_node(create_pickup_rule_node(BTDATA.target)),
+         --app.create_search_block_node(create_pickup_rule_node(BTDATA.target)),
          -- approach_block
-         app.create_curved_approach_block_node(BTDATA.target, 0.18),
+         --app.create_curved_approach_block_node(BTDATA.target, 0.18),
          -- pickup block
+
+      function() DebugMSG("I am before approach") return false, true end,
+
+         app.create_approach_block_node(
+            app.create_search_block_node(create_pickup_rule_node(BTDATA.target)),
+            BTDATA.target, 0.18
+         ),
+
+      function() DebugMSG("I am before approach") return false, true end,
+
          app.create_pickup_block_node(BTDATA.target, 0.03),
 
        -- place
