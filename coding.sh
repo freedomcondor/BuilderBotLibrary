@@ -16,7 +16,7 @@ vim coding.sh -c "
 
    tabnew Tools/BlockTracking.lua
 
-   tabnew AppNode/approach_block.lua
+   tabnew AppNode/curved_approach_block.lua
    tabnew AppNode/Z_shape_approach_block.lua
    tabnew AppNode/move_to_location.lua
    tabnew AppNode/aim_block.lua
