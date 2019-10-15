@@ -2,7 +2,7 @@ package.path = package.path .. ';Tools/?.lua'
 package.path = package.path .. ';luabt/?.lua'
 package.path = package.path .. ';AppNode/?.lua'
 DebugMSG = require('DebugMessage')
---require("Debugger")
+require("Debugger")
 
 if api == nil then api = require('BuilderBotAPI') end
 if app == nil then app = require('ApplicationNode') end
@@ -258,22 +258,22 @@ function init()
          --app.create_curved_approach_block_node(BTDATA.target, 0.18),
          -- pickup block
 
-      function() DebugMSG("I am before approach") return false, true end,
-
          app.create_approach_block_node(
             app.create_search_block_node(create_pickup_rule_node(BTDATA.target)),
             BTDATA.target, 0.18
          ),
 
-      function() DebugMSG("I am before approach") return false, true end,
-
          app.create_pickup_block_node(BTDATA.target, 0.03),
 
        -- place
          -- search block
-         app.create_search_block_node(create_place_rule_node(BTDATA.target)),
+         --app.create_search_block_node(create_place_rule_node(BTDATA.target)),
          -- approach_block
-         app.create_curved_approach_block_node(BTDATA.target, 0.18),
+         --app.create_curved_approach_block_node(BTDATA.target, 0.18),
+         app.create_approach_block_node(
+            app.create_search_block_node(create_place_rule_node(BTDATA.target)),
+            BTDATA.target, 0.18
+         ),
          -- drop
          app.create_place_block_node(BTDATA.target, 0.03),
 

@@ -11,9 +11,7 @@ local create_approach_block_node = function(search_node, target, _distance)
 {
    type = "sequence*",
    children = {
-      function() DebugMSG("I am before approach") return false, true end,
       search_node,
-      function() DebugMSG("I am after approach") return false, true end,
       {
          type = "selector*",
          children = {
@@ -22,7 +20,7 @@ local create_approach_block_node = function(search_node, target, _distance)
             {
                type = "sequence*",
                children = {
-                  create_Z_shape_approach_block_node(target, _distance),
+                  create_Z_shape_approach_block_node(target, _distance + 0.05),
                   search_node,
                   create_curved_approach_block_node(target, _distance),
                },
@@ -33,4 +31,4 @@ local create_approach_block_node = function(search_node, target, _distance)
 } -- end of the return table
 end
 
-return create_curved_approach_block_node
+return create_approach_block_node
