@@ -91,27 +91,27 @@
     </block>
 
     <block id="block5" debug="false">
-      <body position="0.38,-0.20,0" orientation="30,0,0"/>
+      <body position="0.10,-0.18,0" orientation="30,0,0"/>
       <controller config="block"/>
     </block>
 
     <block id="block6" debug="false">
-      <body position="0.38,-0.10,0" orientation="-15,0,0"/>
+      <body position="0.25,-0.13,0" orientation="-15,0,0"/>
       <controller config="block"/>
     </block>
 
     <block id="block7" debug="false">
-      <body position="0.38,0.0,0" orientation="-20,0,0"/>
+      <body position="0.30,0.0,0" orientation="-20,0,0"/>
       <controller config="block"/>
     </block>
 
     <block id="block8" debug="false">
-      <body position="0.38,0.10,0" orientation="10,0,0"/>
+      <body position="0.25,0.15,0" orientation="10,0,0"/>
       <controller config="block"/>
     </block>
 
     <block id="block9" debug="false">
-      <body position="0.38,0.20,0" orientation="45,0,0"/>
+      <body position="0.10,0.18,0" orientation="45,0,0"/>
       <controller config="block"/>
     </block>
 
