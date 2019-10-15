@@ -10,6 +10,19 @@ local create_curved_approach_block_node = function(target, target_distance)
 {
    type = "sequence*",
    children = {
+      -- check the target block is still there 
+      function()
+         if target == nil or 
+            target.reference_id == nil or 
+            api.blocks[target.reference_id] == nil then
+            DebugMSG("curved_approach: block is nil")
+            api.move(0,0)
+            return false, false
+         else
+            DebugMSG("curved_approach: block is not nil")
+            return false, true
+         end
+      end,
       -- check range
       function()
          local target_block = api.blocks[target.reference_id]
@@ -26,6 +39,19 @@ local create_curved_approach_block_node = function(target, target_distance)
       {
          type = "sequence",
          children = {
+            -- check the target block is still there 
+            function()
+               if target == nil or 
+                  target.reference_id == nil or 
+                  api.blocks[target.reference_id] == nil then
+                  DebugMSG("curved_approach: block is nil")
+                  api.move(0,0)
+                  return false, false
+               else
+                  DebugMSG("curved_approach: block is not nil")
+                  return false, true
+               end
+            end,
             -- analyze block angle
             function()
                local target_block = api.blocks[target.reference_id]
