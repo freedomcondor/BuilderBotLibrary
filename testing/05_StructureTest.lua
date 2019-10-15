@@ -90,7 +90,7 @@ local function create_place_rule_node(target)
          {
             type = "selector",
             children = {
-               app.create_approach_block_node(target, 0.25),
+               app.create_curved_approach_block_node(target, 0.25),
                function() print("rule approach finidh") return false, true end,
             },
          },

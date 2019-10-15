@@ -2,20 +2,6 @@ if api == nil then api = require('BuilderBotAPI') end
 
 local create_aim_block_node = require("aim_block")
 
---[[
-local function analyze_block_status(target, case)
-   local target_block = api.blocks[target.reference_id]
-   local robot_to_block = vector3(-target_block.position_robot):rotate(target_block.orientation_robot:inverse())
-   local angle = math.atan(robot_to_block.y / robot_to_block.x) * 180 / math.pi
-   DebugMSG("angle = ", angle)
-   local tolerance = api.parameters.aim_block_angle_tolerance
-   if angle > tolerance then case.left_right_case = -1 -- right
-   elseif angle < -tolerance then case.left_right_case = 1 -- left
-   else case.left_right_case = 0
-   end
-end
-   --]]
-
 local create_curved_approach_block_node = function(target, target_distance)
    local case = {left_right_case = 0, forward_backup_case = 1,}
    local aim = {}

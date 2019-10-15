@@ -18,10 +18,6 @@ local create_Z_shape_approach_block_node = function(target, _distance)
          local target_block = api.blocks[target.reference_id]
          location.position = target_block.position_robot + vector3(1,0,0):rotate(target_block.orientation_robot) * _distance
          location.orientation = target_block.orientation_robot * quaternion(math.pi, vector3(0,0,1))
-         DebugMSG("block position robot = ", target_block.position_robot)
-         DebugMSG("block x offset = ", vector3(1,0,0):rotate(target_block.orientation_robot) * _distance)
-         DebugMSG("position = ", location.position)
-         DebugMSG("orientation = ", location.orientation:toangleaxis())
          return false, true
       end,
       -- move to the location

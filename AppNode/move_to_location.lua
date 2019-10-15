@@ -9,7 +9,7 @@ local create_move_to_location_node = function(location)
    --
    --       \       x
    --     th2\     |
-   --    <----P    |
+   --    <----P    |         forward
    --          \   |
    --       dis \th|
    --            \ |
