@@ -18,6 +18,9 @@ return -- return the following table
       end,
       -- reach the block
       create_reach_block_node(target, _forward_distance),
+      function()
+         robot.nfc.write(tostring(target.type))
+      end,
       -- drop electromagnet
       function()
          robot.electromagnet_system.set_discharge_mode("destructive")

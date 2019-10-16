@@ -161,7 +161,8 @@ local create_process_rules_node = function(rule_type, final_target)
             },
             target = {
                reference_index = vector3(0, 0, 0),
-               offset_from_reference = vector3(0, 0, 0)
+               offset_from_reference = vector3(0, 0, 0),
+               type = 1
             },
             generate_orientations = false
          }
@@ -346,6 +347,7 @@ local create_process_rules_node = function(rule_type, final_target)
                   possible_target.reference_id =
                      get_reference_id_from_index(rule.target.reference_index, visible_structure)
                   possible_target.offset = rule.target.offset_from_reference
+                  possible_target.type = rule.target.type
                   table.insert(targets_list, possible_target)
                end
             end
@@ -364,6 +366,7 @@ local create_process_rules_node = function(rule_type, final_target)
                      minimum_distance = distance_from_target
                      final_target.reference_id = tonumber(possible_target.reference_id)
                      final_target.offset = possible_target.offset
+                     final_target.type = possible_target.type
                   end
                end
             end
@@ -379,6 +382,7 @@ local create_process_rules_node = function(rule_type, final_target)
                      maximum_distance = distance_from_target
                      final_target.reference_id = tonumber(possible_target.reference_id)
                      final_target.offset = possible_target.offset
+                     final_target.type = possible_target.type
                   end
                end
             end
