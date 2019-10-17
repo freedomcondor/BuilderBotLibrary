@@ -10,6 +10,11 @@ require("BlockTracking")
 
 local builderbot_api = {}
 
+-- consts --------------------------------------------
+------------------------------------------------------
+builderbot_api.consts = {}
+builderbot_api.consts.end_effector_position_offset = vector3(0.09800875, 0, 0.055)
+
 -- parameters ----------------------------------------
 ------------------------------------------------------
 builderbot_api.parameters = {}
@@ -27,10 +32,11 @@ builderbot_api.parameters.aim_block_angle_tolerance =
    tonumber(robot.params.aim_block_angle_tolerance or 5)
 
 builderbot_api.parameters.block_position_tolerance = 
-   tonumber(robot.params.block_position_tolerance or 0.005)
+   tonumber(robot.params.block_position_tolerance or 0.001)
 
 builderbot_api.parameters.proximity_touch_tolerance = 
    tonumber(robot.params.proximity_touch_tolerance or 0.005)
+
 
 -- system --------------------------------------------
 ------------------------------------------------------
@@ -63,25 +69,12 @@ end
 -- camera --------------------------------------------
 ------------------------------------------------------
 
-----------------------------------------------------------------------------------
-local function quaternion_from_euler_angles(zRadian, yRadian, xRadian) -- TODO: ask Michael to provide this function
-   local a = vector3(0,0,0)                                            --
-   local X = quaternion(xRadian, vector3(1,0,0))                       --
-   local Y = quaternion(yRadian, vector3(0,1,0))                       --
-   local Z = quaternion(zRadian, vector3(0,0,1))                       --
-   return X * Y * Z                                                    --
-end                                                                    --
-----------------------------------------------------------------------------------
-
-builderbot_api.camera_orientation = 
-   quaternion_from_euler_angles(
-      -0.50 * math.pi,
-       0.75 * math.pi,
-       0.00 * math.pi
-   )
+builderbot_api.camera_orientation = robot.camera_system.transform.orientation
 
 builderbot_api.get_camera_position = function()
-   return vector3(0.095, 0, 0.125 + robot.lift_system.position) -- TODO: this number is not accurate
+   return builderbot_api.consts.end_effector_position_offset + 
+          robot.camera_system.transform.position +
+          vector3(0, 0, robot.lift_system.position)
 end
 
 -- camera's frame reference

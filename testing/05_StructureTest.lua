@@ -86,6 +86,42 @@ local function create_place_rule_node(target)
                             else return false, false end
          end,
          -- approach it until 25cm
+         function() print("before Z") return false, true end,
+         app.create_Z_shape_approach_block_node(target, 0.25),
+         app.create_timer_node{time = 0.4},
+         function() print("after Z") return false, true end,
+
+-- find nearest and then highest block not blue
+         function()
+            local flag = false
+            local x_distance = 999999
+            local z_distance = -999999
+
+            target.reference_id = nil
+            target.offset = nil
+            DebugMSG("api.blocks")
+            DebugMSG(api.blocks)
+            for i, block in pairs(api.blocks) do
+               if block.tags[1].led ~= 4 then -- 4 means blue
+                  DebugMSG("found a non-blue block 2")
+                  if block.position_robot.x + 0.02 < x_distance then
+                     x_distance = block.position_robot.x
+                     z_distance = block.position_robot.z
+                     target.reference_id = i
+                     flag = true
+                  elseif block.position_robot.x < x_distance + 0.02 and
+                         block.position_robot.z > z_distance then
+                     z_distance = block.position_robot.z
+                     target.reference_id = i
+                     flag = true
+                  end
+               end
+            end
+            if flag == true then print("I have true") return false, true
+                            else print("I have false") return false, false end
+         end,
+
+         --[[
          {
             type = "selector",
             children = {
@@ -93,6 +129,7 @@ local function create_place_rule_node(target)
                function() print("rule approach finidh") return false, true end,
             },
          },
+         --]]
          -- check what's in that column there
          {
             type = "selector*",
@@ -129,6 +166,7 @@ local function create_place_rule_node(target)
                         local block = api.blocks[target.reference_id]
 
 
+                        print("block.position_robot.z = ", block.position_robot.z)
                         if block.position_robot.z < 0.055 * (block.tags[1].led - 1) then
 
                            DebugMSG("test1")
@@ -173,6 +211,7 @@ local function create_place_rule_node(target)
                                     break
                                  end
                               end
+                              print("what's on top",flag)
                               return false, flag
                            end,
                            -- otherwise, move up
@@ -263,7 +302,7 @@ function init()
             BTDATA.target, 0.18
          ),
 
-         app.create_pickup_block_node(BTDATA.target, 0.03),
+         app.create_pickup_block_node(BTDATA.target, 0.18),
 
        -- place
          -- search block
@@ -275,7 +314,7 @@ function init()
             BTDATA.target, 0.18
          ),
          -- drop
-         app.create_place_block_node(BTDATA.target, 0.03),
+         app.create_place_block_node(BTDATA.target, 0.18),
 
        -- backup
          -- backup 8 cm
@@ -285,6 +324,8 @@ function init()
          --function() api.move(0,0) return true end,
       },
    }
+   DebugMSG("bt_node = ")
+   DebugMSG(bt_node)
    behaviour = bt.create(bt_node)
    -- robot init ---
    robot.camera_system.enable()
