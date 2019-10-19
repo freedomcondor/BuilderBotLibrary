@@ -1,6 +1,8 @@
 if api == nil then
    api = require('BuilderBotAPI')
 end
+pprint = require('pprint')
+
 print('here is match_rules')
 
 function group_blocks()
@@ -17,8 +19,7 @@ function group_blocks()
       orientation_diff =
          math.sqrt(
          (block_1.orientation_robot.x - block_2.orientation_robot.x) ^ 2 +
-            (block_1.orientation_robot.y - block_2.orientation_robot.y) ^ 2 +
-            (block_1.orientation_robot.z - block_2.orientation_robot.z) ^ 2
+            (block_1.orientation_robot.y - block_2.orientation_robot.y) ^ 2
       )
 
       position_diff =
@@ -29,13 +30,13 @@ function group_blocks()
       )
 
       if orientation_diff > orientation_tolerance then
-         -- print('different orientation')
          result = false
       else
          if position_diff < distance_tolerance then
+            print('connected')
             result = true
          else
-            -- print('far')
+            print('far')
             result = false
          end
       end
@@ -106,7 +107,125 @@ function group_blocks()
          end
       end
    end
-   return groups_of_connected_blocks
+
+   -- Filtering uncertain groups
+   -- pprint.pprint(groups_of_connected_blocks)
+
+   function check_block_in_safe_zone(block)
+      -- pprint.pprint(block)
+      -- we use block in camera eye provided by blocktrackig (Probably would have to do the conversion here in the future)
+      x = block.position.x
+      y = block.position.y
+      z = block.position.z
+      -- Define camera parameters (probably this is already provided by michael or maybe ask for it)
+      horizontal_fov = 0.60 -- 60 degrees
+      vertical_fov = 0.60 -- 60 degrees
+      maimum_visible_distance = 1
+      c = 0.05
+      y_limit = math.tan(vertical_fov / 2) * z - c
+      x_limit = math.tan(horizontal_fov / 2) * z - c
+      z_limit = maimum_visible_distance - c
+
+      camera_position_in_end_effector = robot.camera_system.transform.position
+      camera_position_in_robot =
+         camera_position_in_end_effector + vector3(0.0980875, 0, robot.lift_system.position + 0.055)
+      camera_orientation_in_robot = robot.camera_system.transform.orientation
+      -- pprint.pprint(camera_orientation_in_robot)
+      -- Visualize safe zone
+      y_limit_for_max_z = math.tan(vertical_fov / 2) * z_limit - c
+      x_limit_for_max_z = math.tan(horizontal_fov / 2) * z_limit - c
+
+      staring_point =
+         vector3(0, 0, c / math.tan(vertical_fov / 2)):rotate(camera_orientation_in_robot) +
+         vector3(camera_position_in_robot)
+      api.debug_arrow(
+         'green',
+         vector3(staring_point),
+         vector3(x_limit_for_max_z, y_limit_for_max_z, z_limit):rotate(camera_orientation_in_robot) +
+            vector3(camera_position_in_robot)
+      )
+      api.debug_arrow(
+         'green',
+         vector3(staring_point),
+         vector3(-1 * x_limit_for_max_z, y_limit_for_max_z, z_limit):rotate(camera_orientation_in_robot) +
+            vector3(camera_position_in_robot)
+      )
+
+      api.debug_arrow(
+         'green',
+         vector3(staring_point),
+         vector3(x_limit_for_max_z, -1 * y_limit_for_max_z, z_limit):rotate(camera_orientation_in_robot) +
+            vector3(camera_position_in_robot)
+      )
+
+      api.debug_arrow(
+         'green',
+         vector3(staring_point),
+         vector3(-1 * x_limit_for_max_z, -1 * y_limit_for_max_z, z_limit):rotate(camera_orientation_in_robot) +
+            vector3(camera_position_in_robot)
+      )
+
+      if block.position_robot.z > 0.12 then
+         if z < z_limit and y < y_limit and x < x_limit and x > -1 * x_limit then
+            print('block:', block.id, 'is safe')
+            return true
+         else
+            print('block:', block.id, 'is not safe')
+            return false
+         end
+      else
+         if z < z_limit and y < y_limit and y > -1 * y_limit and x < x_limit and x > -1 * x_limit then
+            print('block:', block.id, 'is safe')
+            return true
+         else
+            print('block:', block.id, 'is not safe')
+            return false
+         end
+      end
+   end
+   filtered_groups_list = {}
+   for i, group in pairs(groups_of_connected_blocks) do
+      group_clear = true
+      for j, block in pairs(group) do
+         print('processing block', tostring(block.id), 'in group:', tostring(i))
+         if check_block_in_safe_zone(block) == false then
+            group_clear = false
+            break
+         end
+      end
+      if group_clear == true then
+         table.insert(filtered_groups_list, group)
+      end
+   end
+
+   -- builderbot_api.structure_list = groups_of_connected_blocks
+
+   -- debug line from arrows ----------------------------
+   function draw_line(color, from, to)
+      function range(from, to, step)
+         step = step or 1
+         return function(_, lastvalue)
+            local nextvalue = lastvalue + step
+            if step > 0 and nextvalue <= to or step < 0 and nextvalue >= to or step == 0 then
+               return nextvalue
+            end
+         end, nil, from - step
+      end
+
+      p0 = from
+      p1 = to
+      vdr = p1 - p0
+      last_subpoint = p0
+      for lambda in range(0, 1, 0.1) do
+         x_ = p0.x + lambda * vdr.x
+         y_ = p0.y + lambda * vdr.y
+         z_ = p0.z + lambda * vdr.z
+         current_subpoint = vector3(x_, y_, z_)
+         builderbot_api.debug_arrow(color, last_subpoint, current_subpoint)
+         last_subpoint = current_subpoint
+      end
+   end
+   return filtered_groups_list
 end
 function draw_block_axes(block_position, block_orientation, color)
    local z = vector3(0, 0, 1)
@@ -149,7 +268,49 @@ local create_process_rules_node = function(rule_type, final_target)
                offset_from_reference = vector3(0, 0, 1),
                type = 3
             },
-            generate_orientations = true
+            generate_orientations = false
+         },
+         {
+            rule_type = 'place',
+            structure = {
+               {
+                  index = vector3(0, 0, 0),
+                  type = 3
+               },
+               {
+                  index = vector3(0, 0, 1),
+                  type = 3
+               }
+            },
+            target = {
+               reference_index = vector3(0, 0, 1),
+               offset_from_reference = vector3(0, 0, 1),
+               type = 3
+            },
+            generate_orientations = false
+         },
+         {
+            rule_type = 'place',
+            structure = {
+               {
+                  index = vector3(0, 0, 0),
+                  type = 3
+               },
+               {
+                  index = vector3(0, 0, 1),
+                  type = 3
+               },
+               {
+                  index = vector3(0, 0, 2),
+                  type = 3
+               }
+            },
+            target = {
+               reference_index = vector3(0, 0, 1),
+               offset_from_reference = vector3(1, 0, -1),
+               type = 3
+            },
+            generate_orientations = false
          },
          {
             rule_type = 'pickup',
@@ -394,7 +555,7 @@ local create_process_rules_node = function(rule_type, final_target)
       ------- Visualizing the results ----------
       target_block = nil
       for i, block in pairs(api.blocks) do
-         if tostring(block.id) == final_target.reference_id then
+         if block.id == final_target.reference_id then
             target_block = block
             offsetted_block_in_reference_block_pos = 0.05 * final_target.offset
             offsetted_block_in_robot_pos =

@@ -12,8 +12,8 @@ if app == nil then
 end
 local bt = require('luabt')
 
-DebugMSG.enable()
-DebugMSG.disable('search_block')
+-- DebugMSG.enable()
+DebugMSG.disable()
 
 -- pyramid rules ------------------------------------
 -----------------------------------------------------
@@ -302,12 +302,37 @@ function init()
 end
 
 local STATE = 'prepare'
+function visualize_target()
+   function draw_block_axes(block_position, block_orientation, color)
+      local z = vector3(0, 0, 1)
+      api.debug_arrow(color, block_position, block_position + 0.1 * vector3(z):rotate(block_orientation))
+   end
+   if BTDATA.target ~= nil then
+      target_block = nil
+      for i, block in pairs(api.blocks) do
+         if block.id == BTDATA.target.reference_id then
+            print('Visualizing target')
+
+            target_block = block
+            offsetted_block_in_reference_block_pos = 0.05 * BTDATA.target.offset
+            offsetted_block_in_robot_pos =
+               offsetted_block_in_reference_block_pos:rotate(target_block.orientation_robot) +
+               target_block.position_robot
+            offsetted_block_in_robot_ori = target_block.orientation_robot
+            draw_block_axes(offsetted_block_in_robot_pos, offsetted_block_in_robot_ori, 'blue')
+            draw_block_axes(target_block.position_robot, target_block.orientation_robot, 'red')
+            break
+         end
+      end
+   end
+end
 
 function step()
    DebugMSG('-------- step begins ---------')
    api.process_time()
    api.process_blocks()
    behaviour()
+   -- visualize_target()
 end
 
 function reset()
