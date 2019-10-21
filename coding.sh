@@ -5,17 +5,15 @@ vim coding.sh -c "
 
    tabnew README.md
 
-   tabnew testing/05_StructureTest.lua
-   vsp testing/05_StructureTest.argos
-
-   tabnew testing/06_AdvanceMoveTest.lua
-   vsp testing/06_AdvanceMoveTest.argos
+   tabnew testing/07_ObstacleTest.lua
+   vsp testing/07_ObstacleTest.argos
 
    tabnew BuilderBotAPI.lua
    vsp ApplicationNode.lua
 
    tabnew Tools/BlockTracking.lua
 
+   tabnew AppNode/search_block.lua
    tabnew AppNode/approach_block.lua
    tabnew AppNode/Z_shape_approach_block.lua
    tabnew AppNode/curved_approach_block.lua
@@ -36,11 +34,16 @@ vim coding.sh -c "
    tabnew testing/04_SearchApproachPick.lua
    vsp testing/04_SearchApproachPick.argos
 
+   tabnew testing/05_StructureTest.lua
+   vsp testing/05_StructureTest.argos
+
+   tabnew testing/06_AdvanceMoveTest.lua
+   vsp testing/06_AdvanceMoveTest.argos
+
    tabnew Tools/BlockTracking.lua
    tabnew Tools/Hungarian.lua
    tabnew Tools/ShowTable.lua
 
-   tabnew AppNode/search_block.lua
    tabnew AppNode/reach_block.lua
    tabnew AppNode/pickup_block.lua
    tabnew AppNode/place_block.lua

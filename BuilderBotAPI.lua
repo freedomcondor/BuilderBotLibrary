@@ -35,7 +35,7 @@ builderbot_api.parameters.block_position_tolerance =
    tonumber(robot.params.block_position_tolerance or 0.001)
 
 builderbot_api.parameters.proximity_touch_tolerance = 
-   tonumber(robot.params.proximity_touch_tolerance or 0.005)
+   tonumber(robot.params.proximity_touch_tolerance or 0.03)
 
 
 -- system --------------------------------------------
@@ -66,16 +66,15 @@ builderbot_api.move_with_bearing = function(v, th)
    robot.differential_drive.set_target_velocity(x, -y)
 end
 
+-- lift ----------------------------------------------
+------------------------------------------------------
+-- this number is updated by process_positions
+builderbot_api.end_effector_position = 
+   builderbot_api.consts.end_effector_position_offset + 
+   vector3(0, 0, robot.lift_system.position)
+
 -- camera --------------------------------------------
 ------------------------------------------------------
-
-builderbot_api.camera_orientation = robot.camera_system.transform.orientation
-
-builderbot_api.get_camera_position = function()
-   return builderbot_api.consts.end_effector_position_offset + 
-          robot.camera_system.transform.position +
-          vector3(0, 0, robot.lift_system.position)
-end
 
 -- camera's frame reference
       --
@@ -119,8 +118,14 @@ end
       --    position_robot    = a vector3
       --    orientation_robot = a quternion  in robot's frame reference
       --    tags = an array of tags pointers, each pointing to the tags array
+      
+builderbot_api.camera_orientation = robot.camera_system.transform.orientation
+-- this number is updated by process_positions
+builderbot_api.camera_position =
+   robot.camera_system.transform.position +
+   builderbot_api.end_effector_position 
 
-builderbot_api.process_leds = function()
+builderbot_api.subprocess_leds = function()
    -- takes tags in camera_frame_reference 
    local led_dis = 0.02 -- distance between leds to the center
    local led_loc_for_tag = {
@@ -142,15 +147,59 @@ end
 
 builderbot_api.process_blocks = function()
    -- figure out led color for tags
-   builderbot_api.process_leds() 
+   builderbot_api.subprocess_leds() 
    -- track block
    if builderbot_api.blocks == nil then builderbot_api.blocks = {} end
    BlockTracking(builderbot_api.blocks, robot.camera_system.tags)
    -- transfer block to robot frame
    for i, block in pairs(builderbot_api.blocks) do
-      block.position_robot = vector3(block.position):rotate(builderbot_api.camera_orientation) + builderbot_api.get_camera_position()
+      block.position_robot = vector3(block.position):rotate(builderbot_api.camera_orientation) + builderbot_api.camera_position
       block.orientation_robot = builderbot_api.camera_orientation * block.orientation
    end
+end
+
+-- process positions ---------------------------------
+------------------------------------------------------
+builderbot_api.process_positions = function()
+   builderbot_api.end_effector_position = 
+      builderbot_api.consts.end_effector_position_offset + 
+      vector3(0, 0, robot.lift_system.position)
+   builderbot_api.camera_position = 
+      builderbot_api.end_effector_position +
+      robot.camera_system.transform.position
+end
+
+-- process obstacles ---------------------------------
+------------------------------------------------------
+builderbot_api.process_obstacles = function()
+   builderbot_api.obstacles = {}
+   for i, rf in pairs(robot.rangefinders) do
+      if rf.proximity ~= 0 and 
+         rf.proximity <= builderbot_api.parameters.proximity_touch_tolerance then
+         local obstacle_position_robot = 
+            vector3(0,0,rf.proximity):rotate(rf.transform.orientation) +
+            rf.transform.position
+         if rf.transform.anchor == "end_effector" then
+            obstacle_position_robot = obstacle_position_robot + builderbot_api.end_effector_position
+         end
+         builderbot_api.obstacles[#builderbot_api.obstacles + 1] = 
+            {
+               position = obstacle_position_robot,
+               distance = dis,
+            }
+      end
+   end
+end
+
+-- process for each step -----------------------------
+------------------------------------------------------
+
+builderbot_api.process = function()
+   builderbot_api.process_time()
+   builderbot_api.process_positions()
+   -- process blocks and obstacle should happen after process positions
+   builderbot_api.process_blocks()
+   builderbot_api.process_obstacles()
 end
 
 -- debug arrow ---------------------------------------

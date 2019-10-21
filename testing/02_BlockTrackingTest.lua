@@ -21,7 +21,7 @@ function step()
    DebugMSG("-------- step begins ---------")
    --- get time test ----
    DebugMSG("-- get time test --")
-   api.process_time()
+   api.process()
    DebugMSG("time period = ", api.time_period)
 
 
@@ -36,9 +36,9 @@ function step()
    -- test tag location
    for i, tag_for_camera in pairs(robot.camera_system.tags) do
       api.debug_arrow("red", 
-                      api.get_camera_position(), 
+                      api.camera_position, 
                       vector3(tag_for_camera.position):rotate(api.camera_orientation) + 
-                           api.get_camera_position()) 
+                           api.camera_position) 
    end
 
    -- test block location and orientation

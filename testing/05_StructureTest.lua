@@ -324,8 +324,6 @@ function init()
          --function() api.move(0,0) return true end,
       },
    }
-   DebugMSG("bt_node = ")
-   DebugMSG(bt_node)
    behaviour = bt.create(bt_node)
    -- robot init ---
    robot.camera_system.enable()

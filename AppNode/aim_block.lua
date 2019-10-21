@@ -5,7 +5,7 @@ local create_aim_block_node = function(target, aim_point)
    return 
 -- return the following table
 {
-   --type = "sequence*",
+   -- TODO: no need for a sequence, just make it a function
    type = "sequence*",
    children = {
       function()
@@ -95,34 +95,6 @@ local create_aim_block_node = function(target, aim_point)
          else
             return true
          end
-
-         --[[
-         -- correct robot orientation
-         DebugMSG("approach: correcting orientation")
-         local target_block = api.blocks[target.reference_id]
-         --local tolerence = math.tan(api.parameters.aim_block_angle_tolerance * math.pi/180)
-         local tolerence = api.parameters.aim_block_angle_tolerance 
-         local aim_angle = 0
-         if aim_point ~= nil then aim_angle = aim_point.angle end
-         local angle = math.atan(target_block.position_robot.y / target_block.position_robot.x) * 180 / math.pi  -- x should always be positive
-         if angle < aim_angle - tolerence then
-            api.move(api.parameters.default_speed, -api.parameters.default_speed)
-            flag_orientation = false
-         elseif angle > aim_angle + tolerence then
-            api.move(-api.parameters.default_speed, api.parameters.default_speed)
-            flag_orientation = false
-         else
-            api.move(0, 0)
-            DebugMSG("robot in right orientation")
-            flag_orientation = true
-         end
-
-         if flag_orientation == true and flag_camera == true then
-            return false, true
-         else
-            return true
-         end
-         --]]
       end,
    },
 }

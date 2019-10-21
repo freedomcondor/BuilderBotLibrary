@@ -34,9 +34,6 @@ local create_curved_approach_block_node = function(target, target_distance)
          elseif case.left_right_case == 1 and angle > -tolerance/2 then case.left_right_case = 0
          elseif case.left_right_case == -1 and angle < tolerance/2 then case.left_right_case = 0
          end
-         print("case left right = ", case.left_right_case)
-         print("angle",angle) 
-         print("tolerance",tolerance) 
          return false, true
       end,
       -- prepare aim
