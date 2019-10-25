@@ -12,6 +12,7 @@ DebugMSG.enable("nil")
 
 -- ARGoS Loop ------------------------
 function init()
+   math.randomseed(os.time())
    -- robot init ---
    api.move_with_bearing(0.01, 0)
    robot.lift_system.set_position(0.02)

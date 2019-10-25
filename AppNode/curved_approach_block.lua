@@ -29,10 +29,10 @@ local create_curved_approach_block_node = function(target, target_distance)
          local robot_to_block = vector3(-target_block.position_robot):rotate(target_block.orientation_robot:inverse())
          local angle = math.atan(robot_to_block.y / robot_to_block.x) * 180 / math.pi
          local tolerance = api.parameters.aim_block_angle_tolerance / 3
-         if case.left_right_case == 0 and angle > tolerance then case.left_right_case = -1 -- right
-         elseif case.left_right_case == 0 and angle < -tolerance then case.left_right_case = 1 -- left
-         elseif case.left_right_case == 1 and angle > -tolerance/2 then case.left_right_case = 0
-         elseif case.left_right_case == -1 and angle < tolerance/2 then case.left_right_case = 0
+         if case.left_right_case == 0 and angle > tolerance/2 then case.left_right_case = -1 -- right
+         elseif case.left_right_case == 0 and angle < -tolerance/2 then case.left_right_case = 1 -- left
+         elseif case.left_right_case == 1 and angle > -tolerance/4 then case.left_right_case = 0
+         elseif case.left_right_case == -1 and angle < tolerance/4 then case.left_right_case = 0
          end
          return false, true
       end,

@@ -73,8 +73,7 @@ local STATE = 'prepare'
 
 function step()
    DebugMSG('-------- step begins ---------')
-   api.process_time()
-   api.process_blocks()
+   api.process()
    behaviour()
 end
 

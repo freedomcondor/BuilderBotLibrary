@@ -1,6 +1,8 @@
 DebugMSG.register("search_block")
 if api == nil then api = require('BuilderBotAPI') end
 
+local create_obstacle_avoidance_node = require("obstacle_avoidance")
+
 local create_search_block_node = function(rule_node)
    -- create a search node based on rule_node
    return {
@@ -35,11 +37,22 @@ local create_search_block_node = function(rule_node)
                -- choose a block,
                -- if got one, return true, stop selector
                rule_node,
-               -- otherwise turn the robot
-               function()
-                  api.move(-api.parameters.default_speed, api.parameters.default_speed)
-                  return true
-               end,
+               -- otherwise check obstacle and turn the robot
+               {
+                  type = "sequence",
+                  children = {
+                     -- if obstacle and avoid
+                     create_obstacle_avoidance_node(),
+                     -- obstacle clear, random walk
+                     function()
+                        print("I am random woal")
+                        local random_angle = math.random(-30,30)
+                        --api.move(-api.parameters.default_speed, api.parameters.default_speed)
+                        api.move_with_bearing(api.parameters.default_speed, random_angle)
+                        return true
+                     end,
+                  },
+               },
             },
          },
       },

@@ -35,7 +35,10 @@ builderbot_api.parameters.block_position_tolerance =
    tonumber(robot.params.block_position_tolerance or 0.001)
 
 builderbot_api.parameters.proximity_touch_tolerance = 
-   tonumber(robot.params.proximity_touch_tolerance or 0.03)
+   tonumber(robot.params.proximity_touch_tolerance or 0.003)
+
+builderbot_api.parameters.proximity_detect_tolerance = 
+   tonumber(robot.params.proximity_detect_tolerance or 0.03)
 
 
 -- system --------------------------------------------
@@ -65,6 +68,14 @@ builderbot_api.move_with_bearing = function(v, th)
    local y = v + diff
    robot.differential_drive.set_target_velocity(x, -y)
 end
+
+builderbot_api.move_with_vector3 = function(v3) -- x front, y left
+   local v = v3:length()
+   if v3.x < 0 then v = -v end
+   local diff = math.atan(v3.y/v3.x) * 180 / math.pi
+   builderbot_api.move_with_bearing(v, diff)
+end
+
 
 -- lift ----------------------------------------------
 ------------------------------------------------------
@@ -171,11 +182,16 @@ end
 
 -- process obstacles ---------------------------------
 ------------------------------------------------------
+-- builderbot_api.obstacles = array of obstacles
+--    an obstacle has
+--       position = vector3
+--       distance = how far away from the rangefinder
+--       TODO: the rangefinder that discovers it
 builderbot_api.process_obstacles = function()
    builderbot_api.obstacles = {}
    for i, rf in pairs(robot.rangefinders) do
       if rf.proximity ~= 0 and 
-         rf.proximity <= builderbot_api.parameters.proximity_touch_tolerance then
+         rf.proximity <= builderbot_api.parameters.proximity_detect_tolerance then
          local obstacle_position_robot = 
             vector3(0,0,rf.proximity):rotate(rf.transform.orientation) +
             rf.transform.position
@@ -185,7 +201,8 @@ builderbot_api.process_obstacles = function()
          builderbot_api.obstacles[#builderbot_api.obstacles + 1] = 
             {
                position = obstacle_position_robot,
-               distance = dis,
+               distance = rf.proximity,
+               rangefinder = i
             }
       end
    end

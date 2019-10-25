@@ -5,8 +5,8 @@ vim coding.sh -c "
 
    tabnew README.md
 
-   tabnew testing/07_ObstacleTest.lua
-   vsp testing/07_ObstacleTest.argos
+   tabnew testing/08_RandomWalkTest.lua
+   vsp testing/08_RandomWalkTest.argos
 
    tabnew BuilderBotAPI.lua
    vsp ApplicationNode.lua
@@ -19,6 +19,7 @@ vim coding.sh -c "
    tabnew AppNode/curved_approach_block.lua
    tabnew AppNode/move_to_location.lua
    tabnew AppNode/aim_block.lua
+   tabnew AppNode/obstacle_avoidance.lua
 "
 
 <<COMMENT
@@ -39,6 +40,9 @@ vim coding.sh -c "
 
    tabnew testing/06_AdvanceMoveTest.lua
    vsp testing/06_AdvanceMoveTest.argos
+
+   tabnew testing/07_ObstacleTest.lua
+   vsp testing/07_ObstacleTest.argos
 
    tabnew Tools/BlockTracking.lua
    tabnew Tools/Hungarian.lua

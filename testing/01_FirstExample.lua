@@ -61,12 +61,14 @@ function init()
 end
 
 function step()
-   robot.debug.draw("arrow(" .. "blue" .. ")(" .. 
-      vector3(0,0,0):__tostring()
-                                       .. ")(" .. 
-      vector3(0.1,0,0):__tostring()
-                                       .. ")"
-   )
+   if robot.debug ~= nil then
+      robot.debug.draw("arrow(" .. "blue" .. ")(" .. 
+         vector3(0,0,0):__tostring()
+                                          .. ")(" .. 
+         vector3(0.1,0,0):__tostring()
+                                          .. ")"
+      )
+   end
 end
 
 function reset()
