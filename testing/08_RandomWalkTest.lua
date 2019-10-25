@@ -2,7 +2,7 @@ package.path = package.path .. ';Tools/?.lua'
 package.path = package.path .. ';luabt/?.lua'
 package.path = package.path .. ';AppNode/?.lua'
 DebugMSG = require('DebugMessage')
-require("Debugger")
+--require("Debugger")
 
 if api == nil then api = require('BuilderBotAPI') end
 if app == nil then app = require('ApplicationNode') end

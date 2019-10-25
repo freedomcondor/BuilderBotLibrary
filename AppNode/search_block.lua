@@ -46,7 +46,7 @@ local create_search_block_node = function(rule_node)
                      -- obstacle clear, random walk
                      function()
                         print("I am random woal")
-                        local random_angle = math.random(-30,30)
+                        local random_angle = math.random(-api.parameters.search_random_range, api.parameters.search_random_range)
                         --api.move(-api.parameters.default_speed, api.parameters.default_speed)
                         api.move_with_bearing(api.parameters.default_speed, random_angle)
                         return true
