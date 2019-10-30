@@ -5,6 +5,93 @@ pprint = require('pprint')
 
 print('here is match_rules')
 
+function deepcopy(orig)
+   local orig_type = type(orig)
+   local copy
+   if orig_type == 'table' then
+      copy = {}
+      for orig_key, orig_value in next, orig, nil do
+         copy[deepcopy(orig_key)] = deepcopy(orig_value)
+      end
+      setmetatable(copy, deepcopy(getmetatable(orig)))
+   else -- number, string, boolean, etc
+      copy = orig
+   end
+   return copy
+end
+
+function check_block_in_safe_zone(block)
+   pprint.pprint(block)
+   -- we use block in camera eye provided by blocktrackig (Probably would have to do the conversion here in the future)
+   x = block.position.x
+   y = block.position.y
+   z = block.position.z
+   -- Define camera parameters (probably this is already provided by michael or maybe ask for it)
+   horizontal_fov = 0.60 -- 60 degrees
+   vertical_fov = 0.60 -- 60 degrees
+   maimum_visible_distance = 1
+   c = 0.05
+   y_limit = math.tan(vertical_fov / 2) * z - c
+   x_limit = math.tan(horizontal_fov / 2) * z - c
+   z_limit = maimum_visible_distance - c
+
+   camera_position_in_end_effector = robot.camera_system.transform.position
+   camera_position_in_robot =
+      camera_position_in_end_effector + vector3(0.0980875, 0, robot.lift_system.position + 0.055)
+   camera_orientation_in_robot = robot.camera_system.transform.orientation
+   -- pprint.pprint(camera_orientation_in_robot)
+   -- Visualize safe zone
+   y_limit_for_max_z = math.tan(vertical_fov / 2) * z_limit - c
+   x_limit_for_max_z = math.tan(horizontal_fov / 2) * z_limit - c
+
+   staring_point =
+      vector3(0, 0, c / math.tan(vertical_fov / 2)):rotate(camera_orientation_in_robot) +
+      vector3(camera_position_in_robot)
+   api.debug_arrow(
+      'green',
+      vector3(staring_point),
+      vector3(x_limit_for_max_z, y_limit_for_max_z, z_limit):rotate(camera_orientation_in_robot) +
+         vector3(camera_position_in_robot)
+   )
+   api.debug_arrow(
+      'green',
+      vector3(staring_point),
+      vector3(-1 * x_limit_for_max_z, y_limit_for_max_z, z_limit):rotate(camera_orientation_in_robot) +
+         vector3(camera_position_in_robot)
+   )
+
+   api.debug_arrow(
+      'green',
+      vector3(staring_point),
+      vector3(x_limit_for_max_z, -1 * y_limit_for_max_z, z_limit):rotate(camera_orientation_in_robot) +
+         vector3(camera_position_in_robot)
+   )
+
+   api.debug_arrow(
+      'green',
+      vector3(staring_point),
+      vector3(-1 * x_limit_for_max_z, -1 * y_limit_for_max_z, z_limit):rotate(camera_orientation_in_robot) +
+         vector3(camera_position_in_robot)
+   )
+
+   if block.position_robot.z > 0.12 then
+      if z < z_limit and y < y_limit and x < x_limit and x > -1 * x_limit then
+         print('block:', block.id, 'is safe')
+         return true
+      else
+         print('block:', block.id, 'is not safe')
+         return false
+      end
+   else
+      if z < z_limit and y < y_limit and y > -1 * y_limit and x < x_limit and x > -1 * x_limit then
+         print('block:', block.id, 'is safe')
+         return true
+      else
+         print('block:', block.id, 'is not safe')
+         return false
+      end
+   end
+end
 function group_blocks()
    local_list_of_structures = {}
    groups_of_connected_blocks = {}
@@ -36,7 +123,7 @@ function group_blocks()
             print('connected')
             result = true
          else
-            print('far')
+            -- print('far')
             result = false
          end
       end
@@ -111,93 +198,21 @@ function group_blocks()
    -- Filtering uncertain groups
    -- pprint.pprint(groups_of_connected_blocks)
 
-   function check_block_in_safe_zone(block)
-      -- pprint.pprint(block)
-      -- we use block in camera eye provided by blocktrackig (Probably would have to do the conversion here in the future)
-      x = block.position.x
-      y = block.position.y
-      z = block.position.z
-      -- Define camera parameters (probably this is already provided by michael or maybe ask for it)
-      horizontal_fov = 0.60 -- 60 degrees
-      vertical_fov = 0.60 -- 60 degrees
-      maimum_visible_distance = 1
-      c = 0.05
-      y_limit = math.tan(vertical_fov / 2) * z - c
-      x_limit = math.tan(horizontal_fov / 2) * z - c
-      z_limit = maimum_visible_distance - c
-
-      camera_position_in_end_effector = robot.camera_system.transform.position
-      camera_position_in_robot =
-         camera_position_in_end_effector + vector3(0.0980875, 0, robot.lift_system.position + 0.055)
-      camera_orientation_in_robot = robot.camera_system.transform.orientation
-      -- pprint.pprint(camera_orientation_in_robot)
-      -- Visualize safe zone
-      y_limit_for_max_z = math.tan(vertical_fov / 2) * z_limit - c
-      x_limit_for_max_z = math.tan(horizontal_fov / 2) * z_limit - c
-
-      staring_point =
-         vector3(0, 0, c / math.tan(vertical_fov / 2)):rotate(camera_orientation_in_robot) +
-         vector3(camera_position_in_robot)
-      api.debug_arrow(
-         'green',
-         vector3(staring_point),
-         vector3(x_limit_for_max_z, y_limit_for_max_z, z_limit):rotate(camera_orientation_in_robot) +
-            vector3(camera_position_in_robot)
-      )
-      api.debug_arrow(
-         'green',
-         vector3(staring_point),
-         vector3(-1 * x_limit_for_max_z, y_limit_for_max_z, z_limit):rotate(camera_orientation_in_robot) +
-            vector3(camera_position_in_robot)
-      )
-
-      api.debug_arrow(
-         'green',
-         vector3(staring_point),
-         vector3(x_limit_for_max_z, -1 * y_limit_for_max_z, z_limit):rotate(camera_orientation_in_robot) +
-            vector3(camera_position_in_robot)
-      )
-
-      api.debug_arrow(
-         'green',
-         vector3(staring_point),
-         vector3(-1 * x_limit_for_max_z, -1 * y_limit_for_max_z, z_limit):rotate(camera_orientation_in_robot) +
-            vector3(camera_position_in_robot)
-      )
-
-      if block.position_robot.z > 0.12 then
-         if z < z_limit and y < y_limit and x < x_limit and x > -1 * x_limit then
-            print('block:', block.id, 'is safe')
-            return true
-         else
-            print('block:', block.id, 'is not safe')
-            return false
-         end
-      else
-         if z < z_limit and y < y_limit and y > -1 * y_limit and x < x_limit and x > -1 * x_limit then
-            print('block:', block.id, 'is safe')
-            return true
-         else
-            print('block:', block.id, 'is not safe')
-            return false
-         end
-      end
-   end
-   filtered_groups_list = {}
-   for i, group in pairs(groups_of_connected_blocks) do
-      group_clear = true
-      for j, block in pairs(group) do
-         print('processing block', tostring(block.id), 'in group:', tostring(i))
-         if check_block_in_safe_zone(block) == false then
-            group_clear = false
-            break
-         end
-      end
-      if group_clear == true then
-         table.insert(filtered_groups_list, group)
-      end
-   end
-
+   -- filtered_groups_list = {}
+   -- for i, group in pairs(groups_of_connected_blocks) do
+   --    group_clear = true
+   --    for j, block in pairs(group) do
+   --       print('processing block', tostring(block.id), 'in group:', tostring(i))
+   --       if check_block_in_safe_zone(block) == false then
+   --          group_clear = false
+   --          break
+   --       end
+   --    end
+   --    if group_clear == true then
+   --       table.insert(filtered_groups_list, group)
+   --    end
+   -- end
+   filtered_groups_list = groups_of_connected_blocks
    -- builderbot_api.structure_list = groups_of_connected_blocks
 
    -- debug line from arrows ----------------------------
@@ -429,20 +444,6 @@ local create_process_rules_node = function(rule_type, final_target)
       end
 
       ------- generate rotated rules ---------------------
-      function deepcopy(orig)
-         local orig_type = type(orig)
-         local copy
-         if orig_type == 'table' then
-            copy = {}
-            for orig_key, orig_value in next, orig, nil do
-               copy[deepcopy(orig_key)] = deepcopy(orig_value)
-            end
-            setmetatable(copy, deepcopy(getmetatable(orig)))
-         else -- number, string, boolean, etc
-            copy = orig
-         end
-         return copy
-      end
 
       rotated_rules_list = {}
       for i, rule in pairs(rules.list) do
@@ -497,23 +498,67 @@ local create_process_rules_node = function(rule_type, final_target)
 
       ----------------------------------------------------
       ------------------ matching rules ------------------
+
+      function one_block_safe(indexed_structure)
+         
+         result = false
+         structure = {}
+         for bi, indexed_block in pairs(indexed_structure)do 
+            for b, block in pairs(api.blocks) do 
+               if tonumber(get_reference_id_from_index(indexed_block.index, indexed_structure)) == tonumber(block.id) then
+                  table.insert(structure, block)
+               end
+            end
+         end
+         
+
+         for bi, block in pairs(structure) do
+            if check_block_in_safe_zone(block) == true then
+               result = true
+               break
+            end
+         end
+         return result
+      end
+
       for i, rule in pairs(rules.list) do
          if rule.rule_type == rule_type then
             match_result = false
             for j, visible_structure in pairs(structure_list) do
-               res = match_structures(visible_structure, rule.structure)
-               if res == true then
-                  match_result = true
-                  possible_target = {}
-                  possible_target.reference_id =
-                     get_reference_id_from_index(rule.target.reference_index, visible_structure)
-                  possible_target.offset = rule.target.offset_from_reference
-                  possible_target.type = rule.target.type
-                  table.insert(targets_list, possible_target)
+               -- pprint.pprint(visible_structure)
+               if one_block_safe(visible_structure) == true then 
+                  res = match_structures(visible_structure, rule.structure)
+                  if res == true then
+                     match_result = true
+                     possible_target = {}
+                     possible_target.reference_id =
+                        get_reference_id_from_index(rule.target.reference_index, visible_structure)
+                     possible_target.offset = rule.target.offset_from_reference
+                     possible_target.type = rule.target.type
+                     table.insert(targets_list, possible_target)
+                  end
                end
             end
          end
       end
+
+      -- for i, rule in pairs(rules.list) do
+      --    if rule.rule_type == rule_type then
+      --       match_result = false
+      --       for j, visible_structure in pairs(structure_list) do
+      --          res = match_structures(visible_structure, rule.structure)
+      --          if res == true then
+      --             match_result = true
+      --             possible_target = {}
+      --             possible_target.reference_id =
+      --                get_reference_id_from_index(rule.target.reference_index, visible_structure)
+      --             possible_target.offset = rule.target.offset_from_reference
+      --             possible_target.type = rule.target.type
+      --             table.insert(targets_list, possible_target)
+      --          end
+      --       end
+      --    end
+      -- end
       --------------------------------------------------------------
       --------------------- Target selection methods ---------------
       if rules.selection_method == 'nearest_win' then
