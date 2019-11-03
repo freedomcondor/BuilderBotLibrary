@@ -12,7 +12,8 @@ if app == nil then
 end
 local bt = require('luabt')
 
-DebugMSG.enable()
+-- DebugMSG.enable()
+DebugMSG.disable()
 
 -- pyramid rules ------------------------------------
 -----------------------------------------------------
@@ -95,58 +96,16 @@ local function create_place_rule_node(target)
             end
          end,
          -- approach it until 25cm
-         function()
-            print('before Z')
-            return false, true
-         end,
-         app.create_Z_shape_approach_block_node(target, 0.25),
-         app.create_timer_node {time = 0.4},
-         function()
-            print('after Z')
-            return false, true
-         end,
-         -- find nearest and then highest block not blue
-         function()
-            local flag = false
-            local x_distance = 999999
-            local z_distance = -999999
-
-            target.reference_id = nil
-            target.offset = nil
-            DebugMSG('api.blocks')
-            DebugMSG(api.blocks)
-            for i, block in pairs(api.blocks) do
-               if block.tags[1].led ~= 4 then -- 4 means blue
-                  DebugMSG('found a non-blue block 2')
-                  if block.position_robot.x + 0.02 < x_distance then
-                     x_distance = block.position_robot.x
-                     z_distance = block.position_robot.z
-                     target.reference_id = i
-                     flag = true
-                  elseif block.position_robot.x < x_distance + 0.02 and block.position_robot.z > z_distance then
-                     z_distance = block.position_robot.z
-                     target.reference_id = i
-                     flag = true
-                  end
-               end
-            end
-            if flag == true then
-               print('I have true')
-               return false, true
-            else
-               print('I have false')
-               return false, false
-            end
-         end,
-         --[[
          {
-            type = "selector",
+            type = 'selector',
             children = {
                app.create_curved_approach_block_node(target, 0.25),
-               function() print("rule approach finidh") return false, true end,
-            },
+               function()
+                  print('rule approach finidh')
+                  return false, true
+               end
+            }
          },
-         --]]
          -- check what's in that column there
          {
             type = 'selector*',
@@ -181,7 +140,6 @@ local function create_place_rule_node(target)
                         end
                         local block = api.blocks[target.reference_id]
 
-                        print('block.position_robot.z = ', block.position_robot.z)
                         if block.position_robot.z < 0.055 * (block.tags[1].led - 1) then
                            DebugMSG('test1')
                            if block.tags[1].led == 1 then
@@ -232,7 +190,6 @@ local function create_place_rule_node(target)
                                     break
                                  end
                               end
-                              print("what's on top", flag)
                               return false, flag
                            end,
                            -- otherwise, move up
@@ -313,38 +270,18 @@ function init()
       children = {
          -- pickup
          -- search block
-         --app.create_search_block_node(create_pickup_rule_node(BTDATA.target)),
+         app.create_search_block_node(app.create_process_rules_node('pickup', BTDATA.target)),
          -- approach_block
-         --app.create_curved_approach_block_node(BTDATA.target, 0.18),
+         app.create_curved_approach_block_node(BTDATA.target, 0.18),
          -- pickup block
-
-         app.create_approach_block_node(
-            app.create_search_block_node(app.create_process_rules_node('pickup', BTDATA.target)),
-            BTDATA.target,
-            0.18
-         ),
-         app.create_pickup_block_node(BTDATA.target, 0.18),
-         -- turn 180
-         app.create_timer_node(
-            {
-               time = 180 / 5,
-               func = function()
-                  api.move_with_bearing(0, 5)
-               end
-            }
-         ),
+         app.create_pickup_block_node(BTDATA.target, 0.03),
          -- place
          -- search block
-         --app.create_search_block_node(create_place_rule_node(BTDATA.target)),
+         app.create_search_block_node(app.create_process_rules_node('place', BTDATA.target)),
          -- approach_block
-         --app.create_curved_approach_block_node(BTDATA.target, 0.18),
-         app.create_approach_block_node(
-            app.create_search_block_node(app.create_process_rules_node('place', BTDATA.target)),
-            BTDATA.target,
-            0.18
-         ),
+         app.create_curved_approach_block_node(BTDATA.target, 0.18),
          -- drop
-         app.create_place_block_node(BTDATA.target, 0.18),
+         app.create_place_block_node(BTDATA.target, 0.03),
          -- backup
          -- backup 8 cm
          app.create_timer_node(
@@ -352,15 +289,6 @@ function init()
                time = 0.08 / 0.005,
                func = function()
                   api.move(-0.005, -0.005)
-               end
-            }
-         ),
-         -- turn 180
-         app.create_timer_node(
-            {
-               time = 180 / 5,
-               func = function()
-                  api.move_with_bearing(0, 5)
                end
             }
          )
@@ -374,11 +302,37 @@ function init()
 end
 
 local STATE = 'prepare'
+function visualize_target()
+   function draw_block_axes(block_position, block_orientation, color)
+      local z = vector3(0, 0, 1)
+      api.debug_arrow(color, block_position, block_position + 0.1 * vector3(z):rotate(block_orientation))
+   end
+   if BTDATA.target ~= nil then
+      target_block = nil
+      for i, block in pairs(api.blocks) do
+         if block.id == BTDATA.target.reference_id then
+            print('Visualizing target')
+
+            target_block = block
+            offsetted_block_in_reference_block_pos = 0.05 * BTDATA.target.offset
+            offsetted_block_in_robot_pos =
+               offsetted_block_in_reference_block_pos:rotate(target_block.orientation_robot) +
+               target_block.position_robot
+            offsetted_block_in_robot_ori = target_block.orientation_robot
+            draw_block_axes(offsetted_block_in_robot_pos, offsetted_block_in_robot_ori, 'blue')
+            draw_block_axes(target_block.position_robot, target_block.orientation_robot, 'red')
+            break
+         end
+      end
+   end
+end
 
 function step()
    DebugMSG('-------- step begins ---------')
+   api.process_time()
    api.process()
    behaviour()
+   -- visualize_target()
 end
 
 function reset()
