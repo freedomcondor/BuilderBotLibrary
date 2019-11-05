@@ -319,7 +319,7 @@ function init()
          -- pickup block
 
          app.create_approach_block_node(
-            app.create_search_block_node(app.create_process_rules_node('pickup', BTDATA.target)),
+            app.create_search_block_node(app.create_process_rules_node('pickup', BTDATA.target), BTDATA.target),
             BTDATA.target,
             0.18
          ),
@@ -339,7 +339,7 @@ function init()
          -- approach_block
          --app.create_curved_approach_block_node(BTDATA.target, 0.18),
          app.create_approach_block_node(
-            app.create_search_block_node(app.create_process_rules_node('place', BTDATA.target)),
+            app.create_search_block_node(app.create_process_rules_node('place', BTDATA.target), BTDATA.target),
             BTDATA.target,
             0.18
          ),

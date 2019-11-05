@@ -3,8 +3,6 @@ if api == nil then
 end
 pprint = require('pprint')
 
-print('here is match_rules')
-
 function deepcopy(orig)
    local orig_type = type(orig)
    local copy
@@ -21,7 +19,6 @@ function deepcopy(orig)
 end
 
 function check_block_in_safe_zone(block)
-   -- pprint.pprint(block)
    -- we use block in camera eye provided by blocktrackig (Probably would have to do the conversion here in the future)
    x = block.position.x
    y = block.position.y
@@ -39,7 +36,6 @@ function check_block_in_safe_zone(block)
    camera_position_in_robot =
       camera_position_in_end_effector + vector3(0.0980875, 0, robot.lift_system.position + 0.055)
    camera_orientation_in_robot = robot.camera_system.transform.orientation
-   -- pprint.pprint(camera_orientation_in_robot)
    -- Visualize safe zone
    y_limit_for_max_z = math.tan(vertical_fov / 2) * z_limit - c
    x_limit_for_max_z = math.tan(horizontal_fov / 2) * z_limit - c
@@ -76,18 +72,18 @@ function check_block_in_safe_zone(block)
 
    if block.position_robot.z > 0.12 then
       if z < z_limit and y < y_limit and x < x_limit and x > -1 * x_limit then
-         print('block:', block.id, 'is safe')
+         -- print('block:', block.id, 'is safe')
          return true
       else
-         print('block:', block.id, 'is not safe')
+         -- print('block:', block.id, 'is not safe')
          return false
       end
    else
       if z < z_limit and y < y_limit and y > -1 * y_limit and x < x_limit and x > -1 * x_limit then
-         print('block:', block.id, 'is safe')
+         -- print('block:', block.id, 'is safe')
          return true
       else
-         print('block:', block.id, 'is not safe')
+         -- print('block:', block.id, 'is not safe')
          return false
       end
    end
@@ -120,10 +116,8 @@ function group_blocks()
          result = false
       else
          if position_diff < distance_tolerance then
-            print('connected')
             result = true
          else
-            -- print('far')
             result = false
          end
       end
@@ -248,7 +242,6 @@ function draw_block_axes(block_position, block_orientation, color)
 end
 
 local create_process_rules_node = function(rule_type, final_target)
-   print('processing rules')
    final_target.reference_id = nil
    final_target.offset = vector3(0, 0, 0)
 
@@ -397,12 +390,10 @@ local create_process_rules_node = function(rule_type, final_target)
             block.index.y = block.index.y - lowest_y
             block.index.z = block.index.z - lowest_z
          end
-         -- pprint.pprint(bj_in_r2_pos)
          table.insert(local_list_of_structures, bj_in_r2_pos)
       end
       structure_list = local_list_of_structures
 
-      -- pprint.pprint(structure_list)
       ---------------------------------------------------------------------------------------
       --Match current structures against rules
       final_target.reference_id = nil
@@ -519,14 +510,13 @@ local create_process_rules_node = function(rule_type, final_target)
          end
          return result
       end
-      ----------------------------------------------------
-      ------------------ matching rules ------------------
+      ----------------------------------------------------------------------------
+      ------------------ matching rules and getting safe targets ------------------
 
       for i, rule in pairs(rules.list) do
          if rule.rule_type == rule_type then
             match_result = false
             for j, visible_structure in pairs(structure_list) do
-               -- pprint.pprint(visible_structure)
                if one_block_safe(visible_structure) == true then
                   res = match_structures(visible_structure, rule.structure)
                   if res == true then
@@ -544,6 +534,31 @@ local create_process_rules_node = function(rule_type, final_target)
          end
       end
 
+      -----------------------------------------------------------------------------
+      ------------------- match rules and getting unsafe targets ------------------
+      -- we get unsafe targets only if we could not find safe targets
+      if #targets_list == 0 then
+         for i, rule in pairs(rules.list) do
+            if rule.rule_type == rule_type then
+               match_result = false
+               for j, visible_structure in pairs(structure_list) do
+                  if one_block_safe(visible_structure) == false then
+                     res = match_structures(visible_structure, rule.structure)
+                     if res == true then
+                        match_result = true
+                        possible_target = {}
+                        possible_target.reference_id =
+                           get_reference_id_from_index(rule.target.reference_index, visible_structure)
+                        possible_target.offset = rule.target.offset_from_reference
+                        possible_target.type = rule.target.type
+                        possible_target.safe = false
+                        table.insert(targets_list, possible_target)
+                     end
+                  end
+               end
+            end
+         end
+      end
       -- for i, rule in pairs(rules.list) do
       --    if rule.rule_type == rule_type then
       --       match_result = false
@@ -575,6 +590,7 @@ local create_process_rules_node = function(rule_type, final_target)
                      final_target.reference_id = tonumber(possible_target.reference_id)
                      final_target.offset = possible_target.offset
                      final_target.type = possible_target.type
+                     final_target.safe = possible_target.safe
                   end
                end
             end
@@ -591,6 +607,7 @@ local create_process_rules_node = function(rule_type, final_target)
                      final_target.reference_id = tonumber(possible_target.reference_id)
                      final_target.offset = possible_target.offset
                      final_target.type = possible_target.type
+                     final_target.safe = possible_target.safe
                   end
                end
             end
@@ -598,7 +615,6 @@ local create_process_rules_node = function(rule_type, final_target)
       else
          print('no selection method')
       end
-      -- pprint.pprint(targets_list)
       ------- Visualizing the results ----------
       target_block = nil
       for i, block in pairs(api.blocks) do
@@ -616,14 +632,6 @@ local create_process_rules_node = function(rule_type, final_target)
       end
 
       pprint.pprint(final_target)
-      -- if #targets_list == 0 then
-      --    -- pprint.pprint(structure_list)
-      -- else
-      --    -- pprint.pprint(structure_list)
-      --    -- pprint.pprint(rules)
-      --    -- pprint.pprint(targets_list)
-      -- end
-      print('finished processing rules')
 
       if #targets_list > 0 then
          return false, true
