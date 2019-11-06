@@ -8,7 +8,7 @@
     <system threads="0" />
     <experiment length="0" ticks_per_second="5" random_seed="12345" />
   </framework>
-  
+
   <!-- *************** -->
   <!-- * Controllers * -->
   <!-- *************** -->
@@ -22,27 +22,23 @@
         <builderbot_wifi implementation="default" />
 
         <!-- for debug -->
-         <debug implementation="default">
-            <interface id="logerr" output="stderr" />
-            <interface id="log" output="stdout" />
-            <interface id="draw" />
-         </debug>
+        <debug implementation="default">
+          <interface id="logerr" output="stderr" />
+          <interface id="log" output="stdout" />
+          <interface id="draw" />
+        </debug>
 
       </actuators>
       <sensors>
-        <builderbot_camera_system implementation="default"
-                                  show_frustum="true" 
-                                  show_tag_rays="true"
-                                  show_led_rays="true" />
-        <builderbot_rangefinders implementation="default"
-                                 show_rays="true" />
+        <builderbot_camera_system implementation="default" show_frustum="true" show_tag_rays="true" show_led_rays="true" />
+        <builderbot_rangefinders implementation="default" show_rays="true" />
         <builderbot_system implementation="default" />
         <builderbot_differential_drive implementation="default" />
         <builderbot_electromagnet_system implementation="default" />
         <builderbot_lift_system implementation="default" />
         <builderbot_nfc implementation="default" show_rays="true" />
       </sensors>
-	  <params script="testing/08_process_rules/08_process_rules.lua" />
+      <params script="testing/08_process_rules/08_process_rules.lua" />
     </lua_controller>
 
     <lua_controller id="block">
@@ -76,7 +72,6 @@
   <!-- * Physics engines * -->
   <!-- ******************* -->
   <physics_engines>
-    <pointmass3d id="pm3d" />
     <dynamics3d id="dyn3d" iterations="25" default_friction="1">
       <gravity g="9.8" />
       <floor height="0.01" friction="1"/>
@@ -114,6 +109,4 @@
       </camera>
     </qt-opengl>
   </visualization>
-
-
 </argos-configuration>
