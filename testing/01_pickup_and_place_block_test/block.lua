@@ -1,6 +1,6 @@
 function init()
    if robot.id == "block1" then
-      robot.directional_leds.set_all_colors("green")
+      --robot.directional_leds.set_all_colors("green")
    elseif robot.id == "block2" then
       robot.directional_leds.set_all_colors("green")
    elseif robot.id == "block3" then

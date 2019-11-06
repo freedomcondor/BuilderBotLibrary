@@ -12,12 +12,20 @@ DebugMSG.enable()
 
 -- ARGoS Loop ------------------------
 function init()
-   local BTDATA = {target = {},}
+   local BTDATA = {target = {reference_id = 1, offset = vector3(0,0,0), color = "green"},}
    -- bt init ---
    local bt_node = {
       type = 'sequence*',
       children = {
-         app.create_pickup_block_node(),
+         app.create_pickup_block_node(BTDATA.target, 0.15),
+
+         function() 
+            BTDATA.target.offset = vector3(0,0,1) 
+            BTDATA.target.color = "pink"
+            return false, true 
+         end,
+
+         app.create_place_block_node(BTDATA.target, 0.15 + api.consts.end_effector_position_offset.x),
          -- stop
          function() api.move(0,0) return true end,
       },
