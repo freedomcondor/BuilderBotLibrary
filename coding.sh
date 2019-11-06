@@ -8,11 +8,15 @@ vim coding.sh -c "
    tabnew BuilderBotAPI.lua
    vsp ApplicationNode.lua
 
-   tabnew testing/01_pickup_block_test/01_pickup_block_test.lua
-   vsp testing/01_pickup_block_test/01_pickup_block_test.argos
+   tabnew testing/01_pickup_and_place_block_test/01_15_top.lua
+   vsp testing/01_pickup_and_place_block_test/01_15_top.argos
+   
+   tabnew testing/01_pickup_and_place_block_test/02_20_front.lua
+   vsp testing/01_pickup_and_place_block_test/02_20_front.argos
 
    tabnew AppNode/reach_block.lua
    tabnew AppNode/pickup_block.lua
+   tabnew AppNode/place_block.lua
 "
 
 <<COMMENT
@@ -43,7 +47,6 @@ vim coding.sh -c "
    tabnew Tools/Hungarian.lua
    tabnew Tools/ShowTable.lua
 
-   tabnew AppNode/place_block.lua
    tabnew AppNode/timer.lua
 
    tabnew AppNode/search_block.lua

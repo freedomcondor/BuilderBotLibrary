@@ -43,7 +43,6 @@ builderbot_api.parameters.proximity_touch_tolerance =
 builderbot_api.parameters.proximity_detect_tolerance = 
    tonumber(robot.params.proximity_detect_tolerance or 0.03)
 
-
 -- system --------------------------------------------
 ------------------------------------------------------
 builderbot_api.lastTime = 0
@@ -79,6 +78,19 @@ builderbot_api.move_with_vector3 = function(v3) -- x front, y left
    builderbot_api.move_with_bearing(v, diff)
 end
 
+-- nfc  ----------------------------------------------
+------------------------------------------------------
+builderbot_api.set_color = function(color)
+   if color == "pink" then
+      robot.nfc.write('1')
+   elseif color == "orange" then
+      robot.nfc.write('2')
+   elseif color == "green" then
+      robot.nfc.write('3')
+   elseif color == "blue" then
+      robot.nfc.write('4')
+   end
+end
 
 -- lift ----------------------------------------------
 ------------------------------------------------------
