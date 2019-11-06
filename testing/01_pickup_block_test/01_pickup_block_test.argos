@@ -76,7 +76,6 @@
   <!-- * Physics engines * -->
   <!-- ******************* -->
   <physics_engines>
-    <pointmass3d id="pm3d" />
     <dynamics3d id="dyn3d" iterations="25" default_friction="1">
       <gravity g="9.8" />
       <floor height="0.01" friction="1"/>
@@ -114,6 +113,4 @@
       </camera>
     </qt-opengl>
   </visualization>
-
-
 </argos-configuration>
