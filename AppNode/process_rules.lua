@@ -241,106 +241,17 @@ function draw_block_axes(block_position, block_orientation, color)
    api.debug_arrow(color, block_position, block_position + 0.1 * vector3(z):rotate(block_orientation))
 end
 
-local create_process_rules_node = function(rule_type, final_target)
+local create_process_rules_node = function(rules, rule_type, final_target)
    final_target.reference_id = nil
    final_target.offset = vector3(0, 0, 0)
 
    return function()
-      -- returns a function/btnode that
-      --    chooses a block from api.blocks
-      -- stores in target, if didn't find one, target.reference_id = nil
-      --    target = {
-      --       reference_id = index of a block in api.blocks
-      --       offset = vector3(0,0,0), for the block itself
-      --                vector3(1,0,0), for front of this block
-      --    }
-      -- note that target already points to an existing table,
-      --    never do target = {}, then you lost the existing table
 
       grouped_blocks = group_blocks()
 
       if #grouped_blocks == 0 then
          return false, false
       end
-
-      --------------------------- Rules Description -------------------
-
-      rules = {}
-      rules.list = {
-         {
-            rule_type = 'place',
-            structure = {
-               {
-                  index = vector3(0, 0, 0),
-                  type = 3
-               }
-            },
-            target = {
-               reference_index = vector3(0, 0, 0),
-               offset_from_reference = vector3(0, 0, 1),
-               type = 3
-            },
-            generate_orientations = false
-         },
-         {
-            rule_type = 'place',
-            structure = {
-               {
-                  index = vector3(0, 0, 0),
-                  type = 3
-               },
-               {
-                  index = vector3(0, 0, 1),
-                  type = 3
-               }
-            },
-            target = {
-               reference_index = vector3(0, 0, 1),
-               offset_from_reference = vector3(0, 0, 1),
-               type = 3
-            },
-            generate_orientations = false
-         },
-         {
-            rule_type = 'place',
-            structure = {
-               {
-                  index = vector3(0, 0, 0),
-                  type = 3
-               },
-               {
-                  index = vector3(0, 0, 1),
-                  type = 3
-               },
-               {
-                  index = vector3(0, 0, 2),
-                  type = 3
-               }
-            },
-            target = {
-               reference_index = vector3(0, 0, 1),
-               offset_from_reference = vector3(1, 0, -1),
-               type = 3
-            },
-            generate_orientations = false
-         },
-         {
-            rule_type = 'pickup',
-            structure = {
-               {
-                  index = vector3(0, 0, 0),
-                  type = 4
-               }
-            },
-            target = {
-               reference_index = vector3(0, 0, 0),
-               offset_from_reference = vector3(0, 0, 0),
-               type = 1
-            },
-            generate_orientations = false
-         }
-      }
-      rules.selection_method = 'nearest_win'
 
       ------------------------ rotating and indexing the structure ---------------------
       -- Align structure with virtual robot
