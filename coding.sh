@@ -5,26 +5,21 @@ vim coding.sh -c "
 
    tabnew README.md
 
-   tabnew testing/08_RandomWalkTest.lua
-   vsp testing/08_RandomWalkTest.argos
-
    tabnew BuilderBotAPI.lua
    vsp ApplicationNode.lua
 
-   tabnew Tools/BlockTracking.lua
+   tabnew testing/01_pickup_block_test/01_pickup_block_test.lua
+   vsp testing/01_pickup_block_test/01_pickup_block_test.argos
 
-   tabnew AppNode/search_block.lua
-   tabnew AppNode/approach_block.lua
-   tabnew AppNode/Z_shape_approach_block.lua
-   tabnew AppNode/curved_approach_block.lua
-   tabnew AppNode/move_to_location.lua
-   tabnew AppNode/aim_block.lua
-   tabnew AppNode/obstacle_avoidance.lua
+   tabnew AppNode/reach_block.lua
+   tabnew AppNode/pickup_block.lua
 "
 
 <<COMMENT
    tabnew block.lua
    tabnew Tools/DebugMessage.lua
+
+   tabnew Tools/BlockTracking.lua
 
    tabnew testing/01_FirstExample.lua
    vsp testing/01_FirstExample.argos
@@ -48,8 +43,15 @@ vim coding.sh -c "
    tabnew Tools/Hungarian.lua
    tabnew Tools/ShowTable.lua
 
-   tabnew AppNode/reach_block.lua
-   tabnew AppNode/pickup_block.lua
    tabnew AppNode/place_block.lua
    tabnew AppNode/timer.lua
+
+   tabnew AppNode/search_block.lua
+   tabnew AppNode/approach_block.lua
+   tabnew AppNode/Z_shape_approach_block.lua
+   tabnew AppNode/curved_approach_block.lua
+   tabnew AppNode/move_to_location.lua
+   tabnew AppNode/aim_block.lua
+   tabnew AppNode/obstacle_avoidance.lua
+
 COMMENT
