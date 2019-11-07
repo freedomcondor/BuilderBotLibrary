@@ -14,6 +14,12 @@ local builderbot_api = {}
 ------------------------------------------------------
 builderbot_api.consts = {}
 builderbot_api.consts.end_effector_position_offset = vector3(0.09800875, 0, 0.055)
+builderbot_api.consts.color_table = {"pink", "orange", "green", "blue"}
+for i, v in ipairs(builderbot_api.consts.color_table) do
+	builderbot_api.consts.color_table[v] = i
+end
+builderbot_api.consts.color_table[0] = "black";
+builderbot_api.consts.color_table["black"] = 0;
 
 -- parameters ----------------------------------------
 ------------------------------------------------------
@@ -81,14 +87,13 @@ end
 -- nfc  ----------------------------------------------
 ------------------------------------------------------
 builderbot_api.set_color = function(color)
-   if color == "pink" then
-      robot.nfc.write('1')
-   elseif color == "orange" then
-      robot.nfc.write('2')
-   elseif color == "green" then
-      robot.nfc.write('3')
-   elseif color == "blue" then
-      robot.nfc.write('4')
+   if color == "pink" or
+      color == "orange" or
+      color == "green" or
+      color == "blue" then
+      robot.nfc.write(tostring(builderbot_api.consts.color_table[color]))
+   else
+      robot.nfc.write(tostring(builderbot_api.consts.color_table["black"]))
    end
 end
 
@@ -165,9 +170,10 @@ builderbot_api.subprocess_leds = function()
       tag.led = 0
       for j, led_loc in ipairs(led_loc_for_tag) do
          local led_loc_for_camera = vector3(led_loc):rotate(tag.orientation) + tag.position
-         local color = robot.camera_system.detect_led(led_loc_for_camera)
-         if color ~= tag.led and color ~= 0 then tag.led = color end
+         local color_number = robot.camera_system.detect_led(led_loc_for_camera)
+         if color_number ~= tag.led and color_number ~= 0 then tag.led = color_number end
       end
+      tag.color = builderbot_api.consts.color_table[color]
    end
 end
 
