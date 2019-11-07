@@ -38,7 +38,7 @@
         <builderbot_lift_system implementation="default" />
         <builderbot_nfc implementation="default" show_rays="true" />
       </sensors>
-      <params script="testing/08_RandomWalkTest.lua" default_speed="0.005" aim_block_angle_tolerance="2" />
+      <params script="testing/history/08_RandomWalkTest.lua" default_speed="0.005" aim_block_angle_tolerance="2" />
     </lua_controller>
 
     <lua_controller id="block">
