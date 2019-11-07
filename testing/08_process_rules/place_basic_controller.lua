@@ -11,7 +11,7 @@ if app == nil then
    app = require('ApplicationNode')
 end
 if rules == nil then
-   rules = require('testing/08_process_rules/rules')
+   rules = require(robot.params.rules) 
 end
 local bt = require('luabt')
 
@@ -27,34 +27,35 @@ function init()
          {
             type = 'sequence*',
             children = {
-               -- prepare, lift to 0.07
+               -- prepare, lift to 0.13
                {
                   type = 'selector',
                   children = {
-                     -- if lift reach position(0.07), return true, stop selector
+                     -- if lift reach position(0.13), return true, stop selector
                      function()
                         if
-                           robot.lift_system.position > 0.07 - api.parameters.lift_system_position_tolerance and
-                              robot.lift_system.position < 0.07 + api.parameters.lift_system_position_tolerance
+                           robot.lift_system.position > 0.13 - api.parameters.lift_system_position_tolerance and
+                              robot.lift_system.position < 0.13 + api.parameters.lift_system_position_tolerance
                          then
-                           DebugMSG('search_in position')
+                           DebugMSG('lift_in position')
                            return false, true
                         else
-                           DebugMSG('search_not in position')
+                           DebugMSG('lift_not in position')
                            return false, false
                         end
                      end,
-                     -- set position(0.07)
+                     -- set position(0.13)
                      function()
-                        robot.lift_system.set_position(0.07)
+                        robot.lift_system.set_position(0.13)
                         return true -- always running
                      end
                   }
                }
             }
          },
-         app.create_process_rules_node(rules, 'pickup', BTDATA.target),
+         app.create_process_rules_node(rules, 'place', BTDATA.target),
          function()
+            -- pprint.pprint(api.consts.color_table)
             DebugMSG('target: ', BTDATA.target)
             return false, true
          end

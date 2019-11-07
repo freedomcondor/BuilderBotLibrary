@@ -38,7 +38,7 @@
         <builderbot_lift_system implementation="default" />
         <builderbot_nfc implementation="default" show_rays="true" />
       </sensors>
-      <params script="testing/08_process_rules/08_process_rules.lua" />
+      <params script="testing/08_process_rules/pickup_basic_controller.lua" rules='testing/08_process_rules/01_rules'/>
     </lua_controller>
 
     <lua_controller id="block">

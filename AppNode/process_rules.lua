@@ -304,7 +304,7 @@ local create_process_rules_node = function(rules, rule_type, final_target)
          table.insert(local_list_of_structures, bj_in_r2_pos)
       end
       structure_list = local_list_of_structures
-
+      
       ---------------------------------------------------------------------------------------
       --Match current structures against rules
       final_target.reference_id = nil
@@ -423,7 +423,7 @@ local create_process_rules_node = function(rules, rule_type, final_target)
       end
       ----------------------------------------------------------------------------
       ------------------ matching rules and getting safe targets ------------------
-
+      -- pprint.pprint(structure_list)
       for i, rule in pairs(rules.list) do
          if rule.rule_type == rule_type then
             match_result = false
