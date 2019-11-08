@@ -24,13 +24,7 @@ function init()
          -- if obstacle and avoid
          app.create_obstacle_avoidance_node(),
          -- obstacle clear, random walk
-         function()
-            print('I am random woal')
-            local random_angle = math.random(-api.parameters.search_random_range, api.parameters.search_random_range)
-            --api.move(-api.parameters.default_speed, api.parameters.default_speed)
-            api.move_with_bearing(api.parameters.default_speed, random_angle)
-            return true
-         end
+         app.create_random_walk_node()
       }
    }
    behaviour = bt.create(bt_node)
