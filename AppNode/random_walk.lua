@@ -6,7 +6,6 @@ DebugMSG.register('random_walk')
 if api == nil then
    api = require('BuilderBotAPI')
 end
-local create_timer_node = require('timer')
 
 -- if there are obstacles avoid it and return running
 -- if there no obstacles, return true
