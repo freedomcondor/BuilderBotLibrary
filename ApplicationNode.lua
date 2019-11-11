@@ -16,7 +16,7 @@ app_nodes.create_aim_block_node = require('aim_block')
 app_nodes.create_timer_node = require('timer')
 app_nodes.create_process_rules_node = require("process_rules")
 app_nodes.create_obstacle_avoidance_node = require('obstacle_avoidance')
-
+app_nodes.create_random_walk_node = require("random_walk")
 -- this is only used by Z_shape_approach, not provided for user for now
 --app_nodes.create_move_to_location_node = require("move_to_location")
 
