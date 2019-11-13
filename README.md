@@ -229,7 +229,50 @@ rules.list = {
 rules.selection_method = 'nearest_win'
 return rules
 ```
-
-#### Features
+#### Visualization
+To demonstrate the results of process_rules, we use two arrows. The red arrow points from the target block up. The blue arrow points from target+offset up.
+In the case of pick up, there is only one arrow. 
+Four green arrows mark the safe zone. All blocks that are found inside this zone are considered safe.  
 #### Reference frames robot, block
+- ##### Robots reference frame
+	- X axis pointing forward
+    - Y axis pointing to the left
+    - Z axis pointing up
+- ##### Camera reference frame
+	- X axis pointing left
+	- Y axis pointing down 
+	- Z axis pointing far from the camera
+- ##### Block reference frame
+	Having the robot in front of the block, looking from the block to the robot
+	- X axis pointing forward
+	- Y axis pointing left
+	- Z axis pointing up
+- ##### Face reference frame
+	So far it is not necessary for this module, might be in the future
+
 #### Examples/tests
+- ##### [basic test](https://github.com/freedomcondor/BuilderBotLibrary/blob/develop/testing/08_process_rules/01_basic_test.argos)
+	This test is the simplest case possible for process_rules. In the environment we have one block only. The robot lifts up the manipulator and calls process_rules.
+- ##### [colomn matching](https://github.com/freedomcondor/BuilderBotLibrary/blob/develop/testing/08_process_rules/02_colomn_matching_test.argos)
+	In this test we have the robot situated in front of a column of 3 blocks of different colors:
+    ```
+    structure = {
+             {
+                index = vector3(0, 0, 0),
+                type = 1
+             },
+             {
+                index = vector3(0, 0, 1),
+                type = 3
+             },
+             {
+                index = vector3(0, 0, 2),
+                type = 4
+             }
+          }
+  	```
+  The camera sees all blocks and tries to match the rules for each block. The rules would match for all three cases. Having the middle block in a safe zone reflects in having the final result as safe (shown in the terminal).
+      The target block in this example is the middle block expressed as `reference_index = vector3(0, 0, 1)` in the `rules.lua` file and the `offset_from_reference = vector3(1, 0, -1))` which translates in the empty position in front of the first block.
+- ##### [nearest target](https://github.com/freedomcondor/BuilderBotLibrary/blob/develop/testing/08_process_rules/03_nearest_target_test.argos)
+	
+    
