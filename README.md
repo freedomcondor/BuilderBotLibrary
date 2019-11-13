@@ -130,23 +130,4 @@ Example of use:
    }
 ```
 
-## Documents
-In ApplicationNode.lua, you can find a list of nodes that are provided, each node is implemented in a seperate file located in the folder AppNode
-
-### search
-xxxx
-
-### approach
-There are two basic approach method is provided, Z shape approach and curved approach.
-
-app.create\_Z\_shape\_approach\_node(target, distance) will create a bt node, which makes the robot first analyzes the location of the target block, and close the camera and perform a rotation-forward-rotation action to a location which is just in front of the target block with a distance which is given as a parameter.
-
-app.create\_curved\_approach\_node(target, distance) will create a bt node, which makes the robot approach the block while keep the block in the range of its camera. The robot will move forward and backward in turns until it gets the location right in front of the block with the distance given as the second parameter.
-
-app.create\_approach\_node(search\_node, target, distance) is a combination of these two approach method. It takes search\_node as a parameter because during Z\_shape approach the robot will lost the target block, it has to search again after Z\_shape\_approach
-
-### pickup and place block
-app.create\_pickup\_block\_node and app.create\_place\_block\_node will create nodes that...
-
-### timer
-xxxx
+Detailed description of each node in APP level can be found in AppNode/README.md

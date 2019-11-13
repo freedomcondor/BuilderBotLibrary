@@ -1,3 +1,4 @@
+## Documents
 ### Process rules
 This node is located in AppNode\_process\_rules.lua
 #### Description
@@ -124,4 +125,85 @@ Four green arrows mark the safe zone. All blocks that are found inside this zone
 - ##### [furthest target](https://github.com/freedomcondor/BuilderBotLibrary/blob/develop/testing/08_process_rules/04_furthest_target_test.argos)
 - ##### [unalligned robot](https://github.com/freedomcondor/BuilderBotLibrary/blob/develop/testing/08_process_rules/05_unalligned_robot_test.argos)
 	
-    
+### search
+xxxx
+
+### approach
+#### Description
+There are two basic approach method is provided, Z shape approach and curved approach.
+
+Z shape approach makes the robot first analyzes the location of the target block, and close the camera and perform a rotation-forward-rotation action to a location which is just in front of the target block with a distance which is given as a parameter.
+
+Curved approach makes the robot approach the block while keep the block in the range of its camera. The robot will move forward and backward in turns until it gets the location right in front of the block with the distance given as the second parameter.
+
+We also provide a combination of this two approach, simply called approach. In approach node, the robot will first analize the location of the block. If it is close enough, robot will perform curved approach, if not, the robot will first perform z shape approach, and then curved approach. But the user has to provide a search node, because after z shape approach, the robot will lost block and search again.
+
+#### Inputs/Outputs
+create\_Z\_shape\_approach\_node and create\_curved\_approach\_node take a target block (a table {reference\_id}) and a distance as paramete. 
+create\_approach\_node takes search\_node, a target block and a distance as parameters.
+
+#### Example
+See examples of pickup and place block.
+
+### pickup and place block
+Pickup node is located in AppNode/create\_pickup\_block\_node.lua
+Place node is located in AppNode/create\_place\_block\_node.lua
+
+#### Description
+Pickup node assumes the robot is right in front of the target block at a certain distance (this distance is provided by user). The robot will perform the following action: 1. The robot charges the electromagnets and moves forward blindly until its manipulator is right on top of the target block. 2. The robot lowers its manipulator until the manipulator touches the block. 3. The robot discharge the electromagnets as "construction mode". 4. The robot raise the manipulator with the block attached.
+
+Place node is very similiar to pickup node. Instead of going for the target block directly, the robot takes the target block as a reference, and goes for a virtual block according to a offset. The electromagnet also discharges as "destruction" mode.
+
+The offset is a vector3. vector3(0,0,1) means the robot needs to put the block on top of the reference block. vector3(1,0,0) means the robot needs to put the block in front of the reference block.
+
+#### Inputs/Outputs
+Both node creation functions takes two parameters, a table containing an offset, and a distance. See the example for details.
+
+#### Example
+```lua
+bt.create{
+	type = "sequence*",
+	children = 
+	{
+		app.create_approach_node({reference_id = 1, offset = vector3(0,0,0),}, 0.18),
+		app.create_pickup_block_node({reference_id = 1, offset = vector3(0,0,0),}, 0.18),
+
+		app.create_approach_node({reference_id = 2, offset = vector3(0,0,1),}, 0.18),
+		app.create_place_block_node({reference_id = 2, offset = vector3(0,0,1),}, 0.18),
+	},
+}
+```
+
+In this case, the robot will first approach block No.1 until the distance is 18cm, and then move forward and pickup block No.1. Then the robot will approach block No.2 until the distance is 18cm, and then move forward an put block No.1 on top of block No.2.
+
+### timer
+This node is located in AppNode/create\_timer\_node.lua
+#### Description
+This node will count a period of time. For each step during this time, a user defined function can be run.
+
+#### Inputs/Outputs
+To create this node, a table is taken as parameter. The table is like
+```lua
+{
+	time = 4, 
+	func = function() print("I am a step") end,
+}
+```
+The unit of time is second. func can be nil. The return value of func doesn't matter
+
+The output of timer is a bt node which will return running when counting, and return true when time is up.
+
+#### Example
+```lua
+bt.create{
+	type = "sequence*",
+	children = {
+		function() print("start") return false true end,
+		app.create_timer_node{time = 5, func = function() print("step") end,},
+		function() print("end") return false true end,
+	},
+}
+```
+In this case, the bt will print "start", and then print "step" each step for 5 seconds and then print "end".
+
+

@@ -8,15 +8,6 @@ vim coding.sh -c "
    tabnew BuilderBotAPI.lua
    vsp ApplicationNode.lua
 
-   tabnew testing/02_approach_test/01_curved_approach.lua
-   vsp testing/02_approach_test/01_1_curved_approach_left.argos
-   vsp testing/02_approach_test/01_2_curved_approach_right.argos
-
-   tabnew testing/02_approach_test/02_Z_shape_approach.lua
-   vsp testing/02_approach_test/02_1_Z_shape_approach_left.argos
-   vsp testing/02_approach_test/02_2_Z_shape_approach_right.argos
-
-   tabnew AppNode/curved_approach_block.lua
 "
 
 <<COMMENT
@@ -49,6 +40,7 @@ vim coding.sh -c "
 
    tabnew AppNode/timer.lua
 
+   tabnew AppNode/curved_approach_block.lua
    tabnew AppNode/reach_block.lua
    tabnew AppNode/pickup_block.lua
    tabnew AppNode/place_block.lua
