@@ -14,7 +14,7 @@ It procesess `api.blocks` into groups of connected blocks, give the blocks unifi
 	This table is passed to process_rules to be modified with the correct target.
     The target block is the reference block that the robot uses to reach target+offset.
     Target is not the final destination of the robot.
-	- ###### target.reference_id:
+	- ###### target.reference\_id:
 		contains the id of the target block. The id is compatible with the ids in `api.blocks`.
 	- ###### target.offset:
 		The offset from the target. target+offset determine the position of the block to be placed or picked up.
@@ -30,7 +30,7 @@ The rules file contains:
 - ##### list of rules 
 	to be matched against in process_rules.
     Each rule of the list contains:
-    - ##### rule_type
+    - ##### rule\_type
         `'pickup'/'place'`
     - ##### structure
         contains a list of blocks that form the structure/substructure. Each block of the list contains:
@@ -46,10 +46,10 @@ The rules file contains:
             The offset from the target block. This offset + reference_index represents the final position of the block to be place or picked up.
         - ###### type
             type of the target to be set before placing the block or after pickup (still not implemented, probably it is better to put this in a separate field ¨actions¨)
-    - ##### generate_orientations
+    - ##### generate\_orientations
         Binary input. When `true`, process_rules generates 3 more orientations of this rule so that the total would be 4 rules representing the same structure description from all for points of view (if it is not clear, perhaps we should include some images from the presentation here). The generated rules are transparent to the upper layer. 
       
-- ##### rules.selection_method
+- ##### rules.selection\_method
 	process rules offers two methods to select the winning rule in case more than one rule matches with the environment.
     Those methods (for the moment) are `'nearest_win'` and `'furthest_win'`.
 
@@ -78,7 +78,7 @@ rules.selection_method = 'nearest_win'
 return rules
 ```
 #### Visualization
-To demonstrate the results of process_rules, we use two arrows. The red arrow points from the target block up. The blue arrow points from target+offset up.
+To demonstrate the results of process\_rules, we use two arrows. The red arrow points from the target block up. The blue arrow points from target+offset up.
 In the case of pick up, there is only one arrow. 
 Four green arrows mark the safe zone. All blocks that are found inside this zone are considered safe.  
 #### Reference frames robot, block
