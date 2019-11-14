@@ -56,7 +56,8 @@ The rules file contains:
 
 ##### Simple Example
 
-```local rules = {}
+```lua
+local rules = {}
 rules.list = {
    {
       rule_type = 'pickup',
@@ -103,7 +104,7 @@ Four green arrows mark the safe zone. All blocks that are found inside this zone
 	This test is the simplest case possible for process_rules. In the environment we have one block only. The robot lifts up the manipulator and calls process_rules.
 - ##### [colomn matching](https://github.com/freedomcondor/BuilderBotLibrary/blob/develop/testing/08_process_rules/02_colomn_matching_test.argos)
 	In this test we have the robot situated in front of a column of 3 blocks of different colors:
-    ```
+    ```lua
     structure = {
              {
                 index = vector3(0, 0, 0),
