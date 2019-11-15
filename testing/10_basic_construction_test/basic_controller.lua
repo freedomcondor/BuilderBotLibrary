@@ -16,7 +16,7 @@ end
 
 local bt = require('luabt')
 
-DebugMSG.enable()
+DebugMSG.enable("search_block")
 
 -- ARGoS Loop ------------------------
 function init()

@@ -67,6 +67,18 @@ local create_pickup_block_node = function(target, _forward_distance)
       function()
          if target.color ~= nil then
             api.set_color(target.color)
+            return false, true
+         end
+      end,
+      -- check success
+      -- wait
+      create_timer_node({time = 2,}),
+      function()
+         if robot.rangefinders["underneath"].proximity ~= 0 and
+            robot.rangefinders["underneath"].proximity < api.parameters.proximity_touch_tolerance then
+            return false, true -- not running, true
+         else
+            return false, false -- not running, false
          end
       end,
    }
