@@ -8,6 +8,10 @@ vim coding.sh -c "
    tabnew BuilderBotAPI.lua
    vsp ApplicationNode.lua
 
+   tabnew AppNode/search_block.lua
+
+   tabnew testing/10_basic_construction_test/basic_controller.lua
+   vsp testing/10_basic_construction_test/01_basic_test.argos
 "
 
 <<COMMENT
@@ -44,7 +48,6 @@ vim coding.sh -c "
    tabnew AppNode/reach_block.lua
    tabnew AppNode/pickup_block.lua
    tabnew AppNode/place_block.lua
-   tabnew AppNode/search_block.lua
    tabnew AppNode/approach_block.lua
    tabnew AppNode/Z_shape_approach_block.lua
    tabnew AppNode/curved_approach_block.lua

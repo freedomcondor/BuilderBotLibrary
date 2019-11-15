@@ -10,6 +10,10 @@ end
 if app == nil then
    app = require('ApplicationNode')
 end
+if rules == nil then
+   rules = require(robot.params.rules) 
+end
+
 local bt = require('luabt')
 
 DebugMSG.enable()
@@ -19,12 +23,25 @@ function init()
    local BTDATA = {target = {}}
    -- bt init ---
    local bt_node = {
-      type = 'sequence',
+      type = 'sequence*',
       children = {
-         -- if obstacle and avoid
-         app.create_obstacle_avoidance_node(),
-         -- obstacle clear, random walk
-         app.create_random_walk_node()
+         -- search
+         app.create_search_block_node(
+            app.create_process_rules_node(rules, 'pickup', BTDATA.target)
+         ),
+         -- approach
+         app.create_curved_approach_block_node(BTDATA.target, 0.18),
+         -- pickup 
+         app.create_pickup_block_node(BTDATA.target, 0.18),
+
+         -- search
+         app.create_search_block_node(
+            app.create_process_rules_node(rules, 'place', BTDATA.target)
+         ),
+         -- approach
+         app.create_curved_approach_block_node(BTDATA.target, 0.18),
+         -- place
+         app.create_place_block_node(BTDATA.target, 0.18),
       }
    }
    behaviour = bt.create(bt_node)
