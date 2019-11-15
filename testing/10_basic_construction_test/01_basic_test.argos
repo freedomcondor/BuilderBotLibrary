@@ -57,16 +57,16 @@
   <!-- * Arena configuration * -->
   <!-- *********************** -->
   <arena size="1, 1, 2" center="0, 0, 0.5">
-    <box id="bn" size="0.025,1,0.060" movable="false" mass="10">
+    <box id="bn" size="0.025,1,0.045" movable="false" mass="10">
       <body position="0.5,0.0125,0" orientation="0,0,0" />
     </box>
-    <box id="be" size="1,0.025,0.060" movable="false" mass="10">
+    <box id="be" size="1,0.025,0.045" movable="false" mass="10">
       <body position="0.0125,-0.5,0" orientation="0,0,0" />
     </box>
-    <box id="bs" size="0.025,1,0.060" movable="false" mass="10">
+    <box id="bs" size="0.025,1,0.045" movable="false" mass="10">
       <body position="-0.5,-0.0125,0" orientation="0,0,0" />
     </box>
-    <box id="bw" size="1,0.025,0.060" movable="false" mass="10">
+    <box id="bw" size="1,0.025,0.045" movable="false" mass="10">
       <body position="-0.0125,0.5,0" orientation="0,0,0" />
     </box>
 
