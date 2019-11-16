@@ -19,7 +19,7 @@ It procesess `api.blocks` into groups of connected blocks, give the blocks unifi
 	- ###### target.offset:
 		The offset from the target. target+offset determine the position of the block to be placed or picked up.
         The offset is represented based on the target block frame of reference, more of that in the rules description.
-    - ###### target.type:
+    - ###### target.color:
     	This represent the color which we need to set the block to before place or after pickup.
     - ###### target.safe:
     	If `true` then the rules has been matched safely and it is safe to continue with the action. But, if `false` then `process rules` is not sure of what it sees (some blocks might not be fully visible) and therefore, it is not safe/wise to continue with the action.
@@ -37,15 +37,15 @@ The rules file contains:
         - ###### index 
             It is a `vector3` that represents the position of the block with respect to the robot.
             When describing the index of the block, the robot is positioned just in front of the structure (the robot is positioned on the floor aligned with the structure). The indexes should follow the directions of the robots reference frame (shown later). The origin (0,0,0) of the indexes is to be defined by the rules writer and should be followed respectively by the user (if it is not clear, perhaps we should include some images from the presentation here)
-        - ###### type 
+        - ###### color 
             This represents the color of the block (it is an integer between 0 - 4)
     - ##### target
         - ###### reference_index 
             This represents the index of the target block which will be used by the robot as a reference while approaching target + offset
         - ###### offset_from_reference
             The offset from the target block. This offset + reference_index represents the final position of the block to be place or picked up.
-        - ###### type
-            type of the target to be set before placing the block or after pickup (still not implemented, probably it is better to put this in a separate field ¨actions¨)
+        - ###### color
+            color of the target to be set before placing the block or after pickup (probably it is better to put this in a separate field ¨actions¨)
     - ##### generate\_orientations
         Binary input. When `true`, process_rules generates 3 more orientations of this rule so that the total would be 4 rules representing the same structure description from all for points of view (if it is not clear, perhaps we should include some images from the presentation here). The generated rules are transparent to the upper layer. 
       
@@ -64,13 +64,13 @@ rules.list = {
       structure = {
          {
             index = vector3(0, 0, 0),
-            type = 4
+            color = 4
          }
       },
       target = {
          reference_index = vector3(0, 0, 0),
          offset_from_reference = vector3(0, 0, 0),
-         type = 1
+         color = 1
       },
       generate_orientations = false
    }
@@ -108,15 +108,15 @@ Four green arrows mark the safe zone. All blocks that are found inside this zone
     structure = {
              {
                 index = vector3(0, 0, 0),
-                type = 1
+                color = 1
              },
              {
                 index = vector3(0, 0, 1),
-                type = 3
+                color = 3
              },
              {
                 index = vector3(0, 0, 2),
-                type = 4
+                color = 4
              }
           }
   	```

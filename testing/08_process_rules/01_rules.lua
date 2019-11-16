@@ -5,13 +5,13 @@ rules.list = {
       structure = {
          {
             index = vector3(0, 0, 0),
-            type = 4
+            color = "blue"
          }
       },
       target = {
          reference_index = vector3(0, 0, 0),
          offset_from_reference = vector3(0, 0, 0),
-         type = 1
+         color = "green"
       },
       generate_orientations = false
    }

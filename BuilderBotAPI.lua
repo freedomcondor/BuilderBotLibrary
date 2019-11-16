@@ -4,9 +4,9 @@
 -- Author
 --    Weixu Zhu,  Tutti mi chiamano Harry
 --       zhuweixu_harry@126.com
--- 
+--
 ----------------------------------------------------
-require("BlockTracking")
+require('BlockTracking')
 
 local builderbot_api = {}
 
@@ -14,12 +14,8 @@ local builderbot_api = {}
 ------------------------------------------------------
 builderbot_api.consts = {}
 builderbot_api.consts.end_effector_position_offset = vector3(0.09800875, 0, 0.055)
-builderbot_api.consts.color_table = {"pink", "orange", "green", "blue"}
-for i, v in ipairs(builderbot_api.consts.color_table) do
-	builderbot_api.consts.color_table[v] = i
-end
-builderbot_api.consts.color_table[0] = "black";
-builderbot_api.consts.color_table["black"] = 0;
+builderbot_api.consts.color_to_index_table = {black = 0, pink = 1, orange = 2, green = 3, blue = 4}
+builderbot_api.consts.index_to_color_table = {[0] = 'black', [1] = 'pink', [2] = 'orange', [3] = 'green', [4] = 'blue'}
 
 -- parameters ----------------------------------------
 ------------------------------------------------------
@@ -28,26 +24,19 @@ builderbot_api.parameters = {}
 builderbot_api.parameters.lift_system_upper_limit = 0.135
 builderbot_api.parameters.lift_system_lower_limit = 0
 
-builderbot_api.parameters.lift_system_position_tolerance = 
-   tonumber(robot.params.lift_system_tolerance or 0.001)
+builderbot_api.parameters.lift_system_position_tolerance = tonumber(robot.params.lift_system_tolerance or 0.001)
 
-builderbot_api.parameters.default_speed = 
-   tonumber(robot.params.default_speed or 0.005)
+builderbot_api.parameters.default_speed = tonumber(robot.params.default_speed or 0.005)
 
-builderbot_api.parameters.search_random_range = 
-   tonumber(robot.params.search_random_range or 25)
+builderbot_api.parameters.search_random_range = tonumber(robot.params.search_random_range or 25)
 
-builderbot_api.parameters.aim_block_angle_tolerance = 
-   tonumber(robot.params.aim_block_angle_tolerance or 5)
+builderbot_api.parameters.aim_block_angle_tolerance = tonumber(robot.params.aim_block_angle_tolerance or 5)
 
-builderbot_api.parameters.block_position_tolerance = 
-   tonumber(robot.params.block_position_tolerance or 0.001)
+builderbot_api.parameters.block_position_tolerance = tonumber(robot.params.block_position_tolerance or 0.001)
 
-builderbot_api.parameters.proximity_touch_tolerance = 
-   tonumber(robot.params.proximity_touch_tolerance or 0.003)
+builderbot_api.parameters.proximity_touch_tolerance = tonumber(robot.params.proximity_touch_tolerance or 0.003)
 
-builderbot_api.parameters.proximity_detect_tolerance = 
-   tonumber(robot.params.proximity_detect_tolerance or 0.03)
+builderbot_api.parameters.proximity_detect_tolerance = tonumber(robot.params.proximity_detect_tolerance or 0.03)
 
 -- system --------------------------------------------
 ------------------------------------------------------
@@ -71,7 +60,7 @@ builderbot_api.move_with_bearing = function(v, th)
    -- this is the distance of two wheelsA
    -- TODO: needs to be tested on real robots
    local d = 0.1225
-   local diff = math.pi * d * (th/360)
+   local diff = math.pi * d * (th / 360)
    local x = v - diff
    local y = v + diff
    robot.differential_drive.set_target_velocity(x, -y)
@@ -79,113 +68,114 @@ end
 
 builderbot_api.move_with_vector3 = function(v3) -- x front, y left
    local v = v3:length()
-   if v3.x < 0 then v = -v end
-   local diff = math.atan(v3.y/v3.x) * 180 / math.pi
+   if v3.x < 0 then
+      v = -v
+   end
+   local diff = math.atan(v3.y / v3.x) * 180 / math.pi
    builderbot_api.move_with_bearing(v, diff)
 end
 
 -- nfc  ----------------------------------------------
 ------------------------------------------------------
 builderbot_api.set_color = function(color)
-   if color == "pink" or
-      color == "orange" or
-      color == "green" or
-      color == "blue" then
-      robot.nfc.write(tostring(builderbot_api.consts.color_table[color]))
+   if color == 'black' or color == 'pink' or color == 'orange' or color == 'green' or color == 'blue' then
+      robot.nfc.write(tostring(builderbot_api.consts.color_to_index_table[color]))
    else
-      robot.nfc.write(tostring(builderbot_api.consts.color_table["black"]))
+      DebugMSG('color is invalid, setting to black instead')
+      robot.nfc.write(tostring(builderbot_api.consts.color_to_index_table['black']))
    end
 end
 
 -- lift ----------------------------------------------
 ------------------------------------------------------
 -- this number is updated by process_positions
-builderbot_api.end_effector_position = 
-   builderbot_api.consts.end_effector_position_offset + 
-   vector3(0, 0, robot.lift_system.position)
+builderbot_api.end_effector_position =
+   builderbot_api.consts.end_effector_position_offset + vector3(0, 0, robot.lift_system.position)
 
 -- camera --------------------------------------------
 ------------------------------------------------------
 
 -- camera's frame reference
-      --
-      --             /z
-      --            /
-      --            ------- x
-      --            |
-      --            |y     in the camera's eye
-      --
+--
+--             /z
+--            /
+--            ------- x
+--            |
+--            |y     in the camera's eye
+--
 -- robot's frame reference
-      -- 
-      --            z up of the robot
-      --       |     |
-      --       |---  |  / y left of the robot
-      --     __|_    | /
-      --    |____|   |/
-      --     +  +    ------- x  in front of the robot
-
+--
+--            z up of the robot
+--       |     |
+--       |---  |  / y left of the robot
+--     __|_    | /
+--    |____|   |/
+--     +  +    ------- x  in front of the robot
 
 --robot.camera_system.tags
-      -- tags = an array of tags
-      -- a tag has
-      --    position    = a vector3     -- in camera's frame reference
-      --    orientation = a quternion   -- in camera's frame reference
-      --    center and corners  
-      --       2D information, not important for now
+-- tags = an array of tags
+-- a tag has
+--    position    = a vector3     -- in camera's frame reference
+--    orientation = a quternion   -- in camera's frame reference
+--    center and corners
+--       2D information, not important for now
 
 --builderbot_api.blocks
-      -- blocks = an array of blocks
-      -- a block has
-      --    position    = a vector3
-      --    orientation = a quternion   -- in camera's frame reference
-      --    X, Y, Z:  three vector3 (in camera's eye) 
-      --       showing the axis of a block :    
-      --
-      --           |Z           Z| /Y       the one pointing up is Z
-      --           |__ Y         |/         the nearest one pointing towards the camera is X
-      --           /              \         and then Y follows right hand coordinate system
-      --         X/                \X
-      --
-      --    position_robot    = a vector3
-      --    orientation_robot = a quternion  in robot's frame reference
-      --    tags = an array of tags pointers, each pointing to the tags array
-      
+-- blocks = an array of blocks
+-- a block has
+--    position    = a vector3
+--    orientation = a quternion   -- in camera's frame reference
+--    X, Y, Z:  three vector3 (in camera's eye)
+--       showing the axis of a block :
+--
+--           |Z           Z| /Y       the one pointing up is Z
+--           |__ Y         |/         the nearest one pointing towards the camera is X
+--           /              \         and then Y follows right hand coordinate system
+--         X/                \X
+--
+--    position_robot    = a vector3
+--    orientation_robot = a quternion  in robot's frame reference
+--    tags = an array of tags pointers, each pointing to the tags array
+
 builderbot_api.camera_orientation = robot.camera_system.transform.orientation
 -- this number is updated by process_positions
-builderbot_api.camera_position =
-   robot.camera_system.transform.position +
-   builderbot_api.end_effector_position 
+builderbot_api.camera_position = robot.camera_system.transform.position + builderbot_api.end_effector_position
 
 builderbot_api.subprocess_leds = function()
-   -- takes tags in camera_frame_reference 
+   -- takes tags in camera_frame_reference
    local led_dis = 0.02 -- distance between leds to the center
    local led_loc_for_tag = {
-      vector3( led_dis,  0, 0),
-      vector3( 0,  led_dis, 0),
-      vector3(-led_dis,  0, 0),
-      vector3( 0, -led_dis, 0),
-   }     -- from x+, counter-closewise
+      vector3(led_dis, 0, 0),
+      vector3(0, led_dis, 0),
+      vector3(-led_dis, 0, 0),
+      vector3(0, -led_dis, 0)
+   } -- from x+, counter-closewise
 
    for i, tag in ipairs(robot.camera_system.tags) do
       tag.led = 0
       for j, led_loc in ipairs(led_loc_for_tag) do
          local led_loc_for_camera = vector3(led_loc):rotate(tag.orientation) + tag.position
          local color_number = robot.camera_system.detect_led(led_loc_for_camera)
-         if color_number ~= tag.led and color_number ~= 0 then tag.led = color_number end
+         if color_number ~= tag.led and color_number ~= 0 then
+            tag.led = color_number
+         end
       end
-      tag.color = builderbot_api.consts.color_table[color]
+      tag.color = api.consts.index_to_color_table[tag.led]
    end
 end
 
 builderbot_api.process_blocks = function()
    -- figure out led color for tags
-   builderbot_api.subprocess_leds() 
+   builderbot_api.subprocess_leds()
    -- track block
-   if builderbot_api.blocks == nil then builderbot_api.blocks = {} end
+   if builderbot_api.blocks == nil then
+      builderbot_api.blocks = {}
+   end
    BlockTracking(builderbot_api.blocks, robot.camera_system.tags)
    -- transfer block to robot frame
    for i, block in pairs(builderbot_api.blocks) do
-      block.position_robot = vector3(block.position):rotate(builderbot_api.camera_orientation) + builderbot_api.camera_position
+      block.position_robot =
+         vector3(block.position):rotate(builderbot_api.camera_orientation) + builderbot_api.camera_position
       block.orientation_robot = builderbot_api.camera_orientation * block.orientation
    end
 end
@@ -193,12 +183,9 @@ end
 -- process positions ---------------------------------
 ------------------------------------------------------
 builderbot_api.process_positions = function()
-   builderbot_api.end_effector_position = 
-      builderbot_api.consts.end_effector_position_offset + 
-      vector3(0, 0, robot.lift_system.position)
-   builderbot_api.camera_position = 
-      builderbot_api.end_effector_position +
-      robot.camera_system.transform.position
+   builderbot_api.end_effector_position =
+      builderbot_api.consts.end_effector_position_offset + vector3(0, 0, robot.lift_system.position)
+   builderbot_api.camera_position = builderbot_api.end_effector_position + robot.camera_system.transform.position
 end
 
 -- process obstacles ---------------------------------
@@ -211,20 +198,17 @@ end
 builderbot_api.process_obstacles = function()
    builderbot_api.obstacles = {}
    for i, rf in pairs(robot.rangefinders) do
-      if rf.proximity ~= 0 and 
-         rf.proximity <= builderbot_api.parameters.proximity_detect_tolerance then
-         local obstacle_position_robot = 
-            vector3(0,0,rf.proximity):rotate(rf.transform.orientation) +
-            rf.transform.position
-         if rf.transform.anchor == "end_effector" then
+      if rf.proximity ~= 0 and rf.proximity <= builderbot_api.parameters.proximity_detect_tolerance then
+         local obstacle_position_robot =
+            vector3(0, 0, rf.proximity):rotate(rf.transform.orientation) + rf.transform.position
+         if rf.transform.anchor == 'end_effector' then
             obstacle_position_robot = obstacle_position_robot + builderbot_api.end_effector_position
          end
-         builderbot_api.obstacles[#builderbot_api.obstacles + 1] = 
-            {
-               position = obstacle_position_robot,
-               distance = rf.proximity,
-               rangefinder = i
-            }
+         builderbot_api.obstacles[#builderbot_api.obstacles + 1] = {
+            position = obstacle_position_robot,
+            distance = rf.proximity,
+            rangefinder = i
+         }
       end
    end
 end
@@ -243,14 +227,11 @@ end
 -- debug arrow ---------------------------------------
 ------------------------------------------------------
 builderbot_api.debug_arrow = function(color, from, to)
-   if robot.debug == nil then return end
+   if robot.debug == nil then
+      return
+   end
 
-   robot.debug.draw("arrow(" .. color .. ")(" .. 
-      from:__tostring()
-      .. ")(" .. 
-      to:__tostring()
-      ..")"
-   )
+   robot.debug.draw('arrow(' .. color .. ')(' .. from:__tostring() .. ')(' .. to:__tostring() .. ')')
 end
 
 return builderbot_api

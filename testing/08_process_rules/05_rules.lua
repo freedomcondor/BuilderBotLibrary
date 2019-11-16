@@ -5,21 +5,21 @@ rules.list = {
       structure = {
          {
             index = vector3(0, 0, 0),
-            type = 1
+            color = "pink"
          },
          {
             index = vector3(1, 0, 0),
-            type = 1
+            color = "pink"
          },
          {
             index = vector3(1, 1, 0),
-            type = 1
+            color = "pink"
          }
       },
       target = {
          reference_index = vector3(1, 1, 0),
          offset_from_reference = vector3(1, 0, 0),
-         type = 3
+         color = "green"
       },
       generate_orientations = false
    }

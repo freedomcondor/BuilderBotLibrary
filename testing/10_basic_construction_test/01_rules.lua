@@ -5,13 +5,13 @@ rules.list = {
       structure = {
          {
             index = vector3(0, 0, 0),
-            type = 0
+            color = "black"
          }
       },
       target = {
          reference_index = vector3(0, 0, 0),
          offset_from_reference = vector3(0, 0, 0),
-         type = 1
+         color = "pink"
       },
       generate_orientations = false
    },
@@ -20,13 +20,13 @@ rules.list = {
       structure = {
          {
             index = vector3(0, 0, 0),
-            type = 2
+            color = "orange"
          }
       },
       target = {
          reference_index = vector3(0, 0, 0),
          offset_from_reference = vector3(0, 0, 1),
-         type = 2
+         color = "orange"
       },
       generate_orientations = false
    },
@@ -35,17 +35,17 @@ rules.list = {
       structure = {
          {
             index = vector3(0, 0, 0),
-            type = 2
+            color = "orange"
          },
          {
             index = vector3(0, 0, 1),
-            type = 2
+            color = "orange"
          }
       },
       target = {
          reference_index = vector3(0, 0, 1),
          offset_from_reference = vector3(1, 0, -1),
-         type = 2
+         color = "orange"
       },
       generate_orientations = false
    }
