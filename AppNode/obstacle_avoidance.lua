@@ -16,11 +16,9 @@ local create_obstacle_avoidance_node = function()
       children = {
          -- no obstacle?
          function()
-            print('this this this')
             local flag = false
             DebugMSG('obstacles')
             DebugMSG(api.obstacles)
-            print(robot.lift_system.position)
             for i, v in ipairs(api.obstacles) do
                if robot.lift_system.position > 0.05 then
                   if v.rangefinder == '1' or v.rangefinder == '2' or v.rangefinder == '12' or v.rangefinder == '11' then

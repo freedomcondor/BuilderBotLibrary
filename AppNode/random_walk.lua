@@ -14,7 +14,6 @@ local create_random_walk_node = function()
       type = 'sequence',
       children = {
          function()
-            print('I am random woal')
             local random_angle = math.random(-api.parameters.search_random_range, api.parameters.search_random_range)
             --api.move(-api.parameters.default_speed, api.parameters.default_speed)
             api.move_with_bearing(api.parameters.default_speed, random_angle)

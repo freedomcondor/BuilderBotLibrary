@@ -198,7 +198,7 @@ end
 builderbot_api.process_obstacles = function()
    builderbot_api.obstacles = {}
    for i, rf in pairs(robot.rangefinders) do
-      if rf.proximity ~= 0 and rf.proximity <= builderbot_api.parameters.proximity_detect_tolerance then
+      if rf.proximity <= builderbot_api.parameters.proximity_detect_tolerance then
          local obstacle_position_robot =
             vector3(0, 0, rf.proximity):rotate(rf.transform.orientation) + rf.transform.position
          if rf.transform.anchor == 'end_effector' then

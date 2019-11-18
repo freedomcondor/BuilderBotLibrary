@@ -27,10 +27,7 @@ local create_pickup_block_node = function(target, _forward_distance)
                -- hand full ?
                function()
                   DebugMSG('check full')
-                  if
-                     robot.rangefinders['underneath'].proximity ~= 0 and
-                        robot.rangefinders['underneath'].proximity < api.parameters.proximity_touch_tolerance
-                   then
+                  if robot.rangefinders['underneath'].proximity < api.parameters.proximity_touch_tolerance then
                      return false, true -- not running, true
                   else
                      return false, false -- not running, false
@@ -70,10 +67,7 @@ local create_pickup_block_node = function(target, _forward_distance)
          -- wait
          create_timer_node({time = 2}),
          function()
-            if
-               robot.rangefinders['underneath'].proximity ~= 0 and
-                  robot.rangefinders['underneath'].proximity < api.parameters.proximity_touch_tolerance
-             then
+            if robot.rangefinders['underneath'].proximity < api.parameters.proximity_touch_tolerance then
                return false, true -- not running, true
             else
                return false, false -- not running, false
