@@ -151,27 +151,29 @@ builderbot_api.subprocess_leds = function()
       vector3(0, -led_dis, 0)
    } -- from x+, counter-closewise
 
-   for i, tag in ipairs(robot.camera_system.tags) do
-      tag.led = 0
-      for j, led_loc in ipairs(led_loc_for_tag) do
-         local led_loc_for_camera = vector3(led_loc):rotate(tag.orientation) + tag.position
-         local color_number = robot.camera_system.detect_led(led_loc_for_camera)
-         if color_number ~= tag.led and color_number ~= 0 then
-            tag.led = color_number
+   for i, block in ipairs(builderbot_api.blocks) do
+      for j, tag in pairs(block.tags) do
+         tag.type = 0
+         for j, led_loc in ipairs(led_loc_for_tag) do
+            local led_loc_for_camera = vector3(led_loc):rotate(tag.orientation) + tag.position
+            local color_number = robot.camera_system.detect_led(led_loc_for_camera)
+            if color_number ~= tag.type and color_number ~= 0 then
+               tag.type = color_number
+               block.type = tag.type
+            end
          end
       end
-      tag.color = api.consts.index_to_color_table[tag.led]
    end
 end
 
 builderbot_api.process_blocks = function()
-   -- figure out led color for tags
-   builderbot_api.subprocess_leds()
    -- track block
    if builderbot_api.blocks == nil then
       builderbot_api.blocks = {}
    end
    BlockTracking(builderbot_api.blocks, robot.camera_system.tags)
+   -- figure out led color for tags
+   builderbot_api.subprocess_leds()
    -- transfer block to robot frame
    for i, block in pairs(builderbot_api.blocks) do
       block.position_robot =

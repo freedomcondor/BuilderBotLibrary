@@ -308,7 +308,6 @@ function BlockTracking(_blocks, _tags)
          -- X,Y,Z are unit vectors
       block.orientation = XYZtoQuaternion(block.orientation, block.X, block.Y, block.Z)
          -- to make orientation matches X,Y,Z
-      block.color = block.tags[1].color
       CheckTagDirection(block)
    end
 
