@@ -266,6 +266,9 @@ function CheckTagDirection(block)
          block.tags.left = tag
       end
    end
+   for i, tag in ipairs(block.tags) do
+      block.tags[i] = nil
+   end
 end
 
 function BlockTracking(_blocks, _tags)
@@ -305,6 +308,7 @@ function BlockTracking(_blocks, _tags)
          -- X,Y,Z are unit vectors
       block.orientation = XYZtoQuaternion(block.orientation, block.X, block.Y, block.Z)
          -- to make orientation matches X,Y,Z
+      block.color = block.tags[1].color
       CheckTagDirection(block)
    end
 

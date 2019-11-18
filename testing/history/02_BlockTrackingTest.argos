@@ -19,7 +19,6 @@
         <builderbot_differential_drive implementation="default" />
         <builderbot_lift_system implementation="default" />
         <builderbot_nfc implementation="default" />
-        <builderbot_wifi implementation="default" />
 
         <!-- for debug -->
          <debug implementation="default">
@@ -42,7 +41,7 @@
         <builderbot_lift_system implementation="default" />
         <builderbot_nfc implementation="default" show_rays="true" />
       </sensors>
-	  <params script="testing/02_BlockTrackingTest.lua" />
+	  <params script="testing/history/02_BlockTrackingTest.lua" />
     </lua_controller>
 
     <lua_controller id="block">
