@@ -217,6 +217,7 @@ end
 ------------------------------------------------------
 
 builderbot_api.process = function()
+   print('sensor value', robot.rangefinders['underneath'].proximity)
    builderbot_api.process_time()
    builderbot_api.process_positions()
    -- process blocks and obstacle should happen after process positions

@@ -447,41 +447,24 @@ local create_process_rules_node = function(rules, rule_type, final_target)
       -----------------------------------------------------------------------------
       ------------------- match rules and getting unsafe targets ------------------
       -- we get unsafe targets only if we could not find safe targets
-      if #targets_list == 0 then
-         for i, rule in pairs(rules.list) do
-            if rule.rule_type == rule_type then
-               match_result = false
-               for j, visible_structure in pairs(structure_list) do
-                  if one_block_safe(visible_structure) == false then
-                     res = match_structures(visible_structure, rule.structure)
-                     if res == true then
-                        match_result = true
-                        possible_target = {}
-                        possible_target.reference_id =
-                           get_reference_id_from_index(rule.target.reference_index, visible_structure)
-                        possible_target.offset = rule.target.offset_from_reference
-                        possible_target.color = rule.target.color
-                        possible_target.safe = false
-                        table.insert(targets_list, possible_target)
-                     end
-                  end
-               end
-            end
-         end
-      end
-      -- for i, rule in pairs(rules.list) do
-      --    if rule.rule_type == rule_type then
-      --       match_result = false
-      --       for j, visible_structure in pairs(structure_list) do
-      --          res = match_structures(visible_structure, rule.structure)
-      --          if res == true then
-      --             match_result = true
-      --             possible_target = {}
-      --             possible_target.reference_id =
-      --                get_reference_id_from_index(rule.target.reference_index, visible_structure)
-      --             possible_target.offset = rule.target.offset_from_reference
-      --             possible_target.type = rule.target.type
-      --             table.insert(targets_list, possible_target)
+      -- if #targets_list == 0 then
+      --    for i, rule in pairs(rules.list) do
+      --       if rule.rule_type == rule_type then
+      --          match_result = false
+      --          for j, visible_structure in pairs(structure_list) do
+      --             if one_block_safe(visible_structure) == false then
+      --                res = match_structures(visible_structure, rule.structure)
+      --                if res == true then
+      --                   match_result = true
+      --                   possible_target = {}
+      --                   possible_target.reference_id =
+      --                      get_reference_id_from_index(rule.target.reference_index, visible_structure)
+      --                   possible_target.offset = rule.target.offset_from_reference
+      --                   possible_target.color = rule.target.color
+      --                   possible_target.safe = false
+      --                   table.insert(targets_list, possible_target)
+      --                end
+      --             end
       --          end
       --       end
       --    end
@@ -541,8 +524,7 @@ local create_process_rules_node = function(rules, rule_type, final_target)
          end
       end
 
-      pprint.pprint(final_target)
-      print(#targets_list)
+      DebugMSG("final target:",final_target)
       if #targets_list > 0 then
          return false, true
       else
