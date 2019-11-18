@@ -14,8 +14,6 @@ local builderbot_api = {}
 ------------------------------------------------------
 builderbot_api.consts = {}
 builderbot_api.consts.end_effector_position_offset = vector3(0.09800875, 0, 0.055)
-builderbot_api.consts.color_to_index_table = {black = 0, pink = 1, orange = 2, green = 3, blue = 4}
-builderbot_api.consts.index_to_color_table = {[0] = 'black', [1] = 'pink', [2] = 'orange', [3] = 'green', [4] = 'blue'}
 
 -- parameters ----------------------------------------
 ------------------------------------------------------
@@ -77,12 +75,12 @@ end
 
 -- nfc  ----------------------------------------------
 ------------------------------------------------------
-builderbot_api.set_color = function(color)
-   if color == 'black' or color == 'pink' or color == 'orange' or color == 'green' or color == 'blue' then
-      robot.nfc.write(tostring(builderbot_api.consts.color_to_index_table[color]))
+builderbot_api.set_type = function(type)
+   if type == 0 or type == 1 or type == 2 or type == 3 or type == 4 then
+      robot.nfc.write(tostring(type))
    else
-      DebugMSG('color is invalid, setting to black instead')
-      robot.nfc.write(tostring(builderbot_api.consts.color_to_index_table['black']))
+      DebugMSG('type is invalid')
+      -- robot.nfc.write(tostring(builderbot_api.consts.color_to_index_table['black']))
    end
 end
 
@@ -154,6 +152,7 @@ builderbot_api.subprocess_leds = function()
    for i, block in ipairs(builderbot_api.blocks) do
       for j, tag in pairs(block.tags) do
          tag.type = 0
+         block.type = 0
          for j, led_loc in ipairs(led_loc_for_tag) do
             local led_loc_for_camera = vector3(led_loc):rotate(tag.orientation) + tag.position
             local color_number = robot.camera_system.detect_led(led_loc_for_camera)
@@ -219,7 +218,6 @@ end
 ------------------------------------------------------
 
 builderbot_api.process = function()
-   print('sensor value', robot.rangefinders['underneath'].proximity)
    builderbot_api.process_time()
    builderbot_api.process_positions()
    -- process blocks and obstacle should happen after process positions

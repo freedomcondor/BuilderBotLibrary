@@ -19,7 +19,7 @@
         <builderbot_differential_drive implementation="default" />
         <builderbot_lift_system implementation="default" />
         <builderbot_nfc implementation="default" />
-        <builderbot_wifi implementation="default" />
+ 
 
         <!-- for debug -->
         <debug implementation="default">

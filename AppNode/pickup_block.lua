@@ -75,8 +75,8 @@ local create_pickup_block_node = function(target, _forward_distance)
          end,
          -- change color
          function()
-            if target.color ~= nil then
-               api.set_color(target.color)
+            if target.type ~= nil then
+               api.set_type(target.type)
                return false, true
             end
          end

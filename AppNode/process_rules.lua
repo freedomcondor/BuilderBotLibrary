@@ -275,7 +275,7 @@ local create_process_rules_node = function(rules, rule_type, final_target)
             b_in_r2_pos = vector3(b_in_r1_pos):rotate(r2_in_r1_ori:inverse()) + r1_in_r2_pos
             bj_in_r2_pos[tostring(block.id)] = {}
             bj_in_r2_pos[tostring(block.id)].index = (b_in_r2_pos - b1_in_r2_pos)
-            bj_in_r2_pos[tostring(block.id)].color = block.tags[1].color
+            bj_in_r2_pos[tostring(block.id)].type = block.type
 
             function round(num, numDecimalPlaces)
                local mult = 10 ^ (numDecimalPlaces or 0)
@@ -326,7 +326,7 @@ local create_process_rules_node = function(rules, rule_type, final_target)
                block_matched = false
                for k, visible_block in pairs(visible_structure) do
                   if visible_block.index == rule_block.index then --found required index
-                     if (visible_block.color == rule_block.color) or (rule_block.color == 'X') then -- found the same required type
+                     if (visible_block.type == rule_block.type) or (rule_block.type == 'X') then -- found the same required type
                         block_matched = true
                         break
                      end
@@ -435,7 +435,7 @@ local create_process_rules_node = function(rules, rule_type, final_target)
                      possible_target.reference_id =
                         get_reference_id_from_index(rule.target.reference_index, visible_structure)
                      possible_target.offset = rule.target.offset_from_reference
-                     possible_target.color = rule.target.color
+                     possible_target.type = rule.target.type
                      possible_target.safe = true
                      table.insert(targets_list, possible_target)
                   end
@@ -460,7 +460,7 @@ local create_process_rules_node = function(rules, rule_type, final_target)
       --                   possible_target.reference_id =
       --                      get_reference_id_from_index(rule.target.reference_index, visible_structure)
       --                   possible_target.offset = rule.target.offset_from_reference
-      --                   possible_target.color = rule.target.color
+      --                   possible_target.type = rule.target.type
       --                   possible_target.safe = false
       --                   table.insert(targets_list, possible_target)
       --                end
@@ -482,7 +482,7 @@ local create_process_rules_node = function(rules, rule_type, final_target)
                      minimum_distance = distance_from_target
                      final_target.reference_id = tonumber(possible_target.reference_id)
                      final_target.offset = possible_target.offset
-                     final_target.color = possible_target.color
+                     final_target.type = possible_target.type
                      final_target.safe = possible_target.safe
                   end
                end
@@ -499,7 +499,7 @@ local create_process_rules_node = function(rules, rule_type, final_target)
                      maximum_distance = distance_from_target
                      final_target.reference_id = tonumber(possible_target.reference_id)
                      final_target.offset = possible_target.offset
-                     final_target.color = possible_target.color
+                     final_target.type = possible_target.type
                      final_target.safe = possible_target.safe
                   end
                end

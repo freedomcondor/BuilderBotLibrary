@@ -20,8 +20,8 @@ return -- return the following table
       create_reach_block_node(target, _forward_distance),
       -- change color
       function()
-         if target.color ~= nil then
-            api.set_color(target.color)
+         if target.type ~= nil then
+            api.set_type(target.type)
          end
       end,
       -- drop electromagnet

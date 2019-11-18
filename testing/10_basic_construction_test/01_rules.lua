@@ -1,3 +1,5 @@
+-- just as a reminder {black = 0, pink = 1, orange = 2, green = 3, blue = 4}
+
 local rules = {}
 rules.list = {
    {
@@ -5,13 +7,13 @@ rules.list = {
       structure = {
          {
             index = vector3(0, 0, 0),
-            color = "black"
+            type = 0
          }
       },
       target = {
          reference_index = vector3(0, 0, 0),
          offset_from_reference = vector3(0, 0, 0),
-         color = "pink"
+         type = 1
       },
       generate_orientations = false
    },
@@ -20,13 +22,13 @@ rules.list = {
       structure = {
          {
             index = vector3(0, 0, 0),
-            color = "orange"
+            type = 2
          }
       },
       target = {
          reference_index = vector3(0, 0, 0),
          offset_from_reference = vector3(0, 0, 1),
-         color = "orange"
+         type = 2
       },
       generate_orientations = false
    },
@@ -35,17 +37,17 @@ rules.list = {
       structure = {
          {
             index = vector3(0, 0, 0),
-            color = "orange"
+            type = 2
          },
          {
             index = vector3(0, 0, 1),
-            color = "orange"
+            type = 2
          }
       },
       target = {
          reference_index = vector3(0, 0, 1),
          offset_from_reference = vector3(1, 0, -1),
-         color = "orange"
+         type = 2
       },
       generate_orientations = false
    }
