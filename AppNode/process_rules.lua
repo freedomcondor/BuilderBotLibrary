@@ -17,6 +17,35 @@ function deepcopy(orig)
    end
    return copy
 end
+function draw_block_axes(block_position, block_orientation, color)
+   local z = vector3(0, 0, 1)
+   api.debug_arrow(color, block_position, block_position + 0.1 * vector3(z):rotate(block_orientation))
+end
+
+function draw_line(color, from, to)
+   function range(from, to, step)
+      step = step or 1
+      return function(_, lastvalue)
+         local nextvalue = lastvalue + step
+         if step > 0 and nextvalue <= to or step < 0 and nextvalue >= to or step == 0 then
+            return nextvalue
+         end
+      end, nil, from - step
+   end
+
+   p0 = from
+   p1 = to
+   vdr = p1 - p0
+   last_subpoint = p0
+   for lambda in range(0, 1, 0.1) do
+      x_ = p0.x + lambda * vdr.x
+      y_ = p0.y + lambda * vdr.y
+      z_ = p0.z + lambda * vdr.z
+      current_subpoint = vector3(x_, y_, z_)
+      builderbot_api.debug_arrow(color, last_subpoint, current_subpoint)
+      last_subpoint = current_subpoint
+   end
+end
 
 function check_block_in_safe_zone(block)
    -- we use block in camera eye provided by blocktrackig (Probably would have to do the conversion here in the future)
@@ -208,38 +237,9 @@ function group_blocks()
    -- end
    filtered_groups_list = groups_of_connected_blocks
    -- builderbot_api.structure_list = groups_of_connected_blocks
-
-   -- debug line from arrows ----------------------------
-   function draw_line(color, from, to)
-      function range(from, to, step)
-         step = step or 1
-         return function(_, lastvalue)
-            local nextvalue = lastvalue + step
-            if step > 0 and nextvalue <= to or step < 0 and nextvalue >= to or step == 0 then
-               return nextvalue
-            end
-         end, nil, from - step
-      end
-
-      p0 = from
-      p1 = to
-      vdr = p1 - p0
-      last_subpoint = p0
-      for lambda in range(0, 1, 0.1) do
-         x_ = p0.x + lambda * vdr.x
-         y_ = p0.y + lambda * vdr.y
-         z_ = p0.z + lambda * vdr.z
-         current_subpoint = vector3(x_, y_, z_)
-         builderbot_api.debug_arrow(color, last_subpoint, current_subpoint)
-         last_subpoint = current_subpoint
-      end
-   end
    return filtered_groups_list
 end
-function draw_block_axes(block_position, block_orientation, color)
-   local z = vector3(0, 0, 1)
-   api.debug_arrow(color, block_position, block_position + 0.1 * vector3(z):rotate(block_orientation))
-end
+
 
 local create_process_rules_node = function(rules, rule_type, final_target)
    final_target.reference_id = nil
@@ -256,21 +256,28 @@ local create_process_rules_node = function(rules, rule_type, final_target)
       -- Align structure with virtual robot
       for i, group in pairs(grouped_blocks) do
          -- statements
+         -- Get the position and orientation of one of the block in the group
          b1_in_r1_ori = group[1].orientation_robot
          b1_in_r1_pos = group[1].position_robot
+         -- we assume having the robot in a different position where 
+         -- the position and orientation of the previous block are as follows:
          b1_in_r2_ori = quaternion(0, 0, 0, 1)
          b1_in_r2_pos = vector3(0.2, 0, 0.02)
+         -- we calculate the inverse relation between the imaginary robot r2 and the block
          r2_in_b1_ori = b1_in_r2_ori:inverse()
          r2_in_b1_pos = -1 * vector3(b1_in_r2_pos):rotate(r2_in_b1_ori)
+         -- we calculate the relation between the real robot and the imaginary robot
          r2_in_r1_pos = vector3(r2_in_b1_pos):rotate(b1_in_r1_ori) + b1_in_r1_pos
          r2_in_r1_ori = b1_in_r1_ori * r2_in_b1_ori
+         -- we calculate the inverse relation between the real robot r1 and the imaginary r2
          r1_in_r2_ori = r2_in_r1_ori:inverse()
          r1_in_r2_pos = -1 * vector3(r2_in_r1_pos):rotate(r1_in_r2_ori)
          bj_in_r2_pos = {}
          lowest_x = 100
          lowest_y = 100
          lowest_z = 100
-         for j, block in pairs(group) do
+         for j, block in pairs(group) 
+            -- for each block, we know its relation with r1, and we know the relation r1->r2 so we calculate blocks in r2
             b_in_r1_pos = block.position_robot
             b_in_r2_pos = vector3(b_in_r1_pos):rotate(r2_in_r1_ori:inverse()) + r1_in_r2_pos
             bj_in_r2_pos[tostring(block.id)] = {}
@@ -281,9 +288,13 @@ local create_process_rules_node = function(rules, rule_type, final_target)
                local mult = 10 ^ (numDecimalPlaces or 0)
                return math.floor(num * mult + 0.5) / mult
             end
+
+            -- transforming the coordinations to indexes
             bj_in_r2_pos[tostring(block.id)].index.x = round(bj_in_r2_pos[tostring(block.id)].index.x / 0.05, 0)
             bj_in_r2_pos[tostring(block.id)].index.y = round(bj_in_r2_pos[tostring(block.id)].index.y / 0.05, 0)
             bj_in_r2_pos[tostring(block.id)].index.z = round(bj_in_r2_pos[tostring(block.id)].index.z / 0.05, 0)
+
+            -- Getting lowest x,y,z (should be seperated along with transform indexed blocks to unified origin)
             if bj_in_r2_pos[tostring(block.id)].index.x < lowest_x then
                lowest_x = bj_in_r2_pos[tostring(block.id)].index.x
             end
@@ -294,7 +305,7 @@ local create_process_rules_node = function(rules, rule_type, final_target)
                lowest_z = bj_in_r2_pos[tostring(block.id)].index.z
             end
          end
-
+         -- tranform indexed blocks to unified origin
          for j, block in pairs(bj_in_r2_pos) do
             block.index.x = block.index.x - lowest_x
             block.index.y = block.index.y - lowest_y
