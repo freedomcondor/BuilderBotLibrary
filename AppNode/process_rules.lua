@@ -240,7 +240,6 @@ function group_blocks()
    return filtered_groups_list
 end
 
-
 local create_process_rules_node = function(rules, rule_type, final_target)
    final_target.reference_id = nil
    final_target.offset = vector3(0, 0, 0)
@@ -259,7 +258,7 @@ local create_process_rules_node = function(rules, rule_type, final_target)
          -- Get the position and orientation of one of the block in the group
          b1_in_r1_ori = group[1].orientation_robot
          b1_in_r1_pos = group[1].position_robot
-         -- we assume having the robot in a different position where 
+         -- we assume having the robot in a different position where
          -- the position and orientation of the previous block are as follows:
          b1_in_r2_ori = quaternion(0, 0, 0, 1)
          b1_in_r2_pos = vector3(0.2, 0, 0.02)
@@ -276,7 +275,7 @@ local create_process_rules_node = function(rules, rule_type, final_target)
          lowest_x = 100
          lowest_y = 100
          lowest_z = 100
-         for j, block in pairs(group) 
+         for j, block in pairs(group) do
             -- for each block, we know its relation with r1, and we know the relation r1->r2 so we calculate blocks in r2
             b_in_r1_pos = block.position_robot
             b_in_r2_pos = vector3(b_in_r1_pos):rotate(r2_in_r1_ori:inverse()) + r1_in_r2_pos
@@ -314,7 +313,7 @@ local create_process_rules_node = function(rules, rule_type, final_target)
          table.insert(local_list_of_structures, bj_in_r2_pos)
       end
       structure_list = local_list_of_structures
-      
+
       ---------------------------------------------------------------------------------------
       --Match current structures against rules
       final_target.reference_id = nil
@@ -535,7 +534,7 @@ local create_process_rules_node = function(rules, rule_type, final_target)
          end
       end
 
-      DebugMSG("final target:",final_target)
+      DebugMSG('final target:', final_target)
       if #targets_list > 0 then
          return false, true
       else
