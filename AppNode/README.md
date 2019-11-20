@@ -12,7 +12,7 @@ It procesess `api.blocks` into groups of connected blocks, give the blocks unifi
 	Takes `pickup/place`. It tells process rules which type of rules to look for. 
 - ##### target (output)
 	This table is passed to process_rules to be modified with the correct target.
-    The target block is the reference block that the robot uses to reach target+offset.
+	The target block is the reference block that the robot uses to reach target+offset.
     Target is not the final destination of the robot.
 	- ###### target.reference\_id:
 		contains the id of the target block. The id is compatible with the ids in `api.blocks`.
@@ -127,12 +127,26 @@ Four green arrows mark the safe zone. All blocks that are found inside this zone
 - ##### [unalligned robot](https://github.com/freedomcondor/BuilderBotLibrary/blob/develop/testing/08_process_rules/05_unalligned_robot_test.argos)
 	
 ### search
-xxxx
+#### Description
+Search makes robot randomly walk around and look for a block based on a user provided rule.
+
+#### Inputs/Outputs
+create\_search\_block\_node takes a process\_rule node as the parameter. It produces a node where robot randomly walks around with obstacle avoidance and looks for the target block.
+
+#### Example
+app.create\_search\_block\_node(
+   app.create\_process\_rules\_node(rules, 'pickup', BTDATA.target)
+),
+
+### obstacle avoidance
+#### Description
+There during randomly walk, as well as approach, the robot checks its rangefinders when moving around. Currently the robot only checks the rangefinders infront. When it detects something, it will move backwards and turn 180 degree.
+
+Currently the obstacle avoidance is hard coded inside search node and approach node. The user doesn't have to do anything.
 
 ### approach
 #### Description
 There are two basic approach method is provided, Z shape approach and curved approach.
-
 Z shape approach makes the robot first analyzes the location of the target block, and close the camera and perform a rotation-forward-rotation action to a location which is just in front of the target block with a distance which is given as a parameter.
 
 Curved approach makes the robot approach the block while keep the block in the range of its camera. The robot will move forward and backward in turns until it gets the location right in front of the block with the distance given as the second parameter.
