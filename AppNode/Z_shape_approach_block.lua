@@ -4,6 +4,7 @@ DebugMSG.register("blind_approach_block")
 if api == nil then api = require('BuilderBotAPI') end
 
 local create_move_to_location_node = require("move_to_location")
+local create_obstacle_avoidance_node = require("obstacle_avoidance")
 
 local create_Z_shape_approach_block_node = function(target, _distance)
    -- approach the target reference block until _distance away 
@@ -21,7 +22,13 @@ local create_Z_shape_approach_block_node = function(target, _distance)
          return false, true
       end,
       -- move to the location
-      create_move_to_location_node(location),
+      {
+         type = "sequence",
+         children = {
+            create_obstacle_avoidance_node(),
+            create_move_to_location_node(location),
+         }
+      }
    }, -- end of the children of go to pre-position
 } -- end of go to pre-position
 

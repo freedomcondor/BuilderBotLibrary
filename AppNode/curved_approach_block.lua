@@ -1,6 +1,7 @@
 if api == nil then api = require('BuilderBotAPI') end
 
 local create_aim_block_node = require("aim_block")
+local create_obstacle_avoidance_node = require("obstacle_avoidance")
 
 local create_curved_approach_block_node = function(target, target_distance)
    local case = {left_right_case = 0, forward_backup_case = 1,}
@@ -10,6 +11,8 @@ local create_curved_approach_block_node = function(target, target_distance)
 {
    type = "sequence",
    children = {
+      -- obstacle_avoidance
+      create_obstacle_avoidance_node(),
       -- check the target block is still there 
       function()
          if target == nil or 

@@ -59,7 +59,7 @@ local create_obstacle_avoidance_node = function()
                         api.move_with_bearing(0, 5)
                      end
                   }
-               )
+               ),
             }
          }
       }
