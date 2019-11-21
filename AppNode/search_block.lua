@@ -32,12 +32,9 @@ local create_search_block_node = function(rule_node)
          },
          -- search
          {
-            type = "selector",
+            type = "sequence",
             children = {
-               -- choose a block,
-               -- if got one, return true, stop selector
-               rule_node,
-               -- otherwise check obstacle and turn the robot
+               -- check obstacle and randomwalk
                {
                   type = "sequence",
                   children = {
@@ -48,10 +45,13 @@ local create_search_block_node = function(rule_node)
                         local random_angle = math.random(-api.parameters.search_random_range, api.parameters.search_random_range)
                         --api.move(-api.parameters.default_speed, api.parameters.default_speed)
                         api.move_with_bearing(api.parameters.default_speed, random_angle)
-                        return true
+                        return false, true
                      end,
                   },
                },
+               -- choose a block,
+               -- if got one, return true, stop sequence
+               rule_node,
             },
          },
       },
