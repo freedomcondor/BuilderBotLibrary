@@ -11,7 +11,7 @@ if app == nil then
    app = require('ApplicationNode')
 end
 if rules == nil then
-   rules = require(robot.params.rules) 
+   rules = require(robot.params.rules)
 end
 local bt = require('luabt')
 
@@ -55,9 +55,13 @@ function init()
          },
          app.create_process_rules_node(rules, 'place', BTDATA.target),
          function()
-            -- pprint.pprint(api.consts.color_table)
-            DebugMSG('target: ', BTDATA.target)
-            return false, true
+            if BTDATA.target == nil then
+               pprint.pprint('target: ', 'nil')
+               return false, false
+            else
+               pprint.pprint('target: ', BTDATA.target)
+               return false, true
+            end
          end
       }
    }

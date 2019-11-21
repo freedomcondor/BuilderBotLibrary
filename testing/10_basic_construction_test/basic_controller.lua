@@ -53,7 +53,7 @@ function init()
                },
             },
          },
-         -- pick up
+         -- place
          {
             type = "selector*",
             children = {

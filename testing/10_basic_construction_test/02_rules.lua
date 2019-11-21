@@ -78,10 +78,6 @@ rules.list = {
       rule_type = 'place',
       structure = {
          {
-            index = vector3(0, 0, 0),
-            type = 2
-         },
-         {
             index = vector3(0, 0, 1),
             type = 2
          },
@@ -105,19 +101,7 @@ rules.list = {
       rule_type = 'place',
       structure = {
          {
-            index = vector3(0, 0, 0),
-            type = 2
-         },
-         {
-            index = vector3(0, 0, 1),
-            type = 2
-         },
-         {
             index = vector3(0, 0, 2),
-            type = 2
-         },
-         {
-            index = vector3(-1, 0, 0),
             type = 2
          },
          {
