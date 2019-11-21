@@ -12,7 +12,7 @@ DebugMSG.enable()
 
 -- ARGoS Loop ------------------------
 function init()
-   local BTDATA = {target = {reference_id = 1, offset = vector3(0,0,0), color = "green"},}
+   local BTDATA = {target = {reference_id = 1, offset = vector3(0,0,0), type = 2},}
    -- bt init ---
    local bt_node = {
       type = 'sequence*',
@@ -21,7 +21,8 @@ function init()
 
          function() 
             BTDATA.target.offset = vector3(1,0,0) 
-            BTDATA.target.color = "pink"
+            BTDATA.target.type = 3
+            BTDATA.target.reference_id = 2
             return false, true 
          end,
 

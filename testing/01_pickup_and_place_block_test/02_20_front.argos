@@ -66,12 +66,16 @@
     </builderbot>
 
     <block id="block1" debug="false">
-      <body position="0,0,0" orientation="5,0,0"/>
+      <body position="0,0,0" orientation="0,0,0"/>
       <controller config="block"/>
     </block>
 
     <block id="block2" debug="false">
       <body position="0.20,0,0" orientation="0,0,0"/>
+      <controller config="block"/>
+    </block>
+    <block id="block3" debug="false">
+      <body position="0.20,0,0.06" orientation="0,0,0"/>
       <controller config="block"/>
     </block>
   </arena>

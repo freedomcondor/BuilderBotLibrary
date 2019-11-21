@@ -36,7 +36,7 @@ local create_reach_block_node = function(target, distance)
                   end,
                   -- raise lift
                   function()
-                     robot.lift_system.set_position(robot.lift_system.position + 0.025) 
+                     robot.lift_system.set_position(api.blocks[target.reference_id].position_robot.z) 
                      return false, true
                   end,
                   -- wait for 1s
@@ -61,7 +61,7 @@ local create_reach_block_node = function(target, distance)
                   end,
                   -- raise lift
                   function()
-                     robot.lift_system.set_position(robot.lift_system.position + 0.08) 
+                     robot.lift_system.set_position(api.blocks[target.reference_id].position_robot.z + 0.055) 
                      return false, true
                   end,
                   -- wait for 1s
@@ -86,7 +86,7 @@ local create_reach_block_node = function(target, distance)
                   end,
                   -- raise lift
                   function()
-                     robot.lift_system.set_position(robot.lift_system.position + 0.025) 
+                     robot.lift_system.set_position(api.blocks[target.reference_id].position_robot.z) 
                      return false, true
                   end,
                   -- wait for 1s
@@ -111,7 +111,7 @@ local create_reach_block_node = function(target, distance)
                   end,
                   -- lower lift
                   function()
-                     robot.lift_system.set_position(robot.lift_system.position - 0.025) 
+                     robot.lift_system.set_position(api.blocks[target.reference_id].position_robot.z - 0.055) 
                      return false, true
                   end,
                   -- wait for 1s
@@ -136,7 +136,7 @@ local create_reach_block_node = function(target, distance)
                   end,
                   -- lower lift
                   function()
-                     robot.lift_system.set_position(robot.lift_system.position - 0.080) 
+                     robot.lift_system.set_position(api.blocks[target.reference_id].position_robot.z - 0.11) 
                      return false, true
                   end,
                   -- wait for 1s
