@@ -99,7 +99,7 @@ function check_block_in_safe_zone(block)
          vector3(camera_position_in_robot)
    )
 
-   if block.position_robot.z > 0.12 then
+   if block.position_robot.z > 0.12 then -- the block could not be higher
       if z < z_limit and y < y_limit and x < x_limit and x > -1 * x_limit then
          -- print('block:', block.id, 'is safe')
          return true
@@ -272,9 +272,7 @@ local create_process_rules_node = function(rules, rule_type, final_target)
          r1_in_r2_ori = r2_in_r1_ori:inverse()
          r1_in_r2_pos = -1 * vector3(r2_in_r1_pos):rotate(r1_in_r2_ori)
          bj_in_r2_pos = {}
-         lowest_x = 100
-         lowest_y = 100
-         lowest_z = 100
+
          for j, block in pairs(group) do
             -- for each block, we know its relation with r1, and we know the relation r1->r2 so we calculate blocks in r2
             b_in_r1_pos = block.position_robot
@@ -292,18 +290,27 @@ local create_process_rules_node = function(rules, rule_type, final_target)
             bj_in_r2_pos[tostring(block.id)].index.x = round(bj_in_r2_pos[tostring(block.id)].index.x / 0.05, 0)
             bj_in_r2_pos[tostring(block.id)].index.y = round(bj_in_r2_pos[tostring(block.id)].index.y / 0.05, 0)
             bj_in_r2_pos[tostring(block.id)].index.z = round(bj_in_r2_pos[tostring(block.id)].index.z / 0.05, 0)
-
-            -- Getting lowest x,y,z (should be seperated along with transform indexed blocks to unified origin)
-            if bj_in_r2_pos[tostring(block.id)].index.x < lowest_x then
-               lowest_x = bj_in_r2_pos[tostring(block.id)].index.x
-            end
-            if bj_in_r2_pos[tostring(block.id)].index.y < lowest_y then
-               lowest_y = bj_in_r2_pos[tostring(block.id)].index.y
-            end
-            if bj_in_r2_pos[tostring(block.id)].index.z < lowest_z then
-               lowest_z = bj_in_r2_pos[tostring(block.id)].index.z
-            end
          end
+         function get_lowest_indeces(blocks_in_r2)
+            lowest_x = 100
+            lowest_y = 100
+            lowest_z = 100
+            for k, indexed_block in pairs(blocks_in_r2) do
+               -- Getting lowest x,y,z (should be seperated along with transform indexed blocks to unified origin)
+               if indexed_block.index.x < lowest_x then
+                  lowest_x = indexed_block.index.x
+               end
+               if indexed_block.index.y < lowest_y then
+                  lowest_y = indexed_block.index.x
+               end
+               if indexed_block.index.z < lowest_z then
+                  lowest_z = indexed_block.index.x
+               end
+            end
+            return lowest_x, lowest_y, lowest_z
+         end
+         lowest_x, lowest_y, lowest_z = get_lowest_indeces(bj_in_r2_pos)
+
          -- tranform indexed blocks to unified origin
          for j, block in pairs(bj_in_r2_pos) do
             block.index.x = block.index.x - lowest_x
@@ -421,7 +428,6 @@ local create_process_rules_node = function(rules, rule_type, final_target)
                end
             end
          end
-
          for bi, block in pairs(structure) do
             if check_block_in_safe_zone(block) == true then
                result = true
