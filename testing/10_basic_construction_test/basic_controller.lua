@@ -25,24 +25,68 @@ function init()
    local bt_node = {
       type = 'sequence*',
       children = {
-         -- search
-         app.create_search_block_node(
-            app.create_process_rules_node(rules, 'pickup', BTDATA.target)
-         ),
-         -- approach
-         app.create_curved_approach_block_node(BTDATA.target, 0.18),
-         -- pickup 
-         app.create_pickup_block_node(BTDATA.target, 0.18),
-
-         -- search
-         app.create_search_block_node(
-            app.create_process_rules_node(rules, 'place', BTDATA.target)
-         ),
-         -- approach
-         app.create_curved_approach_block_node(BTDATA.target, 0.18),
-         -- place
-         app.create_place_block_node(BTDATA.target, 0.18),
-      }
+         -- pick up
+         {
+            type = "selector*",
+            children = {
+               -- am I holding a block? If yes, go to place
+               function()
+                  if robot.rangefinders['underneath'].proximity < api.parameters.proximity_touch_tolerance then
+                     return false, true
+                  else
+                     return false, false
+                  end
+               end,
+               -- pickup procedure
+               {
+                  type = "sequence*",
+                  children = {
+                     -- search
+                     app.create_search_block_node(
+                        app.create_process_rules_node(rules, 'pickup', BTDATA.target)
+                     ),
+                     -- approach
+                     app.create_curved_approach_block_node(BTDATA.target, 0.18),
+                     -- pickup 
+                     app.create_pickup_block_node(BTDATA.target, 0.18),
+                  },
+               },
+            },
+         },
+         -- pick up
+         {
+            type = "selector*",
+            children = {
+               -- Is my hand empty? If yes, go to pickup
+               function()
+                  if robot.rangefinders['underneath'].proximity > api.parameters.proximity_touch_tolerance then
+                     return false, true
+                  else
+                     return false, false
+                  end
+               end,
+               -- place procedure
+               {
+                  type = "sequence*",
+                  children = {
+                     -- search
+                     app.create_search_block_node(
+                        app.create_process_rules_node(rules, 'place', BTDATA.target)
+                     ),
+                     -- approach
+                     app.create_curved_approach_block_node(BTDATA.target, 0.18),
+                     -- place
+                     app.create_place_block_node(BTDATA.target, 0.18),
+                     -- backup
+                     app.create_timer_node{
+                        time = 0.08 / 0.005,
+                        func = function() api.move(-0.005, -0.005) end
+                     },
+                  },
+               },
+            },
+         },
+      },
    }
    behaviour = bt.create(bt_node)
    -- robot init ---
