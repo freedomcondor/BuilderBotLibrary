@@ -21,19 +21,16 @@ local create_obstacle_avoidance_node = function()
             DebugMSG(api.obstacles)
             for i, v in ipairs(api.obstacles) do
                if robot.lift_system.position > 0.06 then
-                  print("here one")
                   if v.rangefinder == '1' or v.rangefinder == '2' or v.rangefinder == '12' or v.rangefinder == '11' then
                      flag = true
                      break
                   end
                elseif robot.rangefinders['underneath'].proximity > api.parameters.proximity_touch_tolerance then
-                  print("here two")
                   if v.rangefinder == 'left' or v.rangefinder == 'right' or v.rangefinder == '2' or v.rangefinder == '11' then
                      flag = true
                      break
                   end
                else 
-                  print("here three")
                   if v.rangefinder == '2' or v.rangefinder == '11' then
                      flag = true
                      break
