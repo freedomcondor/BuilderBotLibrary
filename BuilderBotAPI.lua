@@ -214,9 +214,9 @@ builderbot_api.process_obstacles = function()
    end
    for i, block in ipairs(api.blocks) do
       builderbot_api.obstacles[#builderbot_api.obstacles + 1] = {
-         position = block.position_robot
-         distance = block.position_robot:length()
-         rangefinder = "camera"
+         position = block.position_robot,
+         distance = block.position_robot:length(),
+         rangefinder = "camera",
       }
    end
 end
