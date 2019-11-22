@@ -17,23 +17,38 @@ local create_obstacle_avoidance_node = function()
          -- no obstacle?
          function()
             local flag = false
-            DebugMSG('obstacles')
-            DebugMSG(api.obstacles)
-            for i, v in ipairs(api.obstacles) do
-               if robot.lift_system.position > 0.06 then
-                  if v.rangefinder == '1' or v.rangefinder == '2' or v.rangefinder == '12' or v.rangefinder == '11' then
+            -- DebugMSG('obstacles')
+            -- DebugMSG(api.possible_obstacles)
+            
+            for i, v in ipairs(api.possible_obstacles) do
+               -- pprint.pprint(v)
+               if v.position.x < 0.17 and v.position.x > 0.06 then
+                  if v.source == 'camera' then
+                     -- print("camera")
                      flag = true
                      break
-                  end
-               elseif robot.rangefinders['underneath'].proximity > api.parameters.proximity_touch_tolerance then
-                  if v.rangefinder == 'left' or v.rangefinder == 'right' or v.rangefinder == '2' or v.rangefinder == '11' then
+                  elseif v.source == 'left' or v.source == 'right' then
+                     if robot.rangefinders['underneath'].proximity > api.parameters.proximity_touch_tolerance then
+                        if robot.lift_system.position < api.parameters.lift_system_rf_cover_threshold then
+                           -- print('left right maip down normal')
+
+                           flag = true
+                           break
+                        end
+                     end
+                  elseif v.source == '1' or v.source == '12' then
+                     if robot.lift_system.position >= api.parameters.lift_system_rf_cover_threshold then
+                        -- print('1 12 manip up')
+                        -- pprint.pprint(v)
+                        flag = true
+                        break
+                     end
+                  elseif v.source == '2' or v.source == '11' then
+                     -- print('2 11 normal')
+
                      flag = true
                      break
-                  end
-               else 
-                  if v.rangefinder == '2' or v.rangefinder == '11' then
-                     flag = true
-                     break
+    
                   end
                end
             end
@@ -64,7 +79,7 @@ local create_obstacle_avoidance_node = function()
                         api.move_with_bearing(0, 5)
                      end
                   }
-               ),
+               )
             }
          }
       }

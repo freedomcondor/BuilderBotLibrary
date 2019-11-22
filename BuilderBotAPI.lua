@@ -21,7 +21,7 @@ builderbot_api.parameters = {}
 
 builderbot_api.parameters.lift_system_upper_limit = 0.135
 builderbot_api.parameters.lift_system_lower_limit = 0
-
+builderbot_api.parameters.lift_system_rf_cover_threshold = 0.06
 builderbot_api.parameters.lift_system_position_tolerance = tonumber(robot.params.lift_system_tolerance or 0.001)
 
 builderbot_api.parameters.default_speed = tonumber(robot.params.default_speed or 0.005)
@@ -35,6 +35,10 @@ builderbot_api.parameters.block_position_tolerance = tonumber(robot.params.block
 builderbot_api.parameters.proximity_touch_tolerance = tonumber(robot.params.proximity_touch_tolerance or 0.003)
 
 builderbot_api.parameters.proximity_detect_tolerance = tonumber(robot.params.proximity_detect_tolerance or 0.03)
+
+builderbot_api.parameters.proximity_maximum_distace = tonumber(robot.params.proximity_maximum_distace or 0.05)
+
+
 
 -- system --------------------------------------------
 ------------------------------------------------------
@@ -79,8 +83,8 @@ builderbot_api.set_type = function(type)
    if type == 0 or type == 1 or type == 2 or type == 3 or type == 4 then
       robot.nfc.write(tostring(type))
    else
-      DebugMSG('type is invalid')
       -- robot.nfc.write(tostring(builderbot_api.consts.color_to_index_table['black']))
+      DebugMSG('type is invalid')
    end
 end
 
@@ -197,26 +201,25 @@ end
 --       distance = how far away from the rangefinder
 --       TODO: the rangefinder that discovers it
 builderbot_api.process_obstacles = function()
-   builderbot_api.obstacles = {}
+   builderbot_api.possible_obstacles = {}
    for i, rf in pairs(robot.rangefinders) do
-      if rf.proximity <= builderbot_api.parameters.proximity_detect_tolerance then
-         local obstacle_position_robot =
-            vector3(0, 0, rf.proximity):rotate(rf.transform.orientation) + rf.transform.position
-         if rf.transform.anchor == 'end_effector' then
-            obstacle_position_robot = obstacle_position_robot + builderbot_api.end_effector_position
-         end
-         builderbot_api.obstacles[#builderbot_api.obstacles + 1] = {
-            position = obstacle_position_robot,
-            distance = rf.proximity,
-            rangefinder = i
-         }
+      if rf.proximity >= builderbot_api.parameters.proximity_maximum_distace then
+         rf.proximity = 9999
       end
+      local obstacle_position_robot =
+         vector3(0, 0, rf.proximity):rotate(rf.transform.orientation) + rf.transform.position
+      if rf.transform.anchor == 'end_effector' then
+         obstacle_position_robot = obstacle_position_robot + builderbot_api.end_effector_position
+      end
+      builderbot_api.possible_obstacles[#builderbot_api.possible_obstacles + 1] = {
+         position = obstacle_position_robot,
+         source = tostring(i)
+      }
    end
    for i, block in ipairs(api.blocks) do
-      builderbot_api.obstacles[#builderbot_api.obstacles + 1] = {
+      builderbot_api.possible_obstacles[#builderbot_api.possible_obstacles + 1] = {
          position = block.position_robot,
-         distance = block.position_robot:length(),
-         rangefinder = "camera",
+         source = 'camera'
       }
    end
 end
