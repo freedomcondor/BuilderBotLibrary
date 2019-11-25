@@ -17,6 +17,10 @@ end
 local bt = require('luabt')
 
 DebugMSG.enable("search_block")
+-- DebugMSG.enable('process_rules')
+
+
+
 
 -- ARGoS Loop ------------------------
 function init()
@@ -74,9 +78,9 @@ function init()
                         app.create_process_rules_node(rules, 'place', BTDATA.target)
                      ),
                      -- approach
-                     app.create_curved_approach_block_node(BTDATA.target, 0.18),
+                     app.create_curved_approach_block_node(BTDATA.target, 0.19),
                      -- place
-                     app.create_place_block_node(BTDATA.target, 0.18),
+                     app.create_place_block_node(BTDATA.target, 0.19),
                      -- backup
                      app.create_timer_node{
                         time = 0.08 / 0.005,

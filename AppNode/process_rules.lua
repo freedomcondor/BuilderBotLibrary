@@ -1,3 +1,5 @@
+DebugMSG.register('process_rules')
+
 if api == nil then
    api = require('BuilderBotAPI')
 end
@@ -559,7 +561,7 @@ local create_process_rules_node = function(rules, rule_type, final_target)
             break
          end
       end
-
+      -- pprint.pprint(final_target)
       DebugMSG('final target:', final_target)
       if #targets_list > 0 then
          return false, true
