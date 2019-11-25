@@ -91,7 +91,7 @@ rules.list = {
          }
       },
       target = {
-         reference_index = vector3(1, 0, 0),
+         reference_index = vector3(-1, 0, 0),
          offset_from_reference = vector3(0, 0, 1),
          type = 2
       },

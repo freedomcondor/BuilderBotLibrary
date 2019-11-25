@@ -436,6 +436,26 @@ local create_process_rules_node = function(rules, rule_type, final_target)
          end
          return result
       end
+      function target_block_safe(indexed_structure, rule_reference_index)
+         result = false
+         target_block = nil
+         target_block_reference_id = get_reference_id_from_index(rule_reference_index, indexed_structure)
+         for b, block in pairs(api.blocks) do
+            if tonumber(target_block_reference_id) == tonumber(block.id) then
+               target_block = block
+            end
+         end
+         if target_block == nil then 
+            result = false -- target block is not in the structure
+            return result
+         end
+         if check_block_in_safe_zone(target_block) == true then
+            result = true
+         end
+
+         return result
+      end
+
       ----------------------------------------------------------------------------
       ------------------ matching rules and getting safe targets ------------------
       -- pprint.pprint(structure_list)
@@ -443,7 +463,7 @@ local create_process_rules_node = function(rules, rule_type, final_target)
          if rule.rule_type == rule_type then
             match_result = false
             for j, visible_structure in pairs(structure_list) do
-               if one_block_safe(visible_structure) == true then
+               if target_block_safe(visible_structure, rule.target.reference_index) == true then
                   res = match_structures(visible_structure, rule.structure)
                   if res == true then
                      match_result = true

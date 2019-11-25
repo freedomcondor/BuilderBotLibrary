@@ -44,7 +44,7 @@ local create_search_block_node = function(rule_node)
                      function()
                         local random_angle = math.random(-api.parameters.search_random_range, api.parameters.search_random_range)
                         --api.move(-api.parameters.default_speed, api.parameters.default_speed)
-                        api.move_with_bearing(api.parameters.default_speed, random_angle)
+                        api.move_with_bearing(api.parameters.default_speed, 0)
                         return false, true
                      end,
                   },
