@@ -56,7 +56,7 @@ function check_block_in_safe_zone(block)
    z = block.position.z
    -- Define camera parameters (probably this is already provided by michael or maybe ask for it)
    horizontal_fov = 0.60 -- 60 degrees
-   vertical_fov = 0.60 -- 60 degrees
+   vertical_fov = 0.55 -- 60 degrees
    maimum_visible_distance = 1
    c = 0.05
    y_limit = math.tan(vertical_fov / 2) * z - c
@@ -248,7 +248,6 @@ local create_process_rules_node = function(rules, rule_type, final_target)
 
    return function()
       grouped_blocks = group_blocks()
-
       if #grouped_blocks == 0 then
          return false, false
       end
@@ -263,7 +262,7 @@ local create_process_rules_node = function(rules, rule_type, final_target)
          -- we assume having the robot in a different position where
          -- the position and orientation of the previous block are as follows:
          b1_in_r2_ori = quaternion(0, 0, 0, 1)
-         b1_in_r2_pos = vector3(0.2, 0, 0.02)
+         b1_in_r2_pos = vector3(0.2, 0, b1_in_r1_pos.z - 0.05)
          -- we calculate the inverse relation between the imaginary robot r2 and the block
          r2_in_b1_ori = b1_in_r2_ori:inverse()
          r2_in_b1_pos = -1 * vector3(b1_in_r2_pos):rotate(r2_in_b1_ori)
@@ -281,12 +280,14 @@ local create_process_rules_node = function(rules, rule_type, final_target)
             b_in_r2_pos = vector3(b_in_r1_pos):rotate(r2_in_r1_ori:inverse()) + r1_in_r2_pos
             bj_in_r2_pos[tostring(block.id)] = {}
             bj_in_r2_pos[tostring(block.id)].index = (b_in_r2_pos - b1_in_r2_pos)
+            bj_in_r2_pos[tostring(block.id)].index.z = b_in_r2_pos.z
             bj_in_r2_pos[tostring(block.id)].type = block.type
 
             function round(num, numDecimalPlaces)
                local mult = 10 ^ (numDecimalPlaces or 0)
                return math.floor(num * mult + 0.5) / mult
             end
+            -- pprint.pprint(bj_in_r2_pos[tostring(block.id)])
 
             -- transforming the coordinations to indexes
             bj_in_r2_pos[tostring(block.id)].index.x = round(bj_in_r2_pos[tostring(block.id)].index.x / 0.05, 0)
@@ -322,7 +323,7 @@ local create_process_rules_node = function(rules, rule_type, final_target)
          table.insert(local_list_of_structures, bj_in_r2_pos)
       end
       structure_list = local_list_of_structures
-
+      -- pprint.pprint(structure_list)
       ---------------------------------------------------------------------------------------
       --Match current structures against rules
       final_target.reference_id = nil
@@ -447,7 +448,7 @@ local create_process_rules_node = function(rules, rule_type, final_target)
                target_block = block
             end
          end
-         if target_block == nil then 
+         if target_block == nil then
             result = false -- target block is not in the structure
             return result
          end

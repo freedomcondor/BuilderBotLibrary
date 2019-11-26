@@ -74,7 +74,7 @@ local create_obstacle_avoidance_node = function()
                -- turn 180
                create_timer_node(
                   {
-                     time = 180 / 5,
+                     time = 90 / 5,
                      func = function()
                         api.move_with_bearing(0, 5)
                      end

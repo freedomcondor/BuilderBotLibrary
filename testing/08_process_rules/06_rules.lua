@@ -3,7 +3,7 @@
 local rules = {}
 rules.list = {
    {
-      rule_type = 'pickup',
+      rule_type = 'place',
       structure = {
          {
             index = vector3(0, 0, 0),
@@ -12,23 +12,8 @@ rules.list = {
       },
       target = {
          reference_index = vector3(0, 0, 0),
-         offset_from_reference = vector3(0, 0, 0),
-         type = 1
-      },
-      generate_orientations = false
-   },
-   {
-      rule_type = 'place',
-      structure = {
-         {
-            index = vector3(0, 0, 0),
-            type = 2
-         }
-      },
-      target = {
-         reference_index = vector3(0, 0, 0),
          offset_from_reference = vector3(0, 0, 1),
-         type = 2
+         type = 0
       },
       generate_orientations = false
    },
@@ -37,17 +22,17 @@ rules.list = {
       structure = {
          {
             index = vector3(0, 0, 0),
-            type = 2
+            type = 0
          },
          {
             index = vector3(0, 0, 1),
-            type = 2
+            type = 0
          }
       },
       target = {
          reference_index = vector3(0, 0, 1),
          offset_from_reference = vector3(0, 0, 1),
-         type = 2
+         type = 0
       },
       generate_orientations = false
    },
@@ -56,21 +41,21 @@ rules.list = {
       structure = {
          {
             index = vector3(0, 0, 0),
-            type = 2
+            type = 0
          },
          {
             index = vector3(0, 0, 1),
-            type = 2
+            type = 0
          },
          {
             index = vector3(0, 0, 2),
-            type = 2
+            type = 0
          }
       },
       target = {
          reference_index = vector3(0, 0, 1),
          offset_from_reference = vector3(1, 0, -1),
-         type = 2
+         type = 0
       },
       generate_orientations = false
    },
@@ -79,21 +64,21 @@ rules.list = {
       structure = {
          {
             index = vector3(0, 0, 1),
-            type = 2
+            type = 0
          },
          {
             index = vector3(0, 0, 2),
-            type = 2
+            type = 0
          },
          {
             index = vector3(-1, 0, 0),
-            type = 2
+            type = 0
          }
       },
       target = {
          reference_index = vector3(-1, 0, 0),
          offset_from_reference = vector3(0, 0, 1),
-         type = 2
+         type = 0
       },
       generate_orientations = false
    },
@@ -102,21 +87,21 @@ rules.list = {
       structure = {
          {
             index = vector3(0, 0, 2),
-            type = 2
+            type = 0
          },
          {
             index = vector3(-1, 0, 1),
-            type = 2
+            type = 0
          },
          {
             index = vector3(-1, 0, 0),
-            type = 2
+            type = 0
          }
       },
       target = {
          reference_index = vector3(-1, 0, 1),
          offset_from_reference = vector3(1, 0, -1),
-         type = 2
+         type = 0
       },
       generate_orientations = false
    }

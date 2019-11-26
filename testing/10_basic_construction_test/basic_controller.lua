@@ -50,9 +50,9 @@ function init()
                         app.create_process_rules_node(rules, 'pickup', BTDATA.target)
                      ),
                      -- approach
-                     app.create_curved_approach_block_node(BTDATA.target, 0.18),
+                     app.create_curved_approach_block_node(BTDATA.target, 0.2),
                      -- pickup 
-                     app.create_pickup_block_node(BTDATA.target, 0.18),
+                     app.create_pickup_block_node(BTDATA.target, 0.2),
                   },
                },
             },
