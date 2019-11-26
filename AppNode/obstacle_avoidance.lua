@@ -22,7 +22,7 @@ local create_obstacle_avoidance_node = function()
             
             for i, v in ipairs(api.possible_obstacles) do
                -- pprint.pprint(v)
-               if v.position.x < 0.17 and v.position.x > 0.06 then
+               if v.position.x < 0.19 and v.position.x > 0.06 then
                   if v.source == 'camera' then
                      -- print("camera")
                      flag = true
