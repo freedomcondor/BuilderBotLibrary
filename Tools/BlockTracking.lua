@@ -10,64 +10,7 @@
 local BLOCKLENGTH = 0.055
 local Hungarian = require("Hungarian")
 
-local function FindBlockXYZ_forRobot(orientation) -- for robot frame reference
-   --    this function finds axis of a block :    
-   --         |Z           Z| /Y       the one pointing up is z
-   --         |__ Y         |/         the nearest one pointing towards the camera is x
-   --        /               \         and then y follows right hand coordinate system
-   --      X/                 \X
-
-   -- All vectors in the system of the robot
-   --           z up
-   --             | /x, front
-   --             |/
-   --  y left -----
-   --                   in the camera's eye
-
-   local X, Y, Z -- vectors of XYZ axis of a block (in camera's coor system) 
-
-   -- all the 6 dirs of a block
-   local dirs = {}
-   dirs[1] = vector3(1,0,0)
-   dirs[2] = vector3(0,1,0)
-   dirs[3] = vector3(0,0,1)
-   dirs[1]:rotate(orientation)
-   dirs[2]:rotate(orientation)
-   dirs[3]:rotate(orientation)
-   dirs[4] = -dirs[1]
-   dirs[5] = -dirs[2]
-   dirs[6] = -dirs[3]
-
-   -- clear out 3 pointing far away 
-   -- in the case of robot, this may clear out dirs very close to z
-   --for i, v in pairs(dirs) do
-   --   if v.x > 0 then dirs[i] = nil end
-   --end
-
-   -- choose the one pointing highest(max z) as Z 
-   local highestI 
-   local highestZ = 0
-   for i, v in pairs(dirs) do
-      if v.z > highestZ then highestZ = v.z highestI = i end
-   end
-   Z = dirs[highestI]
-   dirs[highestI] = nil
-
-   -- choose the one pointing nearest(min x) as X
-   local nearestI 
-   local nearestX = 0
-   for i, v in pairs(dirs) do
-      if v.x < nearestX then nearestX = v.x nearestI = i end
-   end
-   X = dirs[nearestI]
-   dirs[nearestI] = nil
-
-   Y = vector3(Z):cross(X) -- stupid argos way of saying Y = Z * X
-
-   return X, Y, Z  -- unit vectors
-end
-
-local function FindBlockXYZ(orientation) -- for camera
+local function FindBlockXYZ(position, orientation) -- for camera
    --    this function finds axis of a block :    
    --         |Z           Z| /Y       the one pointing up is z
    --         |__ Y         |/         the nearest one pointing towards the camera is x
@@ -111,9 +54,9 @@ local function FindBlockXYZ(orientation) -- for camera
 
    -- choose the one pointing nearest(min z) as X
    local nearestI 
-   local nearestZ = 0
+   local nearestZ = 99999999999
    for i, v in pairs(dirs) do
-      if v.z < nearestZ then nearestZ = v.z nearestI = i end
+      if (position + v):length() < nearestZ then nearestZ = (position + v):length(); nearestI = i end
    end
    X = dirs[nearestI]
    dirs[nearestI] = nil
@@ -304,7 +247,7 @@ function BlockTracking(_blocks, _tags)
    end
    -- adjust block orientation
    for i, block in ipairs(blocks) do
-      block.X, block.Y, block.Z = FindBlockXYZ(block.orientation)
+      block.X, block.Y, block.Z = FindBlockXYZ(block.position, block.orientation)
          -- X,Y,Z are unit vectors
       block.orientation = XYZtoQuaternion(block.orientation, block.X, block.Y, block.Z)
          -- to make orientation matches X,Y,Z
