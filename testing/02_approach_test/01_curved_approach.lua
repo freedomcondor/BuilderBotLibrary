@@ -28,8 +28,8 @@ function init()
             end
          end,
 
-         app.create_curved_approach_block_node(BTDATA.target, 0.18),
-         app.create_pickup_block_node(BTDATA.target, 0.18),
+         app.create_curved_approach_block_node(BTDATA.target, 0.20),
+         app.create_pickup_block_node(BTDATA.target, 0.20),
 
          -- stop
          function() api.move(0,0) return true end,

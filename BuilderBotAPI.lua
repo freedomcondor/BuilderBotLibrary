@@ -28,7 +28,7 @@ builderbot_api.parameters.default_speed = tonumber(robot.params.default_speed or
 
 builderbot_api.parameters.search_random_range = tonumber(robot.params.search_random_range or 25)
 
-builderbot_api.parameters.aim_block_angle_tolerance = tonumber(robot.params.aim_block_angle_tolerance or 5)
+builderbot_api.parameters.aim_block_angle_tolerance = tonumber(robot.params.aim_block_angle_tolerance or 1)
 
 builderbot_api.parameters.block_position_tolerance = tonumber(robot.params.block_position_tolerance or 0.001)
 

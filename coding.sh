@@ -12,8 +12,12 @@ vim coding.sh -c "
    tabnew AppNode/pickup_block.lua
    tabnew AppNode/place_block.lua
 
+   tabnew testing/02_approach_test/01_curved_approach.lua
+   vsp testing/02_approach_test/01_1_curved_approach_left.argos
+
    tabnew testing/10_basic_construction_test/basic_controller.lua
    vsp testing/10_basic_construction_test/01_basic_test.argos
+
 "
 
 <<COMMENT

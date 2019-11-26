@@ -1,3 +1,4 @@
+DebugMSG.register("curved_approach_block")
 if api == nil then api = require('BuilderBotAPI') end
 
 local create_aim_block_node = require("aim_block")
@@ -34,7 +35,8 @@ local create_curved_approach_block_node = function(target, target_distance)
          if angle > 30 or angle < -30 then
             return false, false
          end
-         local tolerance = api.parameters.aim_block_angle_tolerance / 3
+         DebugMSG("curved_approach: angle is ", angle)
+         local tolerance = api.parameters.aim_block_angle_tolerance * 3
          if case.left_right_case == 0 and angle > tolerance/2 then case.left_right_case = -1 -- right
          elseif case.left_right_case == 0 and angle < -tolerance/2 then case.left_right_case = 1 -- left
          elseif case.left_right_case == 1 and angle > -tolerance/4 then case.left_right_case = 0
