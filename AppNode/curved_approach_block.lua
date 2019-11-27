@@ -34,10 +34,20 @@ local create_curved_approach_block_node = function(target, target_distance)
          local angle = math.atan(robot_to_block.y / robot_to_block.x) * 180 / math.pi
          DebugMSG("curved_approach: angle is ", angle)
          local tolerance = api.parameters.aim_block_angle_tolerance * 3
-         if case.left_right_case == 0 and angle > tolerance/2 then case.left_right_case = -1 -- right
-         elseif case.left_right_case == 0 and angle < -tolerance/2 then case.left_right_case = 1 -- left
-         elseif case.left_right_case == 1 and angle > -tolerance/4 then case.left_right_case = 0
-         elseif case.left_right_case == -1 and angle < tolerance/4 then case.left_right_case = 0
+
+         if target_block.position_robot.x > target_distance + 0.05 then
+            if case.left_right_case == 0 and angle > tolerance/2 then case.left_right_case = -1 -- right
+            elseif case.left_right_case == 0 and angle < -tolerance/2 then case.left_right_case = 1 -- left
+            elseif case.left_right_case == 1 and angle > -tolerance/4 then case.left_right_case = 0
+            elseif case.left_right_case == -1 and angle < tolerance/4 then case.left_right_case = 0
+            end
+            case.done = false
+         else
+            if case.done == false and angle > tolerance/2 then case.left_right_case = -1 -- right
+            elseif case.done == false and angle < -tolerance/2 then case.left_right_case = 1 -- left
+            elseif case.left_right_case == 1 and angle > tolerance/6 and angle < tolerance/2 then case.left_right_case = 0 case.done = true
+            elseif case.left_right_case == -1 and angle < -tolerance/6 and angle > -tolerance/2 then case.left_right_case = 0 case.done = true
+            end
          end
          return false, true
       end,
@@ -61,6 +71,8 @@ local create_curved_approach_block_node = function(target, target_distance)
          local target_block = api.blocks[target.reference_id]
          local tolerence = api.parameters.block_position_tolerance
          local default_speed = api.parameters.default_speed
+
+         DebugMSG(case)
 
          if case.forward_backup_case == 1 then
             -- forward case
