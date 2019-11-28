@@ -36,13 +36,13 @@ local create_reach_block_node = function(target, distance)
                   end,
                   -- raise lift
                   function()
-                     robot.lift_system.set_position(robot.lift_system.position + 0.025) 
+                     robot.lift_system.set_position(api.blocks[target.reference_id].position_robot.z) 
                      return false, true
                   end,
                   -- wait for 1s
                   create_timer_node({time = 3,}),
-                  -- forward 8cm
-                  create_timer_node({time = (distance + 0.055) / api.parameters.default_speed,
+                  -- forward to block
+                  create_timer_node({time = (distance - api.consts.end_effector_position_offset.x) / api.parameters.default_speed,
                                      func = function() api.move(api.parameters.default_speed, 
                                                                 api.parameters.default_speed) end,})
                },
@@ -61,13 +61,13 @@ local create_reach_block_node = function(target, distance)
                   end,
                   -- raise lift
                   function()
-                     robot.lift_system.set_position(robot.lift_system.position + 0.08) 
+                     robot.lift_system.set_position(api.blocks[target.reference_id].position_robot.z + 0.055) 
                      return false, true
                   end,
                   -- wait for 1s
                   create_timer_node({time = 5,}),
-                  -- forward 8cm
-                  create_timer_node({time = (distance + 0.055) / api.parameters.default_speed,
+                  -- forward to block
+                  create_timer_node({time = (distance - api.consts.end_effector_position_offset.x - 0.005) / api.parameters.default_speed,
                                      func = function() api.move(api.parameters.default_speed, 
                                                                 api.parameters.default_speed) end,})
                },
@@ -86,13 +86,13 @@ local create_reach_block_node = function(target, distance)
                   end,
                   -- raise lift
                   function()
-                     robot.lift_system.set_position(robot.lift_system.position + 0.025) 
+                     robot.lift_system.set_position(api.blocks[target.reference_id].position_robot.z) 
                      return false, true
                   end,
                   -- wait for 1s
                   create_timer_node({time = 3,}),
-                  -- forward 8cm
-                  create_timer_node({time = distance / api.parameters.default_speed, 
+                  -- forward in front of block
+                  create_timer_node({time = (distance - api.consts.end_effector_position_offset.x - 0.060) / api.parameters.default_speed,
                                      func = function() api.move(api.parameters.default_speed, 
                                                                 api.parameters.default_speed) end,})
                },
@@ -111,13 +111,13 @@ local create_reach_block_node = function(target, distance)
                   end,
                   -- lower lift
                   function()
-                     robot.lift_system.set_position(robot.lift_system.position - 0.025) 
+                     robot.lift_system.set_position(api.blocks[target.reference_id].position_robot.z - 0.055) 
                      return false, true
                   end,
                   -- wait for 1s
                   create_timer_node({time = 3,}),
-                  -- forward 8cm
-                  create_timer_node({time = distance / api.parameters.default_speed, 
+                  -- forward in front of block
+                  create_timer_node({time = (distance - api.consts.end_effector_position_offset.x - 0.060) / api.parameters.default_speed,
                                      func = function() api.move(api.parameters.default_speed, 
                                                                 api.parameters.default_speed) end,})
                },
@@ -136,13 +136,13 @@ local create_reach_block_node = function(target, distance)
                   end,
                   -- lower lift
                   function()
-                     robot.lift_system.set_position(robot.lift_system.position - 0.080) 
+                     robot.lift_system.set_position(api.blocks[target.reference_id].position_robot.z - 0.11) 
                      return false, true
                   end,
                   -- wait for 1s
                   create_timer_node({time = 5,}),
-                  -- forward distance
-                  create_timer_node({time = distance / api.parameters.default_speed, 
+                  -- forward in front of block
+                  create_timer_node({time = (distance - api.consts.end_effector_position_offset.x - 0.060) / api.parameters.default_speed,
                                      func = function() api.move(api.parameters.default_speed, 
                                                                 api.parameters.default_speed) end,})
                },

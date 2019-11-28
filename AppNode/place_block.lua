@@ -18,6 +18,12 @@ return -- return the following table
       end,
       -- reach the block
       create_reach_block_node(target, _forward_distance),
+      -- change color
+      function()
+         if target.type ~= nil then
+            api.set_type(target.type)
+         end
+      end,
       -- drop electromagnet
       function()
          robot.electromagnet_system.set_discharge_mode("destructive")

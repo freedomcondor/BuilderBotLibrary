@@ -19,7 +19,6 @@
         <builderbot_differential_drive implementation="default" />
         <builderbot_lift_system implementation="default" />
         <builderbot_nfc implementation="default" />
-        <builderbot_wifi implementation="default" />
 
         <!-- for debug -->
         <debug implementation="default">
@@ -38,11 +37,7 @@
         <builderbot_lift_system implementation="default" />
         <builderbot_nfc implementation="default" show_rays="true" />
       </sensors>
-      <params script="testing/05_StructureTest.lua"
-              default_speed="0.005" 
-              block_position_tolerance="0.005"
-              aim_block_angle_tolerance="2"
-              />
+      <params script="testing/08_process_rules/place_basic_controller.lua" rules='testing/08_process_rules/06_rules'/>
     </lua_controller>
 
     <lua_controller id="block">
@@ -53,67 +48,28 @@
       <sensors>
         <radios implementation="default" show_rays="true"/>
       </sensors>
-      <params script="block.lua" somekey="value.somevalue">
-        <test key2="value2"/>
-      </params>
+      <params script="testing/08_process_rules/block.lua" />
     </lua_controller>
   </controllers>
 
   <!-- *********************** -->
   <!-- * Arena configuration * -->
   <!-- *********************** -->
-  <arena size="4, 2, 2" center="0, 0, 0.5">
+  <arena size="1, 1, 2" center="0, 0, 0.5">
     <builderbot id="builderbot1" debug="false">
-      <body position="0.0,0,0" orientation="0,0,0"/>
+      <body position="-0.30,0,0" orientation="0,0,0"/>
       <controller config="builderbot"/>
     </builderbot>
 
-    <block id="block1" debug="false" movable="false">
-      <body position="-0.20,0,0" orientation="0,0,0"/>
+    <block id="block" debug="false">
+      <body position="0,0,0" orientation="15,0,0"/>
+      <controller config="block"/>
+    </block>
+    <block id="1block" debug="false">
+      <body position="0,0,0.05" orientation="15,0,0"/>
       <controller config="block"/>
     </block>
 
-    <!--
-    <block id="block2" debug="false">
-      <body position="-0.15,0,0.055" orientation="0,0,0"/>
-      <controller config="block"/>
-    </block>
-
-    <block id="block3" debug="false">
-      <body position="-0.15,0,0.11" orientation="0,0,0"/>
-      <controller config="block"/>
-    </block>
-    -->
-
-    <block id="block4" debug="false">
-      <body position="0.20,0,0" orientation="15,0,0"/>
-      <controller config="block"/>
-    </block>
-
-    <block id="block5" debug="false">
-      <body position="0.10,-0.18,0" orientation="30,0,0"/>
-      <controller config="block"/>
-    </block>
-
-    <block id="block6" debug="false">
-      <body position="0.25,-0.13,0" orientation="-15,0,0"/>
-      <controller config="block"/>
-    </block>
-
-    <block id="block7" debug="false">
-      <body position="0.30,0.0,0" orientation="-20,0,0"/>
-      <controller config="block"/>
-    </block>
-
-    <block id="block8" debug="false">
-      <body position="0.25,0.15,0" orientation="10,0,0"/>
-      <controller config="block"/>
-    </block>
-
-    <block id="block9" debug="false">
-      <body position="0.10,0.18,0" orientation="45,0,0"/>
-      <controller config="block"/>
-    </block>
 
   </arena>
 
@@ -121,8 +77,7 @@
   <!-- * Physics engines * -->
   <!-- ******************* -->
   <physics_engines>
-    <pointmass3d id="pm3d" />
-    <dynamics3d id="dyn3d" iterations="35" default_friction="1">
+    <dynamics3d id="dyn3d" iterations="25" default_friction="1">
       <gravity g="9.8" />
       <floor height="0.01" friction="1"/>
       <virtual_magnetism />
@@ -159,6 +114,4 @@
       </camera>
     </qt-opengl>
   </visualization>
-
-
 </argos-configuration>

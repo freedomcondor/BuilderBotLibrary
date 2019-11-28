@@ -20,7 +20,7 @@ print(a)   -- a would be (0,1,0)
 ## Development
 ### Coding Standard
 1. Indentation is always done by 3 spaces, tabs are not allowed.
-2. Functions are variable names are lower case and seperated by underscrolls. 
+2. Function and variable names are in lower case and seperated by underscrolls. 
 
 ```lua
 if condition then
@@ -53,6 +53,8 @@ DebugMSG.enable()
 DebugMSG.disable("module1")
 
 DebugMSG("I am main")
+
+
 -- In IncludeFile1.lua
 DebugMSG.register("module1")
 function F1()
@@ -66,17 +68,23 @@ function F1()
 end
 ```
 
-DebugMessage also provides function to show table content, if the first parameter is a table, it will parse the table recursively and show it (ignores the rest parameters)
+DebugMessage also provides function to show table content, if the first parameter is a table, it will parse the table recursively and show it. In this case, the second parameter would be the number of tabs printed before each line, and the third parameter would be an index which will be ignored.
 ```lua
 DebugMSG = require('DebugMessage')
-local a = {a = 1, b = "lalala", c = function() print("test") end}
-DebugMSG(a)
+local table = {
+	a = 1, 
+	b = "lalala", 
+	c = function() print("test") end, 
+	d = {a = 1, b = 2, c = 3},
+}
+DebugMSG(table, 1, "d")
 ```
 result will be
 ```
-DebugMSG:	c	function: 0x559b50944d70
-DebugMSG:	b	lalala
-DebugMSG:	a	1
+DebugMSG:		c	function: 0x559b50944d70
+DebugMSG:		b	lalala
+DebugMSG:		a	1
+DebugMSG:		d	SKIPPED
 ```
 
 ### Parameters
@@ -93,8 +101,13 @@ There are some parameters can be defined in .argos file, for example, the defaul
 provided parameters can be seen in builderbot\_api.parameters = {}, which is in BuilderBotAPI.lua file
 
 
-### API Levels
-Applications are designed by using the functions provided by the intermediate API. These functions are supposed to encapsulated inside [finite state machine states](https://github.com/allsey87/luafsm) or [behavior tree nodes](https://github.com/allsey87/luabt).
+## Code Structure
+There are several levels provided in this library, intermediate API level and Application level.
+
+### Robot Level
+Robot level is directly provided by ARGoS-srocs. It is a table called "robot", it contains all the actuator and sensor data and operation of the robot.
+### API Level
+Intermediate API level is the level above the robot level. It provides basic functions, for example calculating the block location.
 ```lua
 api = require("builderbot.api")
 cv = require("builderbot.cv")
@@ -114,11 +127,11 @@ api.get_blocks = function(xxx)
 end
 ```
 
-### APP Levels
-Application level provides some behaviour tree nodes for user to use directly.
+### APP Level
+Application level provides some behaviour tree nodes for user to use directly. It is designed by using the functions provided by the intermediate API. These functions are supposed to encapsulated inside [finite state machine states](https://github.com/allsey87/luafsm) or [behavior tree nodes](https://github.com/allsey87/luabt).
 Example of use:
 ```lua
-   app = require('ApplicationNode') -- these need to be global
+   app = require('ApplicationNode')
 
    bt.create{
       type = 'sequence*',
@@ -129,51 +142,5 @@ Example of use:
       },
    }
 ```
-In ApplicationNode.lua, you can find a list of nodes that are provided, each node is implemented in a seperate file located in the folder AppNode
-The following nodes are provided:
 
-```lua
-create_search_block_node = require('search_block')
-   -- create_search_block_node = function(rule_node)
-   -- create a search node based on rule_node
-
-create_approach_block_node = require("approach_block")
-   -- create_approach_block_node = function(target, _distance)
-   -- approach the target reference block until _distance away 
-
-create_pickup_block_node = require('pickup_block')
-   -- create_pickup_block_node = function(target, _forward_distance)
-   -- assume i am _forward_distance away from the block
-   -- shameful move blindly for that far (use reach_block node)
-   -- move down manipulator to pickup
-
-create_place_block_node = require('place_block')
-   -- create_place_block_node = function(target, _forward_distance)
-   -- assume i am _forward_distance away from the block
-   -- shameful move blindly for that far (use reach_block node)
-   -- anti release the electomagnet to drop the block
-
-create_reach_block_node = require("reach_block")
-   -- create_reach_block_node = function(target, _distance)
-   -- assuming i'm just infront of the block, 
-   -- shamefully forward blindly for a certain _distance
-   -- based on target.offset, adjust the distance and 
-   --                         raise or lower the manipulator
-   --     offset could be vector3(0,0,0), means the reference block itself
-   --                     vector3(1,0,0), means just infront of the reference block
-   --                     vector3(0,0,1), top of the reference block
-   --                     vector3(1,0,-1)
-   --                     vector3(1,0,-2)
-
-
-create_aim_block_node = require('aim_block')
-   -- create_aim_block_node = function(target)
-   -- aim block, put the block into the center of the image
-
-create_timer_node = require('timer')
-   -- create_timer_node = function(para)
-   -- para = {time, func}
-   -- count from 0, to para.time, with increment of api.time_period
-   -- each step do para.func()
-   -- need to do api.process_time everytime
-```
+Detailed description of each node in APP level can be found in AppNode/README.md
