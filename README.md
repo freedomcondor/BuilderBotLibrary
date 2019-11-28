@@ -5,7 +5,9 @@
 
 ## Usage
 ### Running an example
-`argos3 -c testing/01_FirstExample.argos`
+`argos3 -c testing/history/01_FirstExample.argos`
+
+This example does nothing. It just prints some apis which argos provides. Take a look inside testing folder, there are many scenarios to play with.
 
 ## Hints
 1. If there is a problem was loading libraries, try running `sudo ldconfig` on Linux or `sudo update_dyld_shared_cache` on OS X. This issue is also resolved by restarting the computer.
