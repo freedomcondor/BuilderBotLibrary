@@ -78,7 +78,14 @@
       <body position="-0.2,0,0" orientation="0,0,0"/>
       <controller config="block"/>
     </block>
-
+    <block id="block22" debug="false" movable="false">
+      <body position="-0.2,0,0.05" orientation="0,0,0"/>
+      <controller config="block"/>
+    </block>
+    <block id="block222" debug="false" movable="false">
+      <body position="-0.15,0,0" orientation="0,0,0"/>
+      <controller config="block"/>
+    </block>
     <distribute>
       <position method="uniform" min="-0.4,-0.4,0" max="0.4,0.4,0" />
       <orientation method="uniform" min="0,0,0" max="360,0,0" />
