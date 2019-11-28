@@ -35,6 +35,8 @@ local create_curved_approach_block_node = function(target, target_distance)
          DebugMSG("curved_approach: angle is ", angle)
          local tolerance = api.parameters.aim_block_angle_tolerance * 3
 
+         if angle > 40 or angle < -40 then return false, false end
+
          if target_block.position_robot.x > target_distance + 0.05 then
             if case.left_right_case == 0 and angle > tolerance/2 then case.left_right_case = -1 -- right
             elseif case.left_right_case == 0 and angle < -tolerance/2 then case.left_right_case = 1 -- left
